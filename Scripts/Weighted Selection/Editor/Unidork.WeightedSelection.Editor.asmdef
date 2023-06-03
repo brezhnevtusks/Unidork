@@ -1,0 +1,18 @@
+{
+    "name": "Unidork.WeightedSelection.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:01e98ea822577cc44a2f7d597c90afff"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

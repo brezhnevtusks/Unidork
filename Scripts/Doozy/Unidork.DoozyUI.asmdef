@@ -1,0 +1,17 @@
+{
+    "name": "Unidork.DoozyUI",
+    "rootNamespace": "",
+    "references": [
+        "Doozy.Runtime",
+        "Unidork.Variables"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

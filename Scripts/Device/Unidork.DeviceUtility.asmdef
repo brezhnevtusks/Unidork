@@ -1,0 +1,16 @@
+{
+    "name": "Unidork.DeviceUtility",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4ee1b0f5de000e041a6521f50852d501"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,21 @@
+{
+    "name": "Unidork.Events.Editor",
+    "rootNamespace": "",
+    "references": [
+        "DoozyEditor",
+        "DoozyRuntime",
+        "Unidork.Events",
+        "Unidork.Extensions"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

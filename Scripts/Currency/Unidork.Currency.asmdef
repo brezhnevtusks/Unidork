@@ -1,0 +1,16 @@
+{
+    "name": "Unidork.Currency",
+    "references": [
+        "GUID:4ee1b0f5de000e041a6521f50852d501",
+        "GUID:f2624564a2dc98e43b069312b63c832f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

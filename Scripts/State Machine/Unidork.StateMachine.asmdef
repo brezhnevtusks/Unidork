@@ -1,0 +1,18 @@
+{
+    "name": "Unidork.StateMachine",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4ee1b0f5de000e041a6521f50852d501",
+        "GUID:9549780f47e97fc4aae12a67385fdc4b",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

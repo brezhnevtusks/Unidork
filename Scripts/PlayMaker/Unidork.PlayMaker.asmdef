@@ -1,0 +1,20 @@
+{
+    "name": "Unidork.PlayMaker",
+    "rootNamespace": "",
+    "references": [
+        "PlayMakerAssembly",
+        "Unidork.Extensions",
+        "Unidork.Variables"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "PlayMaker.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

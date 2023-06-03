@@ -1,0 +1,20 @@
+{
+    "name": "Unidork.Settings",
+    "rootNamespace": "",
+    "references": [
+        "GUID:57a0b9bc628ab4740af4b6f1f0b2e134",
+        "GUID:8087d854c1f812e4b9a74437dfc524e0",
+        "GUID:4ee1b0f5de000e041a6521f50852d501",
+        "GUID:e3849d08bb4c0424eb45023c3b3ac9f6",
+        "GUID:f2624564a2dc98e43b069312b63c832f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

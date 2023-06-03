@@ -1,0 +1,20 @@
+{
+    "name": "Unidork.Animations",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4ee1b0f5de000e041a6521f50852d501",
+        "GUID:0a6c2723dfa91ae48ab1b93d2c2e184f",
+        "GUID:9549780f47e97fc4aae12a67385fdc4b",
+        "GUID:c594251d8d147ae4288cd9920cc54a90",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

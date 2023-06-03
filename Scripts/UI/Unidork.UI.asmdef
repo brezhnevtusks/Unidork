@@ -1,0 +1,23 @@
+{
+    "name": "Unidork.UI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4ee1b0f5de000e041a6521f50852d501",
+        "GUID:0a6c2723dfa91ae48ab1b93d2c2e184f",
+        "GUID:9549780f47e97fc4aae12a67385fdc4b",
+        "GUID:18e9565d05249e342a1199f1a71803fb",
+        "GUID:e5f4c75823153f34dabbdd809d275344",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:ccbb9e063a08b6c4186c5e6067fd7e58",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

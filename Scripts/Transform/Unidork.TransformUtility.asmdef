@@ -1,0 +1,18 @@
+{
+    "name": "Unidork.TransformUtility",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4ee1b0f5de000e041a6521f50852d501",
+        "GUID:9549780f47e97fc4aae12a67385fdc4b",
+        "GUID:18e9565d05249e342a1199f1a71803fb"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
