@@ -2,8 +2,8 @@
     "name": "Unidork.Events.Editor",
     "rootNamespace": "",
     "references": [
-        "DoozyEditor",
-        "DoozyRuntime",
+        "Doozy.Editor",
+        "Doozy.Runtime",
         "Unidork.Events",
         "Unidork.Extensions"
     ],
