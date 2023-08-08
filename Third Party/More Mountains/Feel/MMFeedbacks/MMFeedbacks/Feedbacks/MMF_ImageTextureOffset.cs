@@ -24,6 +24,8 @@ namespace MoreMountains.Feedbacks
 		public override string RequiredTargetText { get { return TargetImage != null ? TargetImage.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetImage be set to be able to work properly. You can set one below."; } }
 		#endif
+		public override bool HasAutomatedTargetAcquisition => true;
+		protected override void AutomateTargetAcquisition() => TargetImage = FindAutomatedTarget<Image>();
 
 		/// the possible modes for this feedback
 		public enum Modes { OverTime, Instant }
@@ -80,6 +82,7 @@ namespace MoreMountains.Feedbacks
 
 		/// the duration of this feedback is the duration of the transition
 		public override float FeedbackDuration { get { return (Mode == Modes.Instant) ? 0f : ApplyTimeMultiplier(Duration); } set { Duration = value; } }
+		public override bool HasRandomness => true;
 
 		/// <summary>
 		/// On init we store our initial texture offset
@@ -114,7 +117,7 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
             
 			switch (Mode)
 			{

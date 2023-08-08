@@ -40,9 +40,13 @@ namespace MoreMountains.Feedbacks
 					}
 				}    
 			}
+			if (SoundDataSO != null)
+			{
+				requiresSetup = false;
+			}
 			return requiresSetup;
 		}
-		public override string RequiredTargetText { get { return Sfx != null ? Sfx.name : "";  } }
+		public override string RequiredTargetText { get { return Sfx != null ? Sfx.name + " - ID:" + ID : "";  } }
 
 		public override string RequiresSetupText { get { return "This feedback requires that you set an Audio clip in its Sfx slot below, or one or more clips in the Random Sfx array."; } }
 		public override bool HasCustomInspectors { get { return true; } }
@@ -50,6 +54,7 @@ namespace MoreMountains.Feedbacks
 
 		/// the duration of this feedback is the duration of the clip being played
 		public override float FeedbackDuration { get { return GetDuration(); } }
+		public override bool HasRandomness => true;
         
 		[MMFInspectorGroup("Sound", true, 14, true)]
 		/// the sound clip to play
@@ -72,15 +77,15 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("if we're in sequential order hold last mode, index will reset to 0 automatically after this duration, unless it's 0, in which case it'll be ignored")]
 		[MMFCondition("SequentialOrderHoldLast", true)]
 		public float SequentialOrderHoldCooldownDuration = 2f;
-        
-		[MMFInspectorGroup("Debug", true, 31)]
-		/// a test button used to play the sound in inspector
-		public MMF_Button TestPlayButton;
-		/// a test button used to stop the sound in inspector
-		public MMF_Button TestStopButton;
-		/// a test button used to stop the sound in inspector
-		public MMF_Button ResetSequentialIndexButton;
-        
+		/// if this is true, sfx will be picked at random until all have been played. once this happens, the list is shuffled again, and it starts over
+		[Tooltip("if this is true, sfx will be picked at random until all have been played. once this happens, the list is shuffled again, and it starts over")]
+		public bool RandomUnique = false;
+		
+		[MMFInspectorGroup("Scriptable Object", true, 14, true)]
+		/// a scriptable object (created via the Create/MoreMountains/Audio/MMF_SoundData menu) to define settings that will override all other settings on this feedback
+		[Tooltip("a scriptable object (created via the Create/MoreMountains/Audio/MMF_SoundData menu) to define settings that will override all other settings on this feedback")]
+		public MMF_MMSoundManagerSoundData SoundDataSO;
+
 		[MMFInspectorGroup("Sound Properties", true, 24)]
 		[Header("Volume")]
 		/// the minimum volume to play the sound at
@@ -101,12 +106,7 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("the maximum pitch to play the sound at")]
 		[Range(-3f,3f)]
 		public float MaxPitch = 1f;
-
-		[Header("Time")]
-		/// the minimum and maximum time stamps at which to play the sound 
-		[Tooltip("the minimum and maximum time stamps at which to play the sound")]
-		[MMVector("Min", "Max")]
-		public Vector2 PlaybackTime = new Vector2(0f, 0f);
+		
 		[MMFInspectorGroup("SoundManager Options", true, 28)]
 		/// the track on which to play the sound. Pick the one that matches the nature of your sound
 		[Tooltip("the track on which to play the sound. Pick the one that matches the nature of your sound")]
@@ -170,7 +170,10 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("Sets how much this AudioSource is affected by 3D spatialisation calculations (attenuation, doppler etc). 0.0 makes the sound full 2D, 1.0 makes it full 3D.")]
 		[Range(0f,1f)]
 		public float SpatialBlend;
-        
+		/// a Transform this sound can 'attach' to and follow it along as it plays
+		[Tooltip("a Transform this sound can 'attach' to and follow it along as it plays")]
+		public Transform AttachToTransform;
+		
 		[MMFInspectorGroup("Effects", true, 36)]
 		/// Bypass effects (Applied from filter components or global listener filters).
 		[Tooltip("Bypass effects (Applied from filter components or global listener filters).")]
@@ -189,6 +192,16 @@ namespace MoreMountains.Feedbacks
 		[Tooltip("The amount by which the signal from the AudioSource will be mixed into the global reverb associated with the Reverb Zones.")]
 		[Range(0f,1.1f)]
 		public float ReverbZoneMix = 1f;
+
+		[MMFInspectorGroup("Time Options", true, 15)]
+		/// a timestamp (in seconds, randomized between the defined min and max) at which the sound will start playing, equivalent to the Audiosource API's Time) 
+		[Tooltip("a timestamp (in seconds, randomized between the defined min and max) at which the sound will start playing, equivalent to the Audiosource API's Time)")]
+		[MMVector("Min", "Max")]
+		public Vector2 PlaybackTime = new Vector2(0f, 0f);
+		/// a duration (in seconds, randomized between the defined min and max) for which the sound will play before stopping. Ignored if min and max are zero.
+		[Tooltip("a duration (in seconds, randomized between the defined min and max) for which the sound will play before stopping. Ignored if min and max are zero.")]
+		[MMVector("Min", "Max")]
+		public Vector2 PlaybackDuration = new Vector2(0f, 0f);
         
 		[MMFInspectorGroup("3D Sound Settings", true, 37)]
 		/// Sets the Doppler scale for this AudioSource.
@@ -208,13 +221,80 @@ namespace MoreMountains.Feedbacks
 		/// (Logarithmic rolloff) MaxDistance is the distance a sound stops attenuating at.
 		[Tooltip("(Logarithmic rolloff) MaxDistance is the distance a sound stops attenuating at.")]
 		public float MaxDistance = 500f;
+		/// whether or not to use a custom curve for custom volume rolloff
+		[Tooltip("whether or not to use a custom curve for custom volume rolloff")]
+		public bool UseCustomRolloffCurve = false;
+		/// the curve to use for custom volume rolloff if UseCustomRolloffCurve is true
+		[Tooltip("the curve to use for custom volume rolloff if UseCustomRolloffCurve is true")]
+		[MMFCondition("UseCustomRolloffCurve", true)]
+		public AnimationCurve CustomRolloffCurve;
+		/// whether or not to use a custom curve for spatial blend
+		[Tooltip("whether or not to use a custom curve for spatial blend")]
+		public bool UseSpatialBlendCurve = false;
+		/// the curve to use for custom spatial blend if UseSpatialBlendCurve is true
+		[Tooltip("the curve to use for custom spatial blend if UseSpatialBlendCurve is true")]
+		[MMFCondition("UseSpatialBlendCurve", true)]
+		public AnimationCurve SpatialBlendCurve;
+		/// whether or not to use a custom curve for reverb zone mix
+		[Tooltip("whether or not to use a custom curve for reverb zone mix")]
+		public bool UseReverbZoneMixCurve = false;
+		/// the curve to use for custom reverb zone mix if UseReverbZoneMixCurve is true
+		[Tooltip("the curve to use for custom reverb zone mix if UseReverbZoneMixCurve is true")]
+		[MMFCondition("UseReverbZoneMixCurve", true)]
+		public AnimationCurve ReverbZoneMixCurve;
+		/// whether or not to use a custom curve for spread
+		[Tooltip("whether or not to use a custom curve for spread")]
+		public bool UseSpreadCurve = false;
+		/// the curve to use for custom spread if UseSpreadCurve is true
+		[Tooltip("the curve to use for custom spread if UseSpreadCurve is true")]
+		[MMFCondition("UseSpreadCurve", true)]
+		public AnimationCurve SpreadCurve;
+        
+		[MMFInspectorGroup("Debug", true, 31)]
+		/// whether or not to draw sound falloff gizmos when this MMF Player is selected
+		[Tooltip("whether or not to draw sound falloff gizmos when this MMF Player is selected")]
+		public bool DrawGizmos = false;
+		/// an object to use as the center of the gizmos. If left empty, this MMF Player's position will be used.
+		[Tooltip("an object to use as the center of the gizmos. If left empty, this MMF Player's position will be used.")]
+		[MMFCondition("DrawGizmos", true)]
+		public Transform GizmosCenter;
+		/// the color to use to draw the min distance sphere of the sound falloff gizmos
+		[Tooltip("the color to use to draw the min distance sphere of the sound falloff gizmos")]
+		[MMFCondition("DrawGizmos", true)]
+		public Color MinDistanceColor = MMColors.CadetBlue;
+		/// the color to use to draw the max distance sphere of the sound falloff gizmos
+		[Tooltip("the color to use to draw the max distance sphere of the sound falloff gizmos")]
+		[MMFCondition("DrawGizmos", true)]
+		public Color MaxDistanceColor = MMColors.Orangered;
+		/// a test button used to play the sound in inspector
+		public MMF_Button TestPlayButton;
+		/// a test button used to stop the sound in inspector
+		public MMF_Button TestStopButton;
+		/// a test button used to stop the sound in inspector
+		public MMF_Button ResetSequentialIndexButton;
         
 		protected AudioClip _randomClip;
 		protected AudioSource _editorAudioSource;
 		protected MMSoundManagerPlayOptions _options;
 		protected AudioSource _playedAudioSource;
 		protected float _randomPlaybackTime;
+		protected float _randomPlaybackDuration;
 		protected int _currentIndex = 0;
+		protected Vector3 _gizmoCenter;
+		protected MMShufflebag<int> _randomUniqueShuffleBag;
+		
+		protected override void CustomInitialization(MMF_Player owner)
+		{
+			base.CustomInitialization(owner);
+			if (RandomUnique)
+			{
+				_randomUniqueShuffleBag = new MMShufflebag<int>(RandomSfx.Length);
+				for (int i = 0; i < RandomSfx.Length; i++)
+				{
+					_randomUniqueShuffleBag.Add(i,1);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Initializes the debug buttons
@@ -237,8 +317,10 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
+
+			HandleSO();
             
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
             
 			if (Sfx != null)
 			{
@@ -277,6 +359,76 @@ namespace MoreMountains.Feedbacks
 		}
 
 		/// <summary>
+		/// If a scriptable object is specified, we grab its values
+		/// </summary>
+		protected virtual void HandleSO()
+		{
+			if (SoundDataSO == null)
+			{
+				return;
+			}
+			
+			Sfx = SoundDataSO.Sfx;
+			RandomSfx = SoundDataSO.RandomSfx;
+			SequentialOrder = SoundDataSO.SequentialOrder;
+			SequentialOrderHoldLast = SoundDataSO.SequentialOrderHoldLast;
+			SequentialOrderHoldCooldownDuration = SoundDataSO.SequentialOrderHoldCooldownDuration;
+			RandomUnique = SoundDataSO.RandomUnique;
+	        MinVolume = SoundDataSO.MinVolume;
+			MaxVolume = SoundDataSO.MaxVolume;
+			MinPitch = SoundDataSO.MinPitch;
+			MaxPitch = SoundDataSO.MaxPitch;
+			PlaybackTime = SoundDataSO.PlaybackTime;
+			PlaybackDuration = SoundDataSO.PlaybackDuration;
+			MmSoundManagerTrack = SoundDataSO.MmSoundManagerTrack;
+			ID = SoundDataSO.ID;
+			AudioGroup = SoundDataSO.AudioGroup;
+			RecycleAudioSource = SoundDataSO.RecycleAudioSource;
+			Loop = SoundDataSO.Loop;
+			Persistent = SoundDataSO.Persistent;
+			DoNotPlayIfClipAlreadyPlaying = SoundDataSO.DoNotPlayIfClipAlreadyPlaying;
+			StopSoundOnFeedbackStop = SoundDataSO.StopSoundOnFeedbackStop;
+			Fade = SoundDataSO.Fade;
+			FadeInitialVolume = SoundDataSO.FadeInitialVolume;
+			FadeDuration = SoundDataSO.FadeDuration;
+			FadeTween = SoundDataSO.FadeTween;
+			SoloSingleTrack = SoundDataSO.SoloSingleTrack;
+			SoloAllTracks = SoundDataSO.SoloAllTracks;
+			AutoUnSoloOnEnd = SoundDataSO.AutoUnSoloOnEnd;
+			PanStereo = SoundDataSO.PanStereo;
+			SpatialBlend = SoundDataSO.SpatialBlend;
+			AttachToTransform = SoundDataSO.AttachToTransform;
+			BypassEffects = SoundDataSO.BypassEffects;
+			BypassListenerEffects = SoundDataSO.BypassListenerEffects;
+			BypassReverbZones = SoundDataSO.BypassReverbZones;
+			Priority = SoundDataSO.Priority;
+			ReverbZoneMix = SoundDataSO.ReverbZoneMix;
+			DopplerLevel = SoundDataSO.DopplerLevel;
+			Spread = SoundDataSO.Spread;
+			RolloffMode = SoundDataSO.RolloffMode;
+			MinDistance = SoundDataSO.MinDistance;
+			MaxDistance = SoundDataSO.MaxDistance;
+			UseCustomRolloffCurve = SoundDataSO.UseCustomRolloffCurve;
+			CustomRolloffCurve = SoundDataSO.CustomRolloffCurve;
+			UseSpatialBlendCurve = SoundDataSO.UseSpatialBlendCurve;
+			SpatialBlendCurve = SoundDataSO.SpatialBlendCurve;
+			UseReverbZoneMixCurve = SoundDataSO.UseReverbZoneMixCurve;
+			ReverbZoneMixCurve = SoundDataSO.ReverbZoneMixCurve;
+			UseSpreadCurve = SoundDataSO.UseSpreadCurve;
+			SpreadCurve = SoundDataSO.SpreadCurve;
+		}
+
+		/// <summary>
+		/// Randomizes playback time and playback duration
+		/// </summary>
+		public virtual void RandomizeTimes()
+		{
+			_randomPlaybackTime = Random.Range(PlaybackTime.x, PlaybackTime.y);
+			_randomPlaybackDuration = Random.Range(PlaybackDuration.x, PlaybackDuration.y);
+			Owner.ComputeCachedTotalDuration();
+		}
+
+		/// <summary>
 		/// Triggers a play sound event
 		/// </summary>
 		/// <param name="sfx"></param>
@@ -286,9 +438,9 @@ namespace MoreMountains.Feedbacks
 		{
 			if (DoNotPlayIfClipAlreadyPlaying) 
 			{
-				if (_playedAudioSource != null && _playedAudioSource.isPlaying)
+				if ((MMSoundManager.Instance.FindByClip(sfx) != null) && (MMSoundManager.Instance.FindByClip(sfx).isPlaying))
 				{
-					return;    
+					return;
 				}
 			}
             
@@ -300,7 +452,7 @@ namespace MoreMountains.Feedbacks
 			}
             
 			float pitch = Random.Range(MinPitch, MaxPitch);
-			_randomPlaybackTime = Random.Range(PlaybackTime.x, PlaybackTime.y);
+			RandomizeTimes();
 
 			int timeSamples = NormalPlayDirection ? 0 : sfx.samples - 1;
             
@@ -318,6 +470,7 @@ namespace MoreMountains.Feedbacks
 			_options.AudioGroup = AudioGroup;
 			_options.Pitch = pitch;
 			_options.PlaybackTime = _randomPlaybackTime;
+			_options.PlaybackDuration = _randomPlaybackDuration;
 			_options.PanStereo = PanStereo;
 			_options.SpatialBlend = SpatialBlend;
 			_options.SoloSingleTrack = SoloSingleTrack;
@@ -333,6 +486,17 @@ namespace MoreMountains.Feedbacks
 			_options.RolloffMode = RolloffMode;
 			_options.MinDistance = MinDistance;
 			_options.MaxDistance = MaxDistance;
+			_options.AttachToTransform = AttachToTransform;
+			_options.UseSpreadCurve = UseSpreadCurve;
+			_options.SpreadCurve = SpreadCurve;
+			_options.UseCustomRolloffCurve = UseCustomRolloffCurve;
+			_options.CustomRolloffCurve = CustomRolloffCurve;
+			_options.UseSpatialBlendCurve = UseSpatialBlendCurve;
+			_options.SpatialBlendCurve = SpatialBlendCurve;
+			_options.UseReverbZoneMixCurve = UseReverbZoneMixCurve;
+			_options.ReverbZoneMixCurve = ReverbZoneMixCurve;
+			
+			_options.DoNotAutoRecycleIfNotDonePlaying = (_randomPlaybackDuration > 0) ? true : false;
 
 			_playedAudioSource = MMSoundManagerSoundPlayEvent.Trigger(sfx, _options);
 
@@ -345,15 +509,27 @@ namespace MoreMountains.Feedbacks
 		/// <returns></returns>
 		protected virtual float GetDuration()
 		{
-			if (Sfx != null)
+			if (SoundDataSO != null)
 			{
-				return Sfx.length - _randomPlaybackTime;
+				return ComputeDuration(SoundDataSO.Sfx, SoundDataSO.RandomSfx);
+			}
+			else
+			{
+				return ComputeDuration(Sfx, RandomSfx);
+			}
+		}
+
+		protected virtual float ComputeDuration(AudioClip sfx, AudioClip[] randomSfx)
+		{
+			if (sfx != null)
+			{
+				return (_randomPlaybackDuration > 0) ? _randomPlaybackDuration : sfx.length - _randomPlaybackTime;
 			}
 
 			float longest = 0f;
-			if ((RandomSfx != null) && (RandomSfx.Length > 0))
+			if ((randomSfx != null) && (randomSfx.Length > 0))
 			{
-				foreach (AudioClip clip in RandomSfx)
+				foreach (AudioClip clip in randomSfx)
 				{
 					if ((clip != null) && (clip.length > longest))
 					{
@@ -361,10 +537,24 @@ namespace MoreMountains.Feedbacks
 					}
 				}
 
-				return longest - _randomPlaybackTime;
+				return (_randomPlaybackDuration > 0) ? _randomPlaybackDuration : longest - _randomPlaybackTime;
 			}
 
 			return 0f;
+		}
+
+		public override void OnDrawGizmosSelectedHandler()
+		{
+			if (!DrawGizmos)
+			{
+				return;
+			}
+
+			_gizmoCenter = GizmosCenter != null ? GizmosCenter.position : Owner.transform.position;
+			Gizmos.color = MinDistanceColor;
+			Gizmos.DrawWireSphere(_gizmoCenter, MinDistance);
+			Gizmos.color = MaxDistanceColor;
+			Gizmos.DrawWireSphere(_gizmoCenter, MaxDistance);
 		}
 
 		#region TestMethods
@@ -394,15 +584,15 @@ namespace MoreMountains.Feedbacks
 
 			float volume = Random.Range(MinVolume, MaxVolume);
 			float pitch = Random.Range(MinPitch, MaxPitch);
-			_randomPlaybackTime = Random.Range(PlaybackTime.x, PlaybackTime.y);
+			RandomizeTimes();
 			GameObject temporaryAudioHost = new GameObject("EditorTestAS_WillAutoDestroy");
 			SceneManager.MoveGameObjectToScene(temporaryAudioHost.gameObject, Owner.gameObject.scene);
 			temporaryAudioHost.transform.position = Owner.transform.position;
 			_editorAudioSource = temporaryAudioHost.AddComponent<AudioSource>() as AudioSource;
-			PlayAudioSource(_editorAudioSource, tmpAudioClip, volume, pitch, _randomPlaybackTime);
+			PlayAudioSource(_editorAudioSource, tmpAudioClip, volume, pitch, _randomPlaybackTime, _randomPlaybackDuration);
 			_lastPlayTimestamp = FeedbackTime;
-			Debug.Log("time : "+_lastPlayTimestamp);
-			float length = 1000 * tmpAudioClip.length;
+			float length = (_randomPlaybackDuration > 0) ? _randomPlaybackDuration : tmpAudioClip.length;
+			length *= 1000;
 			length = length / Mathf.Abs(pitch);
 			await Task.Delay((int)length);
 			Object.DestroyImmediate(temporaryAudioHost);
@@ -426,7 +616,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="sfx"></param>
 		/// <param name="volume"></param>
 		/// <param name="pitch"></param>
-		protected virtual void PlayAudioSource(AudioSource audioSource, AudioClip sfx, float volume, float pitch, float time)
+		protected virtual void PlayAudioSource(AudioSource audioSource, AudioClip sfx, float volume, float pitch, float time, float playbackDuration)
 		{
 			// we set that audio source clip to the one in paramaters
 			audioSource.clip = sfx;
@@ -450,7 +640,14 @@ namespace MoreMountains.Feedbacks
 	        
 			if (!SequentialOrder)
 			{
-				newIndex = Random.Range(0, RandomSfx.Length);
+				if (RandomUnique)
+				{
+					newIndex = _randomUniqueShuffleBag.Pick();
+				}
+				else
+				{
+					newIndex = Random.Range(0, RandomSfx.Length);	
+				}
 			}
 			else
 			{
@@ -472,9 +669,6 @@ namespace MoreMountains.Feedbacks
 						newIndex = 0;
 					}
 				}
-		        
-		        
-		        
 				_currentIndex = newIndex + 1;
 			}
 			return RandomSfx[newIndex];
@@ -495,6 +689,15 @@ namespace MoreMountains.Feedbacks
 		public virtual void SetSequentialIndex(int newIndex)
 		{
 			_currentIndex = newIndex;
+		}
+		
+		/// <summary>
+		/// On validate we randomize our times
+		/// </summary>
+		public override void OnValidate()
+		{
+			base.OnValidate();
+			RandomizeTimes();
 		}
 
 		#endregion

@@ -14,7 +14,7 @@ namespace MoreMountains.Tools
 	public class MMCooldown 
 	{
 		/// all possible states for the object
-		public enum CooldownStates { Idle, Consuming, PauseOnEmpty, Refilling }
+		public enum CooldownStates { Idle, Consuming, Stopped, Refilling }
 		/// if this is true, the cooldown won't do anything
 		public bool Unlimited = false;
 		/// the time it takes, in seconds, to consume the object
@@ -31,8 +31,27 @@ namespace MoreMountains.Tools
 		[MMReadOnly]
 		/// the amount of duration left in the object at any given time
 		public float CurrentDurationLeft;
+		
+		/// <summary>
+		/// A public delegate you can listen to for state changes
+		///
+		/// How to use : 
+		///
+		/// private void OnCooldownStateChange(MMCooldown.CooldownStates newState)
+		/// {
+		///		if (newState == MMCooldown.CooldownStates.Stopped)
+		///		{
+		/// 		// do something
+		///		}
+		/// }
+		///
+		/// private void OnEnable()	{ Cooldown.OnStateChange += OnCooldownStateChange; }		
+		/// private void OnDisable() { Cooldown.OnStateChange -= OnCooldownStateChange;	}
+		///
+		/// </summary>
+		public delegate void OnStateChangeDelegate(CooldownStates newState);
+		public OnStateChangeDelegate OnStateChange;
 
-		protected WaitForSeconds _pauseOnEmptyWFS;
 		protected float _emptyReachedTimestamp = 0f;
 
 		/// <summary>
@@ -40,9 +59,8 @@ namespace MoreMountains.Tools
 		/// </summary>
 		public virtual void Initialization()
 		{
-			_pauseOnEmptyWFS = new WaitForSeconds(PauseOnEmptyDuration);
 			CurrentDurationLeft = ConsumptionDuration;
-			CooldownState = CooldownStates.Idle;
+			ChangeState(CooldownStates.Idle);
 			_emptyReachedTimestamp = 0f;
 		}
 
@@ -53,10 +71,14 @@ namespace MoreMountains.Tools
 		{
 			if (Ready())
 			{
-				CooldownState = CooldownStates.Consuming;
+				ChangeState(CooldownStates.Consuming);
 			}
 		}
 
+		/// <summary>
+		/// Returns true if the cooldown is ready to be consumed, false otherwise
+		/// </summary>
+		/// <returns></returns>
 		public virtual bool Ready()
 		{
 			if (Unlimited)
@@ -81,7 +103,7 @@ namespace MoreMountains.Tools
 		{
 			if (CooldownState == CooldownStates.Consuming)
 			{
-				CooldownState = CooldownStates.PauseOnEmpty;
+				ChangeState(CooldownStates.Stopped);
 			}
 		}
         
@@ -94,14 +116,17 @@ namespace MoreMountains.Tools
 					return 1f;
 				}
                 
-				if (CooldownState == CooldownStates.Consuming || CooldownState == CooldownStates.PauseOnEmpty)
+				if (CooldownState == CooldownStates.Consuming || CooldownState == CooldownStates.Stopped)
 				{
 					return 0f;
 				}
+
+				if (CooldownState == CooldownStates.Refilling)
+				{
+					return CurrentDurationLeft / RefillDuration;
+				}
                 
-				if (CooldownState == CooldownStates.Refilling) return /*Mathf.Clamp01(*/CurrentDurationLeft / RefillDuration/*)*/;
-                
-				return 1f; // refilled
+				return 1f;
 			}
 		}
 
@@ -126,14 +151,14 @@ namespace MoreMountains.Tools
 					{
 						CurrentDurationLeft = 0f;
 						_emptyReachedTimestamp = Time.time;
-						CooldownState = CooldownStates.PauseOnEmpty;
+						ChangeState(CooldownStates.Stopped);
 					}
 					break;
 
-				case CooldownStates.PauseOnEmpty:
+				case CooldownStates.Stopped:
 					if (Time.time - _emptyReachedTimestamp >= PauseOnEmptyDuration)
 					{
-						CooldownState = CooldownStates.Refilling;
+						ChangeState(CooldownStates.Refilling);
 					}
 					break;
 
@@ -142,10 +167,20 @@ namespace MoreMountains.Tools
 					if (CurrentDurationLeft >= RefillDuration)
 					{
 						CurrentDurationLeft = ConsumptionDuration;
-						CooldownState = CooldownStates.Idle;
+						ChangeState(CooldownStates.Idle);
 					}
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Changes the current state of the cooldown and invokes the delegate if needed
+		/// </summary>
+		/// <param name="newState"></param>
+		protected virtual void ChangeState(CooldownStates newState)
+		{
+			CooldownState = newState;
+			OnStateChange?.Invoke(newState);
 		}
 	}
 }

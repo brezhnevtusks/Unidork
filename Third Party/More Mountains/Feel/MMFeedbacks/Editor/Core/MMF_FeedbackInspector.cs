@@ -36,6 +36,9 @@ namespace MoreMountains.Feedbacks
 		protected MMF_Feedback _feedback;
 		protected bool _expandGroupInspectors;
 		private const string _channelFieldName = "Channel";
+		private const string _channelModeFieldName = "ChannelMode";
+		private const string _channelDefinitionFieldName = "MMChannelDefinition";
+		private const string _automatedTargetAcquisitionName = "AutomatedTargetAcquisition";
         
 		public virtual void OnEnable()
 		{
@@ -62,7 +65,12 @@ namespace MoreMountains.Feedbacks
 				}
 			}
 		}
-        
+		
+		protected Dictionary<string,MMFConditionAttribute> _conditionDictionary = new Dictionary<string,MMFConditionAttribute>();
+		protected Dictionary<string,MMFEnumConditionAttribute> _enumConditionDictionary = new Dictionary<string,MMFEnumConditionAttribute>();
+		protected MMFConditionAttribute _conditionAttributeStore;
+		protected MMFEnumConditionAttribute _enumConditionAttributeStore;
+
 		public virtual void Initialization(SerializedProperty currentProperty, MMF_Feedback feedback, bool expandGroupInspectors)
 		{
 			if (DrawerInitialized)
@@ -73,13 +81,16 @@ namespace MoreMountains.Feedbacks
 			_expandGroupInspectors = expandGroupInspectors;
 			_currentProperty = currentProperty;
 			_feedback = feedback;
-            
+			_conditionDictionary.Clear();
+			_enumConditionDictionary.Clear();
+			
 			List<FieldInfo> fieldInfoList;
 			MMFInspectorGroupAttribute previousGroupAttribute = default;
 			int fieldInfoLength = MMF_FieldInfo.GetFieldInfo(feedback, out fieldInfoList);
             
 			for (int i = 0; i < fieldInfoLength; i++)
 			{
+				SearchForConditions(fieldInfoList[i]);
 				MMFInspectorGroupAttribute group = Attribute.GetCustomAttribute(fieldInfoList[i], typeof(MMFInspectorGroupAttribute)) as MMFInspectorGroupAttribute;
 
 				MMFInspectorGroupData groupData;
@@ -90,12 +101,15 @@ namespace MoreMountains.Feedbacks
 						_shouldDrawBase = false;
 						if (!GroupData.TryGetValue(previousGroupAttribute.GroupName, out groupData))
 						{
-							GroupData.Add(previousGroupAttribute.GroupName, new MMFInspectorGroupData
+							if (!ShouldSkipGroup(previousGroupAttribute.GroupName))
 							{
-								GroupAttribute = previousGroupAttribute,
-								GroupHashSet = new HashSet<string> { fieldInfoList[i].Name },
-								GroupColor = MMFeedbacksColors.GetColorAt(previousGroupAttribute.GroupColorIndex)
-							});
+								GroupData.Add(previousGroupAttribute.GroupName, new MMFInspectorGroupData
+								{
+									GroupAttribute = previousGroupAttribute,
+									GroupHashSet = new HashSet<string> { fieldInfoList[i].Name },
+									GroupColor = MMFeedbacksColors.GetColorAt(previousGroupAttribute.GroupColorIndex)
+								});
+							}
 						}
 						else
 						{
@@ -114,11 +128,16 @@ namespace MoreMountains.Feedbacks
 					bool fallbackOpenState = _expandGroupInspectors;
 					if (group.ClosedByDefault) { fallbackOpenState = false; }
 					bool groupIsOpen = EditorPrefs.GetBool(string.Format($"{group.GroupName}{fieldInfoList[i].Name}{feedback.UniqueID}"), fallbackOpenState);
-					GroupData.Add(group.GroupName, new MMFInspectorGroupData
+
+					if (!ShouldSkipGroup(previousGroupAttribute.GroupName))
 					{
-						GroupAttribute = group,
-						GroupColor = MMFeedbacksColors.GetColorAt(previousGroupAttribute.GroupColorIndex),
-						GroupHashSet = new HashSet<string> { fieldInfoList[i].Name }, GroupIsOpen = groupIsOpen });
+						GroupData.Add(group.GroupName, new MMFInspectorGroupData
+						{
+							GroupAttribute = group,
+							GroupColor = MMFeedbacksColors.GetColorAt(previousGroupAttribute.GroupColorIndex),
+							GroupHashSet = new HashSet<string> { fieldInfoList[i].Name }, GroupIsOpen = groupIsOpen 
+						});	
+					}
 				}
 				else
 				{
@@ -126,7 +145,6 @@ namespace MoreMountains.Feedbacks
 					groupData.GroupColor = MMFeedbacksColors.GetColorAt(previousGroupAttribute.GroupColorIndex);
 				}
 			}
-
 
 			if (currentProperty.NextVisible(true))
 			{
@@ -137,6 +155,37 @@ namespace MoreMountains.Feedbacks
 			}
 
 			DrawerInitialized = true;
+		}
+
+		protected virtual bool ShouldSkipGroup(string groupName)
+		{
+			bool skip = false;
+            
+			if (groupName == MMF_Feedback._randomnessGroupName && !_feedback.HasRandomness)
+			{
+				skip = true;
+			}
+
+			if (groupName == MMF_Feedback._rangeGroupName && !_feedback.HasRange)
+			{
+				skip = true;
+			}
+
+			return skip;
+		}
+
+		protected virtual void SearchForConditions(FieldInfo fieldInfo)
+		{
+			_conditionAttributeStore = Attribute.GetCustomAttribute(fieldInfo, typeof(MMFConditionAttribute)) as MMFConditionAttribute;
+			if (_conditionAttributeStore != null)
+			{
+				_conditionDictionary.Add(fieldInfo.Name, _conditionAttributeStore);
+			}
+			_enumConditionAttributeStore = Attribute.GetCustomAttribute(fieldInfo, typeof(MMFEnumConditionAttribute)) as MMFEnumConditionAttribute;
+			if (_enumConditionAttributeStore != null)
+			{
+				_enumConditionDictionary.Add(fieldInfo.Name, _enumConditionAttributeStore);
+			}
 		}
         
 		public void FillPropertiesList(SerializedProperty serializedProperty)
@@ -258,13 +307,13 @@ namespace MoreMountains.Feedbacks
 
 				for (int i = 0; i < groupData.PropertiesList.Count; i++)
 				{
-					DrawVerticalLayout(() => DrawChild(i), MMF_FeedbackInspectorStyle.BoxChildStyle);
+					DrawVerticalLayout(() => DrawChild(i, feedback), MMF_FeedbackInspectorStyle.BoxChildStyle);
 				}
 			}
 
 			EditorGUILayout.EndVertical();
 
-			void DrawChild(int i)
+			void DrawChild(int i, MMF_Feedback feedbackDrawn)
 			{
 				if (i > groupData.PropertiesList.Count - 1)
 				{
@@ -276,7 +325,10 @@ namespace MoreMountains.Feedbacks
 					return;
 				}
 
-				if (!feedback.HasChannel && groupData.PropertiesList[i].name == _channelFieldName)
+				if (!feedback.HasChannel 
+				    && (groupData.PropertiesList[i].name == _channelFieldName
+				        || groupData.PropertiesList[i].name == _channelModeFieldName
+				        || groupData.PropertiesList[i].name == _channelDefinitionFieldName))
 				{
 					return;
 				}
@@ -286,7 +338,12 @@ namespace MoreMountains.Feedbacks
                 
 				if (!DrawCustomInspectors(groupData.PropertiesList[i], feedback))
 				{
-					EditorGUILayout.PropertyField(groupData.PropertiesList[i], _groupTitle, true); 
+					bool shouldDraw = !((groupData.PropertiesList[i].name == _automatedTargetAcquisitionName) &&
+					                    (!feedbackDrawn.HasAutomatedTargetAcquisition));
+					if (shouldDraw)
+					{
+						EditorGUILayout.PropertyField(groupData.PropertiesList[i], _groupTitle, true);	
+					}
 				}
 			}
 		}
@@ -313,6 +370,17 @@ namespace MoreMountains.Feedbacks
 				}
 			}
 		}
+		
+		protected GUIContent _tweenCurveGUIContent = new GUIContent("MM Tween Curve");
+		protected GUIContent _animationCurveGUIContent = new GUIContent("Animation Curve");
+		protected const string _customInspectorButtonPropertyName = "MMF_Button";
+		protected const string _customTweenTypePropertyName = "MMTweenType";
+		protected const string _findPropertyRelativeMMTweenDefinitionType = "MMTweenDefinitionType";
+		protected const string _mmTweenCurvePropertyName = "MMTweenCurve";
+		protected const string _curvePropertyName = "Curve";
+		protected SerializedProperty _mmTweenTypeProperty;
+		protected MMFConditionAttribute _conditionAttribute;
+		protected MMFEnumConditionAttribute _enumConditionAttribute;
 
 		private bool DrawCustomInspectors(SerializedProperty currentProperty, MMF_Feedback feedback)
 		{
@@ -320,11 +388,59 @@ namespace MoreMountains.Feedbacks
 			{
 				switch (currentProperty.type)
 				{
-					case "MMF_Button":
+					case _customInspectorButtonPropertyName:
 						MMF_Button myButton = (MMF_Button)(currentProperty.MMFGetObjectValue());
 						if (GUILayout.Button(myButton.ButtonText))
 						{
 							myButton.TargetMethod();
+						}
+						return true;
+					case _customTweenTypePropertyName: 
+						// if we're displaying a tween type, we need to handle conditions manually
+
+						_animationCurveGUIContent.tooltip = currentProperty.tooltip;
+						_tweenCurveGUIContent.tooltip = currentProperty.tooltip;
+						
+						_mmTweenTypeProperty = currentProperty.FindPropertyRelative(_findPropertyRelativeMMTweenDefinitionType);
+						if (_conditionDictionary.TryGetValue(currentProperty.name, out _conditionAttribute))
+						{
+							string propertyPath = currentProperty.propertyPath;
+							string conditionPath = propertyPath.Replace(currentProperty.name, _conditionAttribute.ConditionBoolean);
+							SerializedProperty sourcePropertyValue = currentProperty.serializedObject.FindProperty(conditionPath);
+							if (!_conditionAttribute.Negative && !sourcePropertyValue.boolValue) 
+							{
+								return true;
+							}
+							if (_conditionAttribute.Negative && sourcePropertyValue.boolValue)
+							{
+								return true;
+							}
+						}
+						
+						if (_enumConditionDictionary.TryGetValue(currentProperty.name, out _enumConditionAttribute))
+						{
+							string propertyPath = currentProperty.propertyPath;
+							string conditionPath = propertyPath.Replace(currentProperty.name, _enumConditionAttribute.ConditionEnum);
+							SerializedProperty sourcePropertyValue = currentProperty.serializedObject.FindProperty(conditionPath);
+
+							if ((sourcePropertyValue != null) && (sourcePropertyValue.propertyType == SerializedPropertyType.Enum))
+							{
+								int currentEnum = sourcePropertyValue.enumValueIndex;
+								if (!_enumConditionAttribute.ContainsBitFlag(currentEnum))
+								{
+									return true;
+								}
+							}
+						}
+						
+						EditorGUILayout.PropertyField(_mmTweenTypeProperty, new GUIContent(currentProperty.displayName, currentProperty.tooltip));
+						if (_mmTweenTypeProperty.enumValueIndex == 0)
+						{
+							EditorGUILayout.PropertyField(currentProperty.FindPropertyRelative(_mmTweenCurvePropertyName), _tweenCurveGUIContent);
+						}
+						if (_mmTweenTypeProperty.enumValueIndex == 1)
+						{
+							EditorGUILayout.PropertyField(currentProperty.FindPropertyRelative(_curvePropertyName), _animationCurveGUIContent);
 						}
 						return true;
 				}
@@ -332,7 +448,7 @@ namespace MoreMountains.Feedbacks
 
 			return false;
 		}
-        
+
 		private bool EqualContents(SerializedProperty a, SerializedProperty b)
 		{
 			return SerializedProperty.EqualContents(a, b);

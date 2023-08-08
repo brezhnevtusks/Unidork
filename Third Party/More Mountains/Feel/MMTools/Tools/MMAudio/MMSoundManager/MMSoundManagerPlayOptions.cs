@@ -38,8 +38,10 @@ namespace MoreMountains.Tools
 		public AudioMixerGroup AudioGroup;
 		/// The pitch of the audio source.
 		public float Pitch;
-		/// The time (in seconds) at which to play the sound
+		/// The time (in seconds) at which to start playing the sound
 		public float PlaybackTime;
+		/// The time (in seconds after which to stop playing the sound
+		public float PlaybackDuration;
 		/// Pans a playing sound in a stereo way (left or right). This only applies to sounds that are Mono or Stereo.
 		public float PanStereo;
 		/// Sets how much this AudioSource is affected by 3D spatialisation calculations (attenuation, doppler etc). 0.0 makes the sound full 2D, 1.0 makes it full 3D.
@@ -72,6 +74,24 @@ namespace MoreMountains.Tools
 		public float MaxDistance;
 		/// Whether or not the source should be auto recycled if not done playing
 		public bool DoNotAutoRecycleIfNotDonePlaying;
+		/// a Transform this sound can 'attach' to and follow it along as it plays
+		public Transform AttachToTransform;
+		/// whether or not to use a custom curve for custom volume rolloff
+		public bool UseCustomRolloffCurve;
+		/// the curve to use for custom volume rolloff if UseCustomRolloffCurve is true
+		public AnimationCurve CustomRolloffCurve;
+		/// whether or not to use a custom curve for spatial blend
+		public bool UseSpatialBlendCurve;
+		/// the curve to use for custom spatial blend if UseSpatialBlendCurve is true
+		public AnimationCurve SpatialBlendCurve;
+		/// whether or not to use a custom curve for reverb zone mix
+		public bool UseReverbZoneMixCurve;
+		/// the curve to use for custom reverb zone mix if UseReverbZoneMixCurve is true
+		public AnimationCurve ReverbZoneMixCurve;
+		/// whether or not to use a custom curve for spread
+		public bool UseSpreadCurve;
+		/// the curve to use for custom spread if UseSpreadCurve is true
+		public AnimationCurve SpreadCurve;
         
 		/// <summary>
 		/// A default set of options, meant to suit most common cases.

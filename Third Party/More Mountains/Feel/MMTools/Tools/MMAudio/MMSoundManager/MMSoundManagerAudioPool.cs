@@ -42,6 +42,9 @@ namespace MoreMountains.Tools
 				GameObject temporaryAudioHost = new GameObject("MMAudioSourcePool_"+i);
 				SceneManager.MoveGameObjectToScene(temporaryAudioHost.gameObject, parent.gameObject.scene);
 				AudioSource tempSource = temporaryAudioHost.AddComponent<AudioSource>();
+				MMFollowTarget followTarget = temporaryAudioHost.AddComponent<MMFollowTarget>();
+				followTarget.enabled = false;
+				followTarget.DisableSelfOnSetActiveFalse = true;
 				temporaryAudioHost.transform.SetParent(parent);
 				temporaryAudioHost.SetActive(false);
 				_pool.Add(tempSource);
@@ -54,16 +57,18 @@ namespace MoreMountains.Tools
 		/// <param name="duration"></param>
 		/// <param name="targetObject"></param>
 		/// <returns></returns>
-		public virtual IEnumerator AutoDisableAudioSource(float duration, AudioSource source, AudioClip clip, bool doNotAutoRecycleIfNotDonePlaying)
+		public virtual IEnumerator AutoDisableAudioSource(float duration, AudioSource source, AudioClip clip, bool doNotAutoRecycleIfNotDonePlaying, float playbackTime, float playbackDuration)
 		{
-			yield return MMCoroutine.WaitFor(duration);
+			float initialWait = (playbackDuration > 0) ? playbackDuration : duration;
+			yield return MMCoroutine.WaitFor(initialWait);
 			if (source.clip != clip)
 			{
 				yield break;
 			}
 			if (doNotAutoRecycleIfNotDonePlaying)
 			{
-				while (source.time < source.clip.length)
+				float maxTime = (playbackDuration > 0) ? playbackTime + playbackDuration : source.clip.length;
+				while (source.time < maxTime)
 				{
 					yield return null;
 				}

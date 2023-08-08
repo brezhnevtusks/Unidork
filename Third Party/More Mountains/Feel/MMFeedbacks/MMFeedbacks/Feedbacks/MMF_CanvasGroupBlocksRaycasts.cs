@@ -19,6 +19,8 @@ namespace MoreMountains.Feedbacks
 		public override string RequiredTargetText { get { return TargetCanvasGroup != null ? TargetCanvasGroup.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a TargetCanvasGroup be set to be able to work properly. You can set one below."; } }
 		#endif
+		public override bool HasAutomatedTargetAcquisition => true;
+		protected override void AutomateTargetAcquisition() => TargetCanvasGroup = FindAutomatedTarget<CanvasGroup>();
         
 		[MMFInspectorGroup("Block Raycasts", true, 54, true)]
 		/// the target canvas group we want to control the BlocksRaycasts parameter on 
@@ -27,6 +29,8 @@ namespace MoreMountains.Feedbacks
 		/// if this is true, on play, the target canvas group will block raycasts, if false it won't
 		[Tooltip("if this is true, on play, the target canvas group will block raycasts, if false it won't")]
 		public bool ShouldBlockRaycasts = true;
+
+		protected bool _initialState;
         
 		/// <summary>
 		/// On play we turn raycast block on or off
@@ -45,7 +49,20 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
+			_initialState = TargetCanvasGroup.blocksRaycasts;
 			TargetCanvasGroup.blocksRaycasts = ShouldBlockRaycasts;
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			TargetCanvasGroup.blocksRaycasts = _initialState;
 		}
 	}
 }

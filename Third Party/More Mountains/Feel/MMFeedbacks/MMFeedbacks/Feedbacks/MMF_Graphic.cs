@@ -26,6 +26,8 @@ namespace MoreMountains.Feedbacks
 		/// the duration of this feedback is the duration of the Graphic, or 0 if instant
 		public override float FeedbackDuration { get { return (Mode == Modes.Instant) ? 0f : ApplyTimeMultiplier(Duration); } set { Duration = value; } }
 		public override bool HasChannel => true;
+		public override bool HasAutomatedTargetAcquisition => true;
+		protected override void AutomateTargetAcquisition() => TargetGraphic = FindAutomatedTarget<Graphic>();
 
 		/// the possible modes for this feedback
 		public enum Modes { OverTime, Instant }
@@ -46,7 +48,7 @@ namespace MoreMountains.Feedbacks
 		public bool StartsOff = false;
 		/// if this is true, the target will be disabled when this feedbacks is stopped
 		[Tooltip("if this is true, the target will be disabled when this feedbacks is stopped")] 
-		public bool DisableOnStop = true;
+		public bool DisableOnStop = false;
         
 		/// if this is true, calling that feedback will trigger it, even if it's in progress. If it's false, it'll prevent any new Play until the current one is over
 		[Tooltip("if this is true, calling that feedback will trigger it, even if it's in progress. If it's false, it'll prevent any new Play until the current one is over")] 
@@ -64,6 +66,7 @@ namespace MoreMountains.Feedbacks
 		public Color InstantColor;
 
 		protected Coroutine _coroutine;
+		protected Color _initialColor;
 
 		/// <summary>
 		/// On init we turn the Graphic off if needed
@@ -93,7 +96,8 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-        
+
+			_initialColor = TargetGraphic.color;
 			Turn(true);
 			switch (Mode)
 			{
@@ -180,6 +184,18 @@ namespace MoreMountains.Feedbacks
 		{
 			TargetGraphic.gameObject.SetActive(status);
 			TargetGraphic.enabled = status;
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			TargetGraphic.color = _initialColor;
 		}
 	}
 }

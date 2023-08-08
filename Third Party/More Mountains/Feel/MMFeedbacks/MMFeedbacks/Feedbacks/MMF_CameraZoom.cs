@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.Tools;
 using UnityEngine;
 
 namespace MoreMountains.Feedbacks
@@ -21,7 +22,8 @@ namespace MoreMountains.Feedbacks
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.CameraColor; } }
-		public override string RequiredTargetText { get { return "Channel "+Channel;  } }
+		public override string RequiredTargetText => RequiredChannelText;
+		public override bool HasCustomInspectors => true; 
 		#endif
 
 		/// the duration of this feedback is the duration of the zoom
@@ -44,6 +46,10 @@ namespace MoreMountains.Feedbacks
 		/// whether or not ZoomFieldOfView should add itself to the current camera's field of view value
 		[Tooltip("whether or not ZoomFieldOfView should add itself to the current camera's field of view value")]
 		public bool RelativeFieldOfView = false;
+		[Header("Transition Speed")]
+		/// the animation curve to apply to the zoom transition
+		[Tooltip("the animation curve to apply to the zoom transition")]
+		public MMTweenType ZoomTween = new MMTweenType( new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(1f, 1f)));
 
 		/// <summary>
 		/// On Play, triggers a zoom event
@@ -56,7 +62,8 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, Channel, Timing.TimescaleMode == TimescaleModes.Unscaled, false, RelativeFieldOfView);
+			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, ChannelData, 
+				ComputedTimescaleMode == TimescaleModes.Unscaled, false, RelativeFieldOfView, tweenType: ZoomTween);
 		}
 
 		/// <summary>
@@ -71,7 +78,21 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 			base.CustomStopFeedback(position, feedbacksIntensity);
-			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, Channel, Timing.TimescaleMode == TimescaleModes.Unscaled, stop:true);
+			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, ChannelData, 
+				ComputedTimescaleMode == TimescaleModes.Unscaled, stop:true, tweenType: ZoomTween);
+		}
+		
+		/// <summary>
+		/// On restore, we restore our initial state
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			MMCameraZoomEvent.Trigger(ZoomMode, ZoomFieldOfView, ZoomTransitionDuration, FeedbackDuration, ChannelData, 
+				ComputedTimescaleMode == TimescaleModes.Unscaled, restore:true, tweenType: ZoomTween);
 		}
 	}
 }

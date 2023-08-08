@@ -9,7 +9,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will allow you to send to an animator (bound in its inspector) a bool, int, float or trigger parameter, allowing you to trigger an animation, with or without randomness.")]
-	[FeedbackPath("GameObject/Animation")]
+	[FeedbackPath("Animation/Animation Parameter")]
 	public class MMF_Animation : MMF_Feedback 
 	{
 		/// a static bool used to disable all feedbacks of this type at once
@@ -23,16 +23,28 @@ namespace MoreMountains.Feedbacks
 
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
-		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.GameObjectColor; } }
+		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.AnimationColor; } }
 		public override bool EvaluateRequiresSetup() { return (BoundAnimator == null); }
 		public override string RequiredTargetText { get { return BoundAnimator != null ? BoundAnimator.name : "";  } }
 		public override string RequiresSetupText { get { return "This feedback requires that a BoundAnimator be set to be able to work properly. You can set one below."; } }
 		#endif
+		
+		/// the duration of this feedback is the declared duration 
+		public override float FeedbackDuration { get { return ApplyTimeMultiplier(DeclaredDuration); } set { DeclaredDuration = value;  } }
+		public override bool HasRandomness => true;
+		public override bool HasAutomatedTargetAcquisition => true;
+		protected override void AutomateTargetAcquisition() => BoundAnimator = FindAutomatedTarget<Animator>();
 
 		[MMFInspectorGroup("Animation", true, 12, true)]
 		/// the animator whose parameters you want to update
 		[Tooltip("the animator whose parameters you want to update")]
 		public Animator BoundAnimator;
+		/// the list of extra animators whose parameters you want to update
+		[Tooltip("the list of extra animators whose parameters you want to update")]
+		public List<Animator> ExtraBoundAnimators;
+		/// the duration for the player to consider. This won't impact your animation, but is a way to communicate to the MMF Player the duration of this feedback. Usually you'll want it to match your actual animation, and setting it can be useful to have this feedback work with holding pauses.
+		[Tooltip("the duration for the player to consider. This won't impact your animation, but is a way to communicate to the MMF Player the duration of this feedback. Usually you'll want it to match your actual animation, and setting it can be useful to have this feedback work with holding pauses.")]
+		public float DeclaredDuration = 0f;
         
 		[MMFInspectorGroup("Trigger", true, 16)]
 		/// if this is true, will update the specified trigger parameter
@@ -184,17 +196,31 @@ namespace MoreMountains.Feedbacks
 				return;
 			}
 
-			float intensityMultiplier = Timing.ConstantIntensity ? 1f : feedbacksIntensity;
+			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
 
+			ApplyValue(BoundAnimator, intensityMultiplier);
+			foreach (Animator animator in ExtraBoundAnimators)
+			{
+				ApplyValue(animator, intensityMultiplier);
+			}
+		}
+
+		/// <summary>
+		/// Applies values on the target Animator
+		/// </summary>
+		/// <param name="targetAnimator"></param>
+		/// <param name="intensityMultiplier"></param>
+		protected virtual void ApplyValue(Animator targetAnimator, float intensityMultiplier)
+		{
 			if (UpdateTrigger)
 			{
 				if (TriggerMode == TriggerModes.SetTrigger)
 				{
-					BoundAnimator.SetTrigger(_triggerParameter);
+					targetAnimator.SetTrigger(_triggerParameter);
 				}
 				if (TriggerMode == TriggerModes.ResetTrigger)
 				{
-					BoundAnimator.ResetTrigger(_triggerParameter);
+					targetAnimator.ResetTrigger(_triggerParameter);
 				}
 			}
             
@@ -204,56 +230,55 @@ namespace MoreMountains.Feedbacks
                 
 				if (RandomTriggerMode == TriggerModes.SetTrigger)
 				{
-					BoundAnimator.SetTrigger(randomParameter);
+					targetAnimator.SetTrigger(randomParameter);
 				}
 				if (RandomTriggerMode == TriggerModes.ResetTrigger)
 				{
-					BoundAnimator.ResetTrigger(randomParameter);
+					targetAnimator.ResetTrigger(randomParameter);
 				}
 			}
 
 			if (UpdateBool)
 			{
-				BoundAnimator.SetBool(_boolParameter, BoolParameterValue);
+				targetAnimator.SetBool(_boolParameter, BoolParameterValue);
 			}
 
 			if (UpdateRandomBool)
 			{
 				int randomParameter = _randomBoolParameters[Random.Range(0, _randomBoolParameters.Count)];
                 
-				BoundAnimator.SetBool(randomParameter, RandomBoolParameterValue);
+				targetAnimator.SetBool(randomParameter, RandomBoolParameterValue);
 			}
 
 			switch (IntValueMode)
 			{
 				case ValueModes.Constant:
-					BoundAnimator.SetInteger(_intParameter, IntValue);
+					targetAnimator.SetInteger(_intParameter, IntValue);
 					break;
 				case ValueModes.Incremental:
-					int newValue = BoundAnimator.GetInteger(_intParameter) + IntIncrement;
-					BoundAnimator.SetInteger(_intParameter, newValue);
+					int newValue = targetAnimator.GetInteger(_intParameter) + IntIncrement;
+					targetAnimator.SetInteger(_intParameter, newValue);
 					break;
 				case ValueModes.Random:
 					int randomValue = Random.Range(IntValueMin, IntValueMax);
-					BoundAnimator.SetInteger(_intParameter, randomValue);
+					targetAnimator.SetInteger(_intParameter, randomValue);
 					break;
 			}
 
 			switch (FloatValueMode)
 			{
 				case ValueModes.Constant:
-					BoundAnimator.SetFloat(_floatParameter, FloatValue * intensityMultiplier);
+					targetAnimator.SetFloat(_floatParameter, FloatValue * intensityMultiplier);
 					break;
 				case ValueModes.Incremental:
-					float newValue = BoundAnimator.GetFloat(_floatParameter) + FloatIncrement * intensityMultiplier;
-					BoundAnimator.SetFloat(_floatParameter, newValue);
+					float newValue = targetAnimator.GetFloat(_floatParameter) + FloatIncrement * intensityMultiplier;
+					targetAnimator.SetFloat(_floatParameter, newValue);
 					break;
 				case ValueModes.Random:
 					float randomValue = Random.Range(FloatValueMin, FloatValueMax) * intensityMultiplier;
-					BoundAnimator.SetFloat(_floatParameter, randomValue);
+					targetAnimator.SetFloat(_floatParameter, randomValue);
 					break;
 			}
-            
 		}
         
 		/// <summary>
@@ -269,6 +294,10 @@ namespace MoreMountains.Feedbacks
 			}
             
 			BoundAnimator.SetBool(_boolParameter, false);
+			foreach (Animator animator in ExtraBoundAnimators)
+			{
+				animator.SetBool(_boolParameter, false);
+			}
 		}
 	}
 }

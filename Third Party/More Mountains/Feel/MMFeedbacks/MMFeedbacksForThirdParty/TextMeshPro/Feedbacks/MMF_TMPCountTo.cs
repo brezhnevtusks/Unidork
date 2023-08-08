@@ -33,6 +33,9 @@ namespace MoreMountains.Feedbacks
 		public override float FeedbackDuration { get { return ApplyTimeMultiplier(Duration); } set { Duration = value; } }
         
 		#if MM_TEXTMESHPRO
+		public override bool HasAutomatedTargetAcquisition => true;
+		protected override void AutomateTargetAcquisition() => TargetTMPText = FindAutomatedTarget<TMP_Text>();
+
 		[MMFInspectorGroup("TextMeshPro Target Text", true, 12, true)]
 		/// the target TMP_Text component we want to change the text on
 		[Tooltip("the target TMP_Text component we want to change the text on")]
@@ -65,6 +68,7 @@ namespace MoreMountains.Feedbacks
 		protected string _newText;
 		protected float _startTime;
 		protected float _lastRefreshAt;
+		protected string _initialText;
         
 		/// <summary>
 		/// On play we change the text of our target TMPText over time
@@ -83,6 +87,8 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
+
+			_initialText = TargetTMPText.text;
 			#endif
 			Owner.StartCoroutine(CountCo());
 		}
@@ -141,6 +147,20 @@ namespace MoreMountains.Feedbacks
 			float currentTime = FeedbackTime - _startTime;
 			float currentValue = MMTween.Tween(currentTime, 0f, Duration, CountFrom, CountTo, CountingCurve);
 			return currentValue;
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			#if MM_TEXTMESHPRO
+			TargetTMPText.text = _initialText;
+			#endif
 		}
 	}
 }

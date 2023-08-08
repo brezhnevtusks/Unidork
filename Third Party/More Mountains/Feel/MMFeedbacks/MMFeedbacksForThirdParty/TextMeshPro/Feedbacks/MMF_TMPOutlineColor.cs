@@ -34,6 +34,9 @@ namespace MoreMountains.Feedbacks
 		public override float FeedbackDuration { get { return (ColorMode == ColorModes.Instant) ? 0f : ApplyTimeMultiplier(Duration); } set { Duration = value; } }
 
 		#if MM_TEXTMESHPRO
+		public override bool HasAutomatedTargetAcquisition => true;
+		protected override void AutomateTargetAcquisition() => TargetTMPText = FindAutomatedTarget<TMP_Text>();
+
 		[MMFInspectorGroup("Target", true, 12, true)]
 		/// the TMP_Text component to control
 		[Tooltip("the TMP_Text component to control")]
@@ -199,6 +202,22 @@ namespace MoreMountains.Feedbacks
 				Owner.StopCoroutine(_coroutine);
 				_coroutine = null;
 			}
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			#if MM_TEXTMESHPRO
+				TargetTMPText.gameObject.SetActive(false);
+				TargetTMPText.outlineColor = _initialColor;
+				TargetTMPText.gameObject.SetActive(true);
+			#endif
 		}
 	}
 }

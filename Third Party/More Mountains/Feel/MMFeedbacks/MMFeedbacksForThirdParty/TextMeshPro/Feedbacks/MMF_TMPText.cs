@@ -27,6 +27,9 @@ namespace MoreMountains.Feedbacks
 		#endif
         
 		#if MM_TEXTMESHPRO
+		public override bool HasAutomatedTargetAcquisition => true;
+		protected override void AutomateTargetAcquisition() => TargetTMPText = FindAutomatedTarget<TMP_Text>();
+
 		[MMFInspectorGroup("TextMeshPro Change Text", true, 12, true)]
 		/// the target TMP_Text component we want to change the text on
 		[Tooltip("the target TMP_Text component we want to change the text on")]
@@ -36,6 +39,8 @@ namespace MoreMountains.Feedbacks
 		[TextArea]
 		public string NewText = "Hello World";
 		#endif
+
+		protected string _initialText;
         
 		/// <summary>
 		/// On play we change the text of our target TMPText
@@ -53,7 +58,23 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
+
+			_initialText = TargetTMPText.text;
 			TargetTMPText.text = NewText;
+			#endif
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			#if MM_TEXTMESHPRO
+			TargetTMPText.text = _initialText;
 			#endif
 		}
 	}

@@ -35,6 +35,9 @@ namespace MoreMountains.Feedbacks
 		public override float FeedbackDuration { get { return (AlphaMode == AlphaModes.Instant) ? 0f : ApplyTimeMultiplier(Duration); } set { Duration = value; } }
 
 		#if MM_TEXTMESHPRO
+		public override bool HasAutomatedTargetAcquisition => true;
+		protected override void AutomateTargetAcquisition() => TargetTMPText = FindAutomatedTarget<TMP_Text>();
+		
 		[MMFInspectorGroup("Target", true, 12, true)]
 		/// the TMP_Text component to control
 		[Tooltip(" TMP_Text component to control")]
@@ -203,6 +206,20 @@ namespace MoreMountains.Feedbacks
 				newAlpha = MMTween.Tween(time, 0f, 1f, _initialAlpha, DestinationAlpha, Curve);
 			}
 			TargetTMPText.alpha = newAlpha;
+			#endif
+		}
+		
+		/// <summary>
+		/// On restore, we put our object back at its initial position
+		/// </summary>
+		protected override void CustomRestoreInitialValues()
+		{
+			if (!Active || !FeedbackTypeAuthorized)
+			{
+				return;
+			}
+			#if MM_TEXTMESHPRO
+			TargetTMPText.alpha = _initialAlpha;
 			#endif
 		}
 	}
