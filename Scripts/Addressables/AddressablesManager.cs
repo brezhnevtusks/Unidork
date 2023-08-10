@@ -260,7 +260,7 @@ namespace Unidork.AddressableAssetsUtility
                     return;
                 }
 
-                loadedAssetDictionary.Add(resourceLocation, loadHandle);
+                loadedAssetDictionary.TryAdd(resourceLocation, loadHandle);
             };
         }
 
@@ -315,10 +315,7 @@ namespace Unidork.AddressableAssetsUtility
                 {
                     IResourceLocation resourceLocation = AddressablesUtility.GetResourceLocationFromAssetAddress(assetAddress);
 
-                    if (!loadedAssetDictionary.ContainsKey(resourceLocation))
-                    {
-                        loadedAssetDictionary.Add(resourceLocation, assetLoadHandle);
-                    }
+                    loadedAssetDictionary.TryAdd(resourceLocation, assetLoadHandle);
                 }
                 
                 return result;
@@ -381,10 +378,7 @@ namespace Unidork.AddressableAssetsUtility
                 {
                     IResourceLocation resourceLocation = AddressablesUtility.GetResourceLocationFromAssetReference(assetReference);
 
-                    if (!loadedAssetDictionary.ContainsKey(resourceLocation))
-                    {
-                        loadedAssetDictionary.Add(resourceLocation, assetLoadHandle);
-                    }
+                    loadedAssetDictionary.TryAdd(resourceLocation, assetLoadHandle);
                 }
                 
                 return result;
