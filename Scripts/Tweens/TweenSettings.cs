@@ -1,6 +1,5 @@
 ﻿using DG.Tweening;
 using Sirenix.OdinInspector;
-using Unidork.Attributes;
 using UnityEngine;
 
 namespace Unidork.Tweens

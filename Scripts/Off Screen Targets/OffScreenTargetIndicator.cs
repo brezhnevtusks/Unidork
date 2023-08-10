@@ -1,7 +1,10 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Unidork.AddressableAssetsUtility;
 using Unidork.Attributes;
+using Unidork.Extensions;
+using Unidork.Tweens;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
@@ -41,13 +44,14 @@ namespace Unidork.OffScreenTargets
 
 		#endregion
 
-		#region Setup
+		#region Enable
 
 		/// <summary>
-		/// Sets the off screen target data associated with this indicator and initiates the async enable.
+		/// Sets the off screen target data associated with this indicator and initiates the async enable. Optionally plays a scale up tween.
 		/// </summary>
 		/// <param name="targetData">Target data.</param>
-		public void Enable(OffScreenTargetData targetData)
+		/// <param name="scaleUpTweenSettings">Scale up tween settings</param>
+		public void Enable(OffScreenTargetData targetData, FloatTweenSettings scaleUpTweenSettings)
 		{
 			this.targetData = targetData;
 
@@ -57,10 +61,10 @@ namespace Unidork.OffScreenTargets
 			}
 
 			cancellationTokenSource = new CancellationTokenSource();
-			EnableAsync(cancellationTokenSource.Token).Forget();
+			EnableAsync(cancellationTokenSource.Token, scaleUpTweenSettings).Forget();
 		}
 
-		private async UniTaskVoid EnableAsync(CancellationToken cancellationToken)
+		private async UniTaskVoid EnableAsync(CancellationToken cancellationToken, FloatTweenSettings scaleUpTweenSettings)
 		{
 			AssetReference iconAssetReference = await targetData.Target.GetIconAssetReference(cancellationToken);
 
@@ -84,11 +88,41 @@ namespace Unidork.OffScreenTargets
 			}
 			
 			targetIcon.sprite = loadResult.Value;
+			
 			gameObject.SetActive(true);
+
+			if (scaleUpTweenSettings != null && scaleUpTweenSettings.Duration > 0f)
+			{
+				transform.localScale = Vector3.zero;
+				transform.DOScale(scaleUpTweenSettings);
+			}
 		}
 
 		#endregion
 
+		#region Disable
+
+		/// <summary>
+		/// Disables the indicator. Plays an optional scale down tween using the passed settings and destroys the game object afterwards.
+		/// </summary>
+		/// <param name="scaleDownTweenSettings">Scale down tween settings.</param>
+		public void Disable(FloatTweenSettings scaleDownTweenSettings)
+		{
+			if (scaleDownTweenSettings == null || scaleDownTweenSettings.Duration == 0)
+			{
+				Destroy(gameObject);
+				return;
+			}
+			
+			Tween scaleDownTween = transform.DOScale(scaleDownTweenSettings);
+			scaleDownTween.OnComplete(() =>
+			                           {
+				                           Destroy(gameObject);
+			                           });
+		}
+		
+		#endregion
+		
 		#region Position
 
 		/// <summary>

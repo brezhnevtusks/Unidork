@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unidork.Attributes;
 using Unidork.Extensions;
+using Unidork.Tweens;
 using Unidork.Utility;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -29,29 +30,25 @@ namespace Unidork.OffScreenTargets
 		/// </summary>
 		[Space, BaseHeader, Space]
 		[Tooltip("Name of the target detector that this UI will get off screen targets from.")]
-		[SerializeField]
-		private string detectorName = "OffScreenTargetDetector";
+		[SerializeField] private string detectorName = "OffScreenTargetDetector";
 
 		/// <summary>
 		/// Reference to the off screen indicator asset.
 		/// </summary>
-		[SerializeField]
 		[Tooltip("Reference to the off screen indicator asset.")]
-		private AssetReference indicatorAssetReference = null;
+		[SerializeField] private AssetReference indicatorAssetReference = null;
 
 		/// <summary>
 		/// Transform that serves as a holder for the off screen target indicators.
 		/// </summary>
-		[SerializeField]
-		private Transform indicatorHolder = null;
+		[SerializeField] private Transform indicatorHolder = null;
 		
 		/// <summary>
 		/// When set to True, indicators will have an additional image enabled to represent individual target types.
 		/// </summary>
 		[Space, SettingsHeader, Space]
 		[Tooltip("When set to True, indicators will have an additional image enabled to represent individual target types.")]
-		[SerializeField]
-		private bool indicatorsHaveIndividualTargetIcons = false;
+		[SerializeField] private bool indicatorsHaveIndividualTargetIcons = false;
 		
 		/// <summary>
 		/// Offset from the center of the screen to the indicator position.
@@ -59,18 +56,29 @@ namespace Unidork.OffScreenTargets
 		[Range(0.5f, 1f)]
 		[Tooltip("Offset from the center of the screen to the indicator position.")]
 		[SerializeField] private float indicatorOffset = 0.9f;
+
+		/// <summary>
+		///  Optional settings to use for scaling up an indicator when it is enabled.
+		/// </summary>
+		[Tooltip("Optional settings to use for scaling up an indicator when it is enabled.")]
+		[SerializeField] private FloatTweenSettings indicatorScaleUpTweenSettings;
+		
+		/// <summary>
+		///  Optional settings to use for scaling down an indicator when it is disabled.
+		/// </summary>
+		[Tooltip("Optional settings to use for scaling up an indicator when it is disabled.")]
+		[SerializeField] private FloatTweenSettings indicatorScaleDownTweenSettings;
 		
 		/// <summary>
 		/// Should this component be paused on start?
 		/// </summary>
 		[Tooltip("Should this component be paused on start?")]
-		[SerializeField]
-		private bool enableOnInit = true;
+		[SerializeField] private bool enableOnInit = true;
 
 		/// <summary>
 		/// List of active indicators.
 		/// </summary>
-		private readonly List<OffScreenTargetIndicator> activeIndicators = new List<OffScreenTargetIndicator>();
+		private readonly List<OffScreenTargetIndicator> activeIndicators = new();
 		
 		/// <summary>
 		/// Component that detects off screen targets.
@@ -80,7 +88,7 @@ namespace Unidork.OffScreenTargets
 		/// <summary>
 		/// Has the indicator asset been loaded?
 		/// </summary>
-		private bool indicatorAssetLoaded = false;
+		private bool indicatorAssetLoaded;
 
 		/// <summary>
 		/// Load handle that stores the off screen indicator asset.
@@ -130,12 +138,7 @@ namespace Unidork.OffScreenTargets
 
 		private void Update()
 		{
-			if (IsPaused)
-			{
-				return;
-			}
-
-			if (!indicatorAssetLoaded)
+			if (IsPaused || !indicatorAssetLoaded)
 			{
 				return;
 			}
@@ -164,7 +167,7 @@ namespace Unidork.OffScreenTargets
 						continue;
 					}
 					
-					Destroy(currentIndicator.gameObject);
+					currentIndicator.Disable(indicatorScaleDownTweenSettings);
 					activeIndicators.RemoveAt(i);
 				}
 			}
@@ -269,7 +272,7 @@ namespace Unidork.OffScreenTargets
 			indicatorGo.SetActive(false);
 			var indicator = indicatorGo.GetComponentNonAlloc<OffScreenTargetIndicator>();
 			
-			indicator.Enable(targetData);
+			indicator.Enable(targetData, indicatorScaleUpTweenSettings);
 			
 			activeIndicators.Add(indicator);
 

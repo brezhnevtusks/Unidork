@@ -1,11 +1,10 @@
 using DG.Tweening;
-using Unidork.Attributes;
 using UnityEngine;
 
 namespace Unidork.Tweens
 {
 	/// <summary>
-	/// Stores data about a tween that animates a float value: its duration, ease, etc.
+	/// Stores data about a tween that animates a float to a specified target value: its duration, ease, etc.
 	/// </summary>
 	[System.Serializable]
 	public class FloatTweenSettings : TweenSettings
@@ -36,7 +35,7 @@ namespace Unidork.Tweens
 		#region Constructor
 
 		/// <summary>
-		/// Creates an instance of a linear float tween data with a 1 second duration.
+		/// Creates an instance of a linear float tween settings with a 1 second duration and target value of 1f.
 		/// </summary>
 		/// <returns>
 		/// A <see cref="FloatTweenSettings"/>.
@@ -56,7 +55,8 @@ namespace Unidork.Tweens
 		/// <param name="easeFunction">Ease function to use when animating the float value.</param>
 		/// <param name="customEaseCurve">Animation curve to pass to DoTween's SetEase function in case we
 		/// don't want to use any built-in easing functions.</param>
-		public FloatTweenSettings(float targetValue, float duration, float delay, bool useCustomEaseCurve, Ease easeFunction, AnimationCurve customEaseCurve) : base(duration, delay, useCustomEaseCurve, easeFunction, customEaseCurve)
+		public FloatTweenSettings(float targetValue, float duration, float delay, bool useCustomEaseCurve, Ease easeFunction, AnimationCurve customEaseCurve) : 
+			base(duration, delay, useCustomEaseCurve, easeFunction, customEaseCurve)
 		{
 			this.targetValue = targetValue;
 		}

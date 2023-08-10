@@ -2,6 +2,7 @@
     "name": "Unidork.Extensions",
     "rootNamespace": "",
     "references": [
+        "Unidork.Tweens",
         "UniRx",
         "Unity.TextMeshPro"
     ],

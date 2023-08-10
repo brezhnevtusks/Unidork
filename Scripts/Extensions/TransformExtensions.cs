@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using DG.Tweening;
+using Unidork.Tweens;
 using UnityEngine;
 
 namespace Unidork.Extensions
@@ -72,7 +74,7 @@ namespace Unidork.Extensions
         /// <summary>
         /// Performs a breadht-first deep search of a transform's hierarchy for an object with specified name.
         /// </summary>
-        /// <param name="transform">Transform whose hierarchy will be searched.</param>
+        /// <param name="transform">Transform.</param>
         /// <param name="childName">Name of object to search for.</param>
         /// <returns>
         /// A transform whose name matches <paramref name="childName"/> or null if no such object exists.
@@ -121,7 +123,7 @@ namespace Unidork.Extensions
         /// <summary>
         /// Gets all children in transform's hierarchy.
         /// </summary>
-        /// <param name="transform">Transform to get the children from.</param>
+        /// <param name="transform">Transform.</param>
         /// <returns>
         /// A list of transforms that are children of the target transform.
         /// </returns>
@@ -150,7 +152,7 @@ namespace Unidork.Extensions
         /// <summary>
         /// Gets all direct children in transform's hierarchy.
         /// </summary>
-        /// <param name="transform">Transform to get the children from.</param>
+        /// <param name="transform">Transform.</param>
         /// <returns>
         /// A list of transforms that are direct children of the target transform.
         /// </returns>
@@ -171,7 +173,7 @@ namespace Unidork.Extensions
         /// <summary>
         /// Gets the first child of a transform.
         /// </summary>
-        /// <param name="transform"></param>
+        /// <param name="transform">Transform.</param>
         /// <returns>Transform of this transform's first child or null if transform has no children.</returns>
         public static Transform GetFirstChild(this Transform transform)
         {
@@ -182,7 +184,7 @@ namespace Unidork.Extensions
         /// <summary>
         /// Gets the last child of a transform.
         /// </summary>
-        /// <param name="transform"></param>
+        /// <param name="transform">Transform.</param>
         /// <returns>Transform of this transform's last child or null if transform has no children.</returns>
         public static Transform GetLastChild(this Transform transform)
         {
@@ -241,7 +243,7 @@ namespace Unidork.Extensions
         /// <summary>
         /// Transforms a point, ignoring object's scale.
         /// </summary>
-        /// <param name="transform">Transform component to use for the operation.</param>
+        /// <param name="transform">Transform.</param>
         /// <param name="position">Point to transform.</param>
         /// <returns>
         /// A Vector3 representing a transformed position, unaffected by object's scale.
@@ -255,7 +257,7 @@ namespace Unidork.Extensions
         /// <summary>
         /// Inverse-transforms a point, ignoring object's scale.
         /// </summary>
-        /// <param name="transform">Transform component to use for the operation.</param>
+        /// <param name="transform">Transform.</param>
         /// <param name="position">Point to transform.</param>
         /// <returns>
         /// A Vector3 representing an inversed transformed position, unaffected by object's scale.
@@ -267,6 +269,32 @@ namespace Unidork.Extensions
         }
 
 
+        #endregion
+        
+        #region Tweens
+
+        /// <summary>
+        /// Creates a scale tween for this transform using the passed settings.
+        /// </summary>
+        /// <param name="transform">Transform</param>
+        /// <param name="scaleTweenSettings">Scale tween settings.</param>
+        /// <returns>A tween or null if settings are null.</returns>
+        public static Tween DOScale(this Transform transform, FloatTweenSettings scaleTweenSettings)
+        {
+            return TweenUtility.CreateTransformScaleTween(transform, scaleTweenSettings);
+        }
+        
+        /// <summary>
+        /// Creates a scale tween for this transform using the passed settings.
+        /// </summary>
+        /// <param name="transform">Transform</param>
+        /// <param name="scaleTweenSettings">Scale tween settings.</param>
+        /// <returns>A tween or null if settings are null.</returns>
+        public static Tween DOScale(this Transform transform, Vector3TweenSettings scaleTweenSettings)
+        {
+            return TweenUtility.CreateTransformScaleTween(transform, scaleTweenSettings);
+        }
+        
         #endregion
     }
 }
