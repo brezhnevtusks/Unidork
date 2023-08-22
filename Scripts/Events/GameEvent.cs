@@ -80,10 +80,8 @@ namespace Unidork.Events
         #region Event
 
         /// <summary>
-        /// Raises the event, notifying all listeners. Raises an optional DoozyUI event if <paramref name="raiseDoozyUIEvent"/>
-        /// is True.
+        /// Raises the event, notifying all listeners.
         /// </summary>
-        /// <param name="raiseDoozyUIEvent">Should a Doozy UI event be raised as well?</param>
         public void Raise()
         {
             for (int index = EventListeners.Count - 1; index >= 0; index--)
@@ -98,13 +96,6 @@ namespace Unidork.Events
                 
                 currentListener.OnEventRaised(this);
             }
-
-#if dUI_MANAGER
-            if (raiseDoozyUIEvent)
-            {
-                Doozy.Engine.Message.Send(new Doozy.Engine.GameEventMessage(name));
-            }
-#endif
             
 #if DOOZY_UI_MANAGER_4
             if (raiseDoozySignal)
