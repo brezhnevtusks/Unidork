@@ -9,6 +9,15 @@ namespace Unidork.Utility
 	/// </summary>
     public class PausableObjectManager : MonoBehaviour
     {
+		#region Properties
+
+        /// <summary>
+		/// Are objects currently paused?
+		/// </summary>
+		public static bool ObjectsPaused { get; private set; }
+
+		#endregion
+
 	    #region Fields
 
 	    /// <summary>
@@ -94,6 +103,8 @@ namespace Unidork.Utility
 		    {
 			    pausableObject.Pause();
 		    }
+
+			ObjectsPaused = true;
 	    }
 	    
 	    /// <summary>
@@ -105,6 +116,8 @@ namespace Unidork.Utility
 		    {
 			    pausableObject.Unpause();
 		    }
+
+			ObjectsPaused = false;
 	    }
 
 	    /// <summary>
@@ -114,6 +127,7 @@ namespace Unidork.Utility
 	    public void PauseObjects()
 	    {
 			PauseObjectsStatic();   
+			ObjectsPaused = true;
 	    }
 
 	    /// <summary>
@@ -123,6 +137,7 @@ namespace Unidork.Utility
 	    public void UnpauseObjects()
 	    {
 		    UnpauseObjectsStatic();
+			ObjectsPaused = false;
 	    }
 
 	    #endregion
