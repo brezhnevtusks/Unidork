@@ -27,7 +27,7 @@ namespace Unidork.Serialization
 		/// <summary>
 		/// Singleton instance of this manager.
 		/// </summary>
-		private static BaseSerializationManager instance;
+		protected static BaseSerializationManager instance;
 
 		/// <summary>
 		/// Current version of save data.
