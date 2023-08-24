@@ -279,7 +279,7 @@ namespace Unidork.Unlockables
 		/// </summary>
 		public void SaveData()
 		{
-			serializationManager.SerializeSaveDataToFile(unlockableItemSaveData, unlockableItemSaveDataPath);
+			BaseSerializationManager.SerializeSaveDataToFile(unlockableItemSaveData, unlockableItemSaveDataPath);
 		}
 
 		/// <summary>
@@ -305,7 +305,7 @@ namespace Unidork.Unlockables
 			unlockableItemSaveDataPath = Application.persistentDataPath + unlockableItemSaveDataRelativePath;
 
 			unlockableItemSaveData = 
-				serializationManager.DeserializeSaveDataFromFile<UnlockableItemSaveData>(unlockableItemSaveDataPath);
+				BaseSerializationManager.DeserializeSaveDataFromFile<UnlockableItemSaveData>(unlockableItemSaveDataPath);
 
 			if (unlockableItemSaveData == null)
 			{

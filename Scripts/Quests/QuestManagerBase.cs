@@ -78,7 +78,7 @@ namespace Unidork.QuestSystem
 
 			questSaveDataPath = persistentDataPath + questSaveDataRelativePath;
 			
-			questSaveData = serializationManager.DeserializeSaveDataFromFile<QuestSaveData<TQuestCategory>>(questSaveDataPath);
+			questSaveData = BaseSerializationManager.DeserializeSaveDataFromFile<QuestSaveData<TQuestCategory>>(questSaveDataPath);
 
 			if (questSaveData != null)
 			{
@@ -120,7 +120,7 @@ namespace Unidork.QuestSystem
 		/// </summary>
 		public void SerializeSaveData()
 		{
-			serializationManager.SerializeSaveDataToFile(questSaveData, questSaveDataPath);
+			BaseSerializationManager.SerializeSaveDataToFile(questSaveData, questSaveDataPath);
 		}
 		
 		/// <summary>
@@ -129,7 +129,7 @@ namespace Unidork.QuestSystem
 		public void ResetSaveData()
 		{
 			questSaveData = new QuestSaveData<TQuestCategory>(saveVersion);
-			serializationManager.SerializeSaveDataToFile(questSaveData, questSaveDataPath);
+			BaseSerializationManager.SerializeSaveDataToFile(questSaveData, questSaveDataPath);
 		}
 
 		#endregion

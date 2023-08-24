@@ -80,7 +80,7 @@ namespace Unidork.Settings
 
 			string settingsSaveDataPath = Application.persistentDataPath + settingsSaveDataRelativePath;
 
-			settingsSaveData = serializationManager.DeserializeSaveDataFromFile<SettingsSaveData>(settingsSaveDataPath);
+			settingsSaveData = BaseSerializationManager.DeserializeSaveDataFromFile<SettingsSaveData>(settingsSaveDataPath);
 
 			if (settingsSaveData == null)
 			{
@@ -180,7 +180,7 @@ namespace Unidork.Settings
 			string settingsSaveDataPath = Application.persistentDataPath + settingsSaveDataRelativePath;
 
 			settingsSaveData = new SettingsSaveData(saveVersion);
-			serializationManager.SerializeSaveDataToFile(settingsSaveData, settingsSaveDataPath);
+			BaseSerializationManager.SerializeSaveDataToFile(settingsSaveData, settingsSaveDataPath);
 		}
 
 		/// <summary>
@@ -208,7 +208,7 @@ namespace Unidork.Settings
 
 			string settingsSaveDataPath = Application.persistentDataPath + settingsSaveDataRelativePath;
 
-			serializationManager.SerializeSaveDataToFile(settingsSaveData, settingsSaveDataPath);
+			BaseSerializationManager.SerializeSaveDataToFile(settingsSaveData, settingsSaveDataPath);
 		}
 
 		#endregion

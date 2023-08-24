@@ -25,12 +25,32 @@ namespace Unidork.Serialization
 		#region Fields
 		
 		/// <summary>
+		/// Singleton instance of this manager.
+		/// </summary>
+		private static BaseSerializationManager instance;
+
+		/// <summary>
 		/// Current version of save data.
 		/// </summary>
 		[Space, SettingsHeader, Space]
 		[Tooltip("Current version of save data.")] 
 		[SerializeField]
 		private string saveVersion = "0.1";
+
+		#endregion
+
+		#region Init
+
+		protected virtual void Awake()
+		{
+			if (instance != null) 
+			{
+				Destroy(gameObject);
+				return;
+			}
+
+			instance = this;
+		}
 
 		#endregion
 
@@ -43,7 +63,7 @@ namespace Unidork.Serialization
 		/// </summary>
 		/// <param name="saveData">Save data to serialize.</param>
 		/// <param name="savePath">Save file path.</param>
-		public void SerializeSaveDataToFile(BaseSaveData saveData, string savePath)
+		public static void SerializeSaveDataToFile(BaseSaveData saveData, string savePath)
 		{
 			string saveJson = SerializeSaveDataToJson(saveData);
 			File.WriteAllText(savePath, saveJson);
@@ -56,7 +76,7 @@ namespace Unidork.Serialization
 		/// <returns>
 		/// A Json representation of the passed save data object.
 		/// </returns>
-		protected string SerializeSaveDataToJson(BaseSaveData saveData) => JsonUtility.ToJson(saveData);
+		protected static string SerializeSaveDataToJson(BaseSaveData saveData) => JsonUtility.ToJson(saveData);
 
 		#endregion
 
@@ -74,7 +94,7 @@ namespace Unidork.Serialization
 		/// <returns>
 		/// An instance of <typeparamref name="T"/>.
 		/// </returns>
-		public T DeserializeSaveDataFromFile<T>(string filePath) where T : BaseSaveData
+		public static T DeserializeSaveDataFromFile<T>(string filePath) where T : BaseSaveData
 		{
 			string saveJson = FileUtils.GetByteStringFromFile(filePath);
 
@@ -94,7 +114,7 @@ namespace Unidork.Serialization
 		/// <returns>
 		/// An instance of <typeparamref name="T"/>.
 		/// </returns>
-		protected T DeserializeSaveDataFromJson<T>(string json) where T : BaseSaveData => JsonUtility.FromJson<T>(json);
+		protected static T DeserializeSaveDataFromJson<T>(string json) where T : BaseSaveData => JsonUtility.FromJson<T>(json);
 
 		#endregion
 

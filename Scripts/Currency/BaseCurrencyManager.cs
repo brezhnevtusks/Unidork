@@ -70,7 +70,7 @@ namespace Unidork.Currency
 
 			currencySaveDataPath = persistentDataPath + currencySaveDataRelativePath;
 			
-			currencySaveData = serializationManager.DeserializeSaveDataFromFile<CurrencySaveData>(currencySaveDataPath);
+			currencySaveData = BaseSerializationManager.DeserializeSaveDataFromFile<CurrencySaveData>(currencySaveDataPath);
 
 			if (currencySaveData == null)
 			{
@@ -146,7 +146,7 @@ namespace Unidork.Currency
 		/// </summary>
 		protected static void SaveData()
 		{
-			instance.serializationManager.SerializeSaveDataToFile(instance.currencySaveData, instance.currencySaveDataPath);
+			BaseSerializationManager.SerializeSaveDataToFile(instance.currencySaveData, instance.currencySaveDataPath);
 		}
 
 		#endregion
@@ -172,7 +172,7 @@ namespace Unidork.Currency
 		private void ResetSaveDataInternal()
 		{
 			currencySaveData = new CurrencySaveData(CreateCurrencyDataArray(), saveVersion);
-			serializationManager.SerializeSaveDataToFile(currencySaveData, currencySaveDataPath);
+			BaseSerializationManager.SerializeSaveDataToFile(currencySaveData, currencySaveDataPath);
 		}
 
 		#endregion
