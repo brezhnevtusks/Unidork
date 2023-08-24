@@ -15,7 +15,7 @@ namespace Unidork.Serialization
 		/// Array that stores data about all currencies in the game.
 		/// </summary>
 		[SerializeField]
-		private CurrencyData[] currencyDataArray;
+		private CurrencyData[] data;
 
 		/// <summary>
 		/// Last queried currency data. Used so we don't have to request the same currency data multiple times
@@ -34,7 +34,7 @@ namespace Unidork.Serialization
 		/// <param name="saveVersion"></param>
 		public CurrencySaveData(CurrencyData[] currencyDataArray, string saveVersion) : base(saveVersion)
 		{
-			this.currencyDataArray = currencyDataArray;
+			data = currencyDataArray;
 		}
 
 		#endregion
@@ -46,7 +46,7 @@ namespace Unidork.Serialization
 		/// </summary>
 		/// <param name="currencyId">Currency ID></param>
 		/// <returns>
-		/// <see cref="CurrencyData"/> from <see cref="currencyDataArray"/> that corresponds with
+		/// <see cref="CurrencyData"/> from <see cref="data"/> that corresponds with
 		/// the passed ID or null if such currency data doesn't exist.
 		/// </returns>
 		public CurrencyData GetCurrencyById(int currencyId)
@@ -56,7 +56,7 @@ namespace Unidork.Serialization
 				return cachedCurrencyData;
 			}
 
-			foreach (CurrencyData currencyData in currencyDataArray)
+			foreach (CurrencyData currencyData in data)
 			{
 				if (currencyData.CurrencyId == currencyId)
 				{

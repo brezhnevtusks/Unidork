@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Sirenix.OdinInspector;
+using UnityEngine;
 
 namespace Unidork.Currency
 {
@@ -16,7 +17,7 @@ namespace Unidork.Currency
 		/// <value>
 		/// Gets the value of the int field currencyId.
 		/// </value>
-		public int CurrencyId => currencyId;
+		public int CurrencyId => id;
 
 		/// <summary>
 		/// User-friendly currency name for easier data readability.
@@ -24,7 +25,7 @@ namespace Unidork.Currency
 		/// <value>
 		/// Gets the value of the string field currencyName.
 		/// </value>
-		public string CurrencyName => currencyName;
+		public string CurrencyName => name;
 		
 		/// <summary>
 		/// Currency type.
@@ -32,7 +33,7 @@ namespace Unidork.Currency
 		/// <value>
 		/// Gets the value of the field currencyType.
 		/// </value>
-		public CurrencyType CurrencyType => currencyCurrencyType;
+		public CurrencyType CurrencyType => type;
 
 		/// <summary>
 		/// Amount of currency the player owns.
@@ -54,19 +55,19 @@ namespace Unidork.Currency
 		/// Unique currency ID.
 		/// </summary>
 		[SerializeField]
-		private int currencyId;
+		private int id;
 
 		/// <summary>
 		/// User-friendly currency name for easier data readability.
 		/// </summary>
-		[SerializeField]
-		private string currencyName;
+		[ShowInInspector]
+		private string name;
 		
 		/// <summary>
 		/// Currency type.
 		/// </summary>
 		[SerializeField]
-		private CurrencyType currencyCurrencyType;
+		private CurrencyType type;
 
 		/// <summary>
 		/// Amount of currency the player owns.
@@ -81,15 +82,15 @@ namespace Unidork.Currency
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="currencyId">Unique currency ID.</param>
-		/// <param name="currencyName">User-friendly currency name for easier data readability.</param>
-		/// <param name="currencyCurrencyType">Currency type.</param>
+		/// <param name="id">Unique currency ID.</param>
+		/// <param name="name">User-friendly currency name for easier data readability.</param>
+		/// <param name="type">Currency type.</param>
 		/// <param name="amount">Amount of currency the player owns.</param>
-		public CurrencyData(int currencyId, string currencyName, CurrencyType currencyCurrencyType, double amount = 0d)
+		public CurrencyData(int id, string name, CurrencyType type, double amount = 0d)
 		{
-			this.currencyId = currencyId;
-			this.currencyName = currencyName;
-			this.currencyCurrencyType = currencyCurrencyType;
+			this.id = id;
+			this.name = name;
+			this.type = type;
 			this.amount = amount;
 		}		
 
