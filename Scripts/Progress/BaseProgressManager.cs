@@ -42,11 +42,6 @@ namespace Unidork.Progress
 		protected GameEvent onProgressSaveDataLoaded = null;
 
 		/// <summary>
-		/// Current version of save data.
-		/// </summary>
-		protected string saveVersion;
-
-		/// <summary>
 		/// Entire path for the progress save data file.
 		/// </summary>
 		protected string progressSaveDataPath;
@@ -70,8 +65,7 @@ namespace Unidork.Progress
 		/// Loads the save data on game start. Creates save data objects if they don't exist.
 		/// </summary>
 		protected virtual void LoadSaveData()
-		{
-			saveVersion = serializationManager.SaveVersion;		
+		{	
 		}
 
 		#endregion

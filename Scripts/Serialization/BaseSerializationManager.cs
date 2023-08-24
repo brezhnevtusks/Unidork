@@ -18,7 +18,7 @@ namespace Unidork.Serialization
 		/// <value>
 		/// Gets the value of the string field saveVersion.
 		/// </value>
-		public string SaveVersion => saveVersion;
+		public static string SaveVersion => instance.saveVersion;
 
 		#endregion
 		

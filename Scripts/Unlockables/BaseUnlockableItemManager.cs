@@ -66,11 +66,6 @@ namespace Unidork.Unlockables
 		protected UnlockableItemSaveData unlockableItemSaveData;
 
 		/// <summary>
-		/// Current version of save data.
-		/// </summary>
-		protected string saveVersion;
-
-		/// <summary>
 		/// Path for the unlockable item save data file.
 		/// </summary>
 		protected string unlockableItemSaveDataPath;
@@ -123,7 +118,6 @@ namespace Unidork.Unlockables
 			progressManager = FindObjectOfType<BaseProgressManager>();
 
 			serializationManager = FindObjectOfType<BaseSerializationManager>();
-			saveVersion = serializationManager.SaveVersion;
 
 			CurrentProgress = new ReactiveProperty<float>();
 
@@ -287,7 +281,7 @@ namespace Unidork.Unlockables
 		/// </summary>
 		public void ResetSaveData()
 		{
-			unlockableItemSaveData = new UnlockableItemSaveData(saveVersion);
+			unlockableItemSaveData = new UnlockableItemSaveData(BaseSerializationManager.SaveVersion);
 
 			if (serializationManager == null)
 			{

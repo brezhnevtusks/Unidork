@@ -10,11 +10,6 @@ namespace Unidork.QuestSystem
 	public class QuestManagerBase<TQuest, TQuestCategory> : MonoBehaviour where TQuest : IQuest<TQuestCategory> where TQuestCategory : System.Enum
 	{
 		#region Fields
-
-		/// <summary>
-		/// Current version of save data.
-		/// </summary>
-		protected string saveVersion;
 		
 		/// <summary>
 		/// Path to the persistent data directory.
@@ -25,11 +20,6 @@ namespace Unidork.QuestSystem
 		/// Objects storing saved quest data.
 		/// </summary>
 		protected QuestSaveData<TQuestCategory> questSaveData;
-		
-		/// <summary>
-		/// Component that is responsible for serializing and deserializing save data.
-		/// </summary>
-		private BaseSerializationManager serializationManager;
 		
 		/// <summary>
 		/// Path of the quest save data file relative to <see cref="Application.persistentDataPath"/>.
@@ -71,9 +61,6 @@ namespace Unidork.QuestSystem
 		
 		private void Start()
 		{
-			serializationManager = FindObjectOfType<BaseSerializationManager>();
-		
-			saveVersion = serializationManager.SaveVersion;
 			persistentDataPath = Application.persistentDataPath;
 
 			questSaveDataPath = persistentDataPath + questSaveDataRelativePath;
@@ -128,7 +115,7 @@ namespace Unidork.QuestSystem
 		/// </summary>
 		public void ResetSaveData()
 		{
-			questSaveData = new QuestSaveData<TQuestCategory>(saveVersion);
+			questSaveData = new QuestSaveData<TQuestCategory>(BaseSerializationManager.SaveVersion);
 			BaseSerializationManager.SerializeSaveDataToFile(questSaveData, questSaveDataPath);
 		}
 

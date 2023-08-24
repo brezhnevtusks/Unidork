@@ -43,11 +43,6 @@ namespace Unidork.Settings
 		protected string persistentDataPath;
 
 		/// <summary>
-		/// Component that is responsible for serializing and deserializing save data.
-		/// </summary>
-		protected BaseSerializationManager serializationManager;
-
-		/// <summary>
 		/// Path of the settings save data file relative to <see cref="Application.persistentDataPath"/>.
 		/// </summary>
 		[Space, SettingsHeader, Space]
@@ -75,7 +70,7 @@ namespace Unidork.Settings
 		/// </summary>
 		protected virtual void LoadSaveData()
 		{
-			saveVersion = serializationManager.SaveVersion;
+			saveVersion = BaseSerializationManager.SaveVersion;
 			persistentDataPath = Application.persistentDataPath;
 
 			string settingsSaveDataPath = Application.persistentDataPath + settingsSaveDataRelativePath;
@@ -99,9 +94,7 @@ namespace Unidork.Settings
 
 		protected virtual void Start()
 		{
-			serializationManager = FindObjectOfType<BaseSerializationManager>();
 			settingsDictionary = new Dictionary<SettingsType, bool>();
-
 			LoadSaveData();			
 		}
 
