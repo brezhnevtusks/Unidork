@@ -27,11 +27,6 @@ namespace Unidork.Currency
 		protected string persistentDataPath;
 		
 		/// <summary>
-		/// Component that is responsible for serializing and deserializing save data.
-		/// </summary>
-		protected BaseSerializationManager serializationManager;
-		
-		/// <summary>
 		/// Path of the currency save data file relative to <see cref="Application.persistentDataPath"/>.
 		/// </summary>
 		[Space, BaseHeader, Space]
@@ -62,13 +57,11 @@ namespace Unidork.Currency
 			}
 
 			instance = this;
-			
-			serializationManager = FindObjectOfType<BaseSerializationManager>();
-		
-			saveVersion = serializationManager.SaveVersion;
+					
+			saveVersion = BaseSerializationManager.SaveVersion;
 			persistentDataPath = Application.persistentDataPath;
 
-			currencySaveDataPath = persistentDataPath + currencySaveDataRelativePath;
+			currencySaveDataPath = $"{persistentDataPath}{currencySaveDataRelativePath}";
 			
 			currencySaveData = BaseSerializationManager.DeserializeSaveDataFromFile<CurrencySaveData>(currencySaveDataPath);
 
