@@ -108,7 +108,7 @@ namespace Unidork.Currency
 		public static void SpendCurrency(int currencyId, double amount)
 		{
 			instance.currencySaveData.GetCurrencyById(currencyId).Amount -= amount;
-			SaveData();
+			SaveDataStatic();
 		}
 
 		/// <summary>
@@ -119,7 +119,7 @@ namespace Unidork.Currency
 		public static void AddCurrency(int currencyId, double amount)
 		{
 			instance.currencySaveData.GetCurrencyById(currencyId).Amount += amount;
-			SaveData();
+			SaveDataStatic();
 		}
 
 		/// <summary>
@@ -135,9 +135,17 @@ namespace Unidork.Currency
 		#region Save
 
 		/// <summary>
-		/// Tells the serialization manager to save currency data to disk.
+		/// Calls non-static SaveData() on singleton instance of the save manager.
 		/// </summary>
-		protected static void SaveData()
+		protected static void SaveDataStatic()
+		{
+			instance.SaveData();
+		}
+
+		/// <summary>
+		/// Tells the serialization manager to save currency data to disk. Can be overrided by inheriting classes.
+		/// </summary>
+		protected virtual void SaveData()
 		{
 			BaseSerializationManager.SerializeSaveDataToFile(instance.currencySaveData, instance.currencySaveDataPath);
 		}
