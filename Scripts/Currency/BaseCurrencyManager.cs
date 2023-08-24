@@ -27,6 +27,11 @@ namespace Unidork.Currency
 		protected string persistentDataPath;
 		
 		/// <summary>
+		/// Object that stores currency save data.
+		/// </summary>
+		protected CurrencySaveData currencySaveData;
+
+		/// <summary>
 		/// Path of the currency save data file relative to <see cref="Application.persistentDataPath"/>.
 		/// </summary>
 		[Space, BaseHeader, Space]
@@ -38,11 +43,6 @@ namespace Unidork.Currency
 		/// Path at which currency save data is stored.
 		/// </summary>
 		private string currencySaveDataPath;
-		
-		/// <summary>
-		/// Object that stores currency save data.
-		/// </summary>
-		private CurrencySaveData currencySaveData;
 
 		#endregion
 
