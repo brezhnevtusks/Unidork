@@ -72,12 +72,10 @@ namespace Unidork.Currency
 			
 			currencySaveData = serializationManager.DeserializeSaveDataFromFile<CurrencySaveData>(currencySaveDataPath);
 
-			if (currencySaveData != null)
+			if (currencySaveData == null)
 			{
-				return;
+				ResetSaveDataInternal();
 			}
-			
-			ResetSaveDataInternal();
 		}
 
 		#endregion
