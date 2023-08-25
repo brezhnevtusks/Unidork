@@ -170,7 +170,7 @@ namespace Unidork.Currency
 		/// <summary>
 		/// Resets the currency save data.
 		/// </summary>
-		private void ResetSaveDataInternal()
+		protected virtual void ResetSaveDataInternal()
 		{
 			currencySaveData = new CurrencySaveData(CreateCurrencyDataArray(), saveVersion);
 			BaseSerializationManager.SerializeSaveDataToFile(currencySaveData, currencySaveDataPath);
