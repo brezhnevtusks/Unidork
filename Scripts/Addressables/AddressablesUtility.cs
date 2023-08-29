@@ -1,7 +1,6 @@
 #if ADDRESSABLES
 
 using System.Collections.Generic;
-using Unidork.Extensions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
@@ -45,11 +44,10 @@ namespace Unidork.AddressableAssetsUtility
 				Debug.LogError($"Invalid asset reference: {assetReference?.AssetGUID})");
 				return null;
 			}
-		
 
 			foreach (IResourceLocator resourceLocator in ResourceLocators)
 			{
-				if (!resourceLocator.Locate(assetReference, typeof(object), out IList<IResourceLocation> resourceLocations))
+				if (!resourceLocator.Locate(assetReference.AssetGUID, typeof(object), out IList<IResourceLocation> resourceLocations))
 				{
 					continue;
 				}
