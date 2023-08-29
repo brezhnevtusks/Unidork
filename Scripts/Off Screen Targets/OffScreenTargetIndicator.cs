@@ -66,7 +66,7 @@ namespace Unidork.OffScreenTargets
 
 		private async UniTaskVoid EnableAsync(CancellationToken cancellationToken, FloatTweenSettings scaleUpTweenSettings)
 		{
-			AssetReference iconAssetReference = await targetData.Target.GetIconAssetReference(cancellationToken);
+			AssetReference iconAssetReference = await targetData.Target.GetIconAssetReferenceTask(cancellationToken);
 
 			if (!cancellationToken.CanBeCanceled || cancellationToken.IsCancellationRequested)
 			{

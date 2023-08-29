@@ -9,6 +9,6 @@ namespace Unidork.OffScreenTargets
 	{
 		bool OffScreenTargetIsActive { get; }
 		Vector3 GetPosition();
-		UniTask<AssetReference> GetIconAssetReference(CancellationToken cancellationToken);
+		UniTask<AssetReference> GetIconAssetReferenceTask(CancellationToken cancellationToken);
 	}    
 }

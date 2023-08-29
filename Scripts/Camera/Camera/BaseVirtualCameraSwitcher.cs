@@ -76,8 +76,7 @@ namespace Unidork.CameraUtility
 			if (cameraSwitchEventData.RaiseEventAfterBlendFinishes)
 			{
 				StopAllCoroutines();
-				_ = StartCoroutine(RaiseEventAfterCameraBlendsFinishes(cameraSwitchEventData.FromCamera, 
-																	   cameraSwitchEventData.EventToRaise));
+				_ = StartCoroutine(RaiseEventAfterCameraBlendsFinishes(cameraSwitchEventData.FromCamera, cameraSwitchEventData.EventToRaise));
 			}
 			else
 			{
