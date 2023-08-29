@@ -30,41 +30,6 @@ namespace Unidork.AddressableAssetsUtility
 			AsyncOperationHandle<T> loadHandle = ResourceManager.StartOperation(componentAsyncLoadOperation, default);
 			return loadHandle;
 		}
-
-		/// <summary>
-		/// Gets an Addressable resource location from a string address.
-		/// </summary>
-		/// <param name="assetAddress">Asset address.</param>
-		/// <returns>
-		/// An <see cref="IResourceLocation"/> or null if the asset address is invalid.
-		/// </returns>
-		public static IResourceLocation GetResourceLocationFromAssetAddress(string assetAddress)
-		{
-			if (assetAddress.IsNullOrEmpty())
-			{
-				Debug.LogError("Invalid Addressable asset address!");
-				return null;
-			}
-
-			foreach (IResourceLocator resourceLocator in ResourceLocators)
-			{
-				if (!resourceLocator.Locate(assetAddress, typeof(object), out IList<IResourceLocation> resourceLocations))
-				{
-					continue;
-				}
-
-				if (resourceLocations.Count <= 0)
-				{
-					continue;
-				}
-				
-				return resourceLocations[0];
-			}
-
-			Debug.LogError($"Invalid asset address: {assetAddress}");
-
-			return null;
-		}
 		
 		/// <summary>
 		/// Gets an Addressable resource location from an asset reference.
@@ -75,12 +40,28 @@ namespace Unidork.AddressableAssetsUtility
 		/// </returns>
 		public static IResourceLocation GetResourceLocationFromAssetReference(AssetReference assetReference)
 		{
-			if (assetReference != null && assetReference.RuntimeKeyIsValid())
+			if (assetReference == null || !assetReference.RuntimeKeyIsValid())
 			{
-				return GetResourceLocationFromAssetAddress(assetReference.AssetGUID);
+				Debug.LogError($"Invalid asset reference: {assetReference?.AssetGUID})");
+				return null;
 			}
-				
-			Debug.LogError($"Invalid asset reference: {assetReference?.AssetGUID})");
+		
+
+			foreach (IResourceLocator resourceLocator in ResourceLocators)
+			{
+				if (!resourceLocator.Locate(assetReference, typeof(object), out IList<IResourceLocation> resourceLocations))
+				{
+					continue;
+				}
+
+				if (resourceLocations.Count > 0)
+				{
+					return resourceLocations[0];
+				}
+			}
+
+			Debug.LogError($"Failed to locate asset: {assetReference.AssetGUID}");
+
 			return null;
 		}
 	}

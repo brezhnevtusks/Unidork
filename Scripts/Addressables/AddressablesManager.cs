@@ -65,18 +65,6 @@ namespace Unidork.AddressableAssetsUtility
         #region Validation
 
         /// <summary>
-        /// Checks whether a passed asset address is not null and not empty.
-        /// </summary>
-        /// <param name="assetAddress">Asset address.</param>
-        /// <returns>
-        /// True if the asset address is valid, False otherwise.
-        /// </returns>
-        private static bool AssetAddressIsValid(string assetAddress)
-        {
-            return !string.IsNullOrEmpty(assetAddress);
-        }
-
-        /// <summary>
         /// Checks whether a passed asset reference is not null and has a valid runtime key.
         /// </summary>
         /// <param name="assetReference">Asset reference.</param>
@@ -97,27 +85,6 @@ namespace Unidork.AddressableAssetsUtility
         #endregion
 
         #region Get
-        
-        /// <summary>
-        /// Tries to get an asset load result that matches the passed asset address.
-        /// </summary>
-        /// <param name="assetAddress">Asset address.</param>
-        /// <param name="assetLoadResult">Asset load result.</param>
-        /// /// <typeparam name="T">Asset type.</typeparam>
-        /// <returns>
-        /// True if <see cref="loadedAssetDictionary"/> has an asset load result matching the asset address, False otherwise.
-        /// </returns>
-        public static bool TryGetAssetLoadResult<T>(string assetAddress, out AddressableLoadOperationResult<T> assetLoadResult)
-        {
-            if (AssetAddressIsValid(assetAddress))
-            {
-                return TryGetAssetLoadResult(AddressablesUtility.GetResourceLocationFromAssetAddress(assetAddress), out assetLoadResult);
-            }
-
-            Debug.LogError("Trying to load an invalid asset address!");
-            assetLoadResult = AddressableLoadOperationResult<T>.Failed();
-            return false;
-        }
 
         /// <summary>
         /// Tries to get an asset load result that matches the passed asset reference.
@@ -172,46 +139,6 @@ namespace Unidork.AddressableAssetsUtility
         #region Load
 
         /// <summary>
-        /// Loads an asset by address using an asynchronous operation.
-        /// </summary>
-        /// <param name="assetAddress">Asset address.</param>
-        /// <param name="storeLoadedHandle">Should the handle of the loaded asset be stored in a dictionary for faster future access?</param>
-        /// <typeparam name="T">Asset type.</typeparam>
-        /// <returns>
-        /// A handle for the load operation.
-        /// </returns>
-        /// <exception cref="ArgumentException"></exception>
-        public static AsyncOperationHandle<T> LoadAssetByAddressAsync<T>(string assetAddress, bool storeLoadedHandle = true)
-        {
-            if (!AssetAddressIsValid(assetAddress))
-            {
-                throw new ArgumentException("Passed asset address is not valid!");
-            }
-            
-            IResourceLocation resourceLocation = AddressablesUtility.GetResourceLocationFromAssetAddress(assetAddress);
-                
-            if (loadedAssetDictionary.TryGetValue(resourceLocation, out AsyncOperationHandle loadAssetHandle))
-            {
-                // If we already have a valid handle, it will not fire its complete callback, so the user can't rely on it for their logic.
-                // We assign a new handle as a workaround. Ideally, user should call TryGetLoadResult() before calling this method,
-                // in which case we won't end up in this branch.
-                AsyncOperationHandle<T> newLoadHandle = Addressables.LoadAssetAsync<T>(assetAddress);
-                loadedAssetDictionary[resourceLocation] = loadAssetHandle;
-
-                return newLoadHandle;
-            }
-                
-            AsyncOperationHandle<T> loadHandle = Addressables.LoadAssetAsync<T>(assetAddress);
-
-            if (storeLoadedHandle)
-            {
-                AddLoadHandleToDictionary(resourceLocation, loadHandle);    
-            }
-
-            return loadHandle;
-        }
-
-        /// <summary>
         /// Loads an asset by asset reference using an asynchronous operation.
         /// </summary>
         /// <param name="assetReference">Asset reference.</param>
@@ -264,68 +191,6 @@ namespace Unidork.AddressableAssetsUtility
             };
         }
 
-        /// <summary>
-        /// Loads an asset by address asynchronously using UniTask.
-        /// </summary>
-        /// <param name="assetAddress">Asset address.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <param name="storeLoadedHandle">Should the handle of the loaded asset be stored in a dictionary for faster future access?</param>
-        /// <typeparam name="T">Asset type.</typeparam>
-        /// <returns>
-        /// A UniTask storing an <see cref="AddressableLoadOperationResult{T}"/>. 
-        /// </returns>
-        public static async UniTask<AddressableLoadOperationResult<T>> LoadAssetByAddressAsyncWithTask<T>(string assetAddress, bool storeLoadedHandle = true,
-                                                                                                         CancellationToken cancellationToken = default)
-        {
-            if (!AssetAddressIsValid(assetAddress))
-            {
-                Debug.LogError("Trying to load an invalid asset address!");
-                return AddressableLoadOperationResult<T>.Failed();
-            }
-            
-            if (TryGetAssetLoadResult(assetAddress, out AddressableLoadOperationResult<T> loadResult))
-            {
-                return loadResult;
-            }
-
-            AsyncOperationHandle<T> assetLoadHandle = Addressables.LoadAssetAsync<T>(assetAddress);
-
-            await assetLoadHandle.ToUniTask(cancellationToken: cancellationToken);
-
-            if (cancellationToken.CanBeCanceled && cancellationToken.IsCancellationRequested)
-            {
-                Addressables.Release(assetLoadHandle);
-                return AddressableLoadOperationResult<T>.Failed();
-            }
-
-            if (assetLoadHandle.Status == AsyncOperationStatus.Succeeded)
-            {
-                var result = new AddressableLoadOperationResult<T> 
-                {
-                    Succeeded = true,
-                    Key = assetAddress,
-                    Value = assetLoadHandle.Result
-                };
-
-                if (!storeLoadedHandle)
-                {
-                    Addressables.Release(assetLoadHandle);
-                }
-                else
-                {
-                    IResourceLocation resourceLocation = AddressablesUtility.GetResourceLocationFromAssetAddress(assetAddress);
-
-                    loadedAssetDictionary.TryAdd(resourceLocation, assetLoadHandle);
-                }
-                
-                return result;
-            }
-            
-            Debug.LogError($"Failed to load asset at address: {assetAddress}!");
-            Addressables.Release(assetLoadHandle);
-            return AddressableLoadOperationResult<T>.Failed();
-        }
-        
         /// <summary>
         /// Loads an asset by reference asynchronously using UniTask.
         /// </summary>
@@ -411,23 +276,6 @@ namespace Unidork.AddressableAssetsUtility
             }
             
             loadedAssetDictionary.Clear();
-        }
-        
-        /// <summary>
-        /// Releases a loaded Addressable asset by asset address.
-        /// </summary>
-        /// <param name="assetAddress">Asset address.</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static void UnloadAddressableByAddress(string assetAddress)
-        {
-            if (!AssetAddressIsValid(assetAddress))
-            {
-                throw new ArgumentNullException(nameof(assetAddress));
-            }
-
-            IResourceLocation resourceLocation = AddressablesUtility.GetResourceLocationFromAssetAddress(assetAddress);
-            
-            RemoveDictionaryKvp(resourceLocation);
         }
         
         /// <summary>
