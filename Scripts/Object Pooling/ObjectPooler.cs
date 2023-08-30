@@ -48,7 +48,7 @@ namespace Unidork.ObjectPooling
         /// <summary>
         /// Dictionary where an asset guid is the key and a list of pooled objects corresponding with that asset are the value.
         /// </summary>
-        private readonly Dictionary<string, List<IPooledObject>> pooledObjectLists;
+        private readonly Dictionary<string, List<IPooledObject>> pooledObjectLists = new();
 
         #endregion
         
@@ -66,7 +66,6 @@ namespace Unidork.ObjectPooling
             
             pooledObjectHolder = settings.PooledObjectHolder;
             
-            pooledObjectLists = new Dictionary<string, List<IPooledObject>>();
             CreatePoolAsync(settings.GetPoolItemSettings()).Forget();
         }
 
@@ -112,8 +111,7 @@ namespace Unidork.ObjectPooling
             await UniTask.WhenAll(poolTasks);
 
             IsInitialized = true;
-        }
-        
+        } 
         /// <summary>
         /// Instantiates a pool of objects from the passed item handle and settings and adds it to the pooler dictionary.
         /// </summary>
@@ -182,30 +180,18 @@ namespace Unidork.ObjectPooling
         /// <summary>
         /// Gets an item from the pool that matches the passed asset reference.
         /// </summary>
-        /// <param name="assetReference">Addressable asset reference.</param>
+        /// <param name="assetReference">Asset reference.</param>
         /// <returns>
-        /// The result of calling <see cref="Get(string)"/>.
-        /// </returns>
-        public IPooledObject Get(AssetReference assetReference)
-		{
-            return Get(assetReference.AssetGUID);
-		}
-
-        /// <summary>
-        /// Gets an item from the pool that matches the passed asset address.
-        /// </summary>
-        /// <param name="assetAddress">Asset address.</param>
-        /// <returns>
-        /// An <see cref="IPooledObject"/> or null if there are no available objects with 
-        /// that address and the pool isn't allowed to expand.
+        /// An <see cref="IPooledObject"/> or null if there are no available objects matching 
+        /// the passed asset reference and the pool isn't allowed to expand.
         /// </returns>
         /// <exception cref="ArgumentException">Thrown when the pool dictionary doesn't 
         /// contain any items matching the passed asset address.</exception>
-        public IPooledObject Get(string assetAddress)
+        public IPooledObject Get(AssetReference assetReference)
         {
-            if (!pooledObjectLists.TryGetValue(assetAddress, out List<IPooledObject> pooledObjects))
+            if (!pooledObjectLists.TryGetValue(assetReference.AssetGUID, out List<IPooledObject> pooledObjects))
             {
-                throw new ArgumentException($"{Name} doesn't contain items that match asset with gui {assetAddress}");
+                throw new ArgumentException($"{Name} doesn't contain items that match asset with gui {assetReference}");
             }
 
             foreach (IPooledObject pooledObject in pooledObjects)
@@ -218,7 +204,7 @@ namespace Unidork.ObjectPooling
 
             foreach (ObjectPoolItemSettings objectPoolItemSettings in settings.GetPoolItemSettings())
 			{
-                if (string.Equals(objectPoolItemSettings.AssetReference.AssetGUID, assetAddress))
+                if (Equals(objectPoolItemSettings.AssetReference.AssetGUID, assetReference))
 				{
                     if (!objectPoolItemSettings.PoolCanExpand)
 					{
@@ -226,10 +212,10 @@ namespace Unidork.ObjectPooling
 					}
                     else
 					{
-                        var pooledObject = Addressables.InstantiateAsync(assetAddress, pooledObjectHolder).Result.GetComponentInChildren<IPooledObject>();
+                        var pooledObject = Addressables.InstantiateAsync(assetReference, pooledObjectHolder).Result.GetComponentInChildren<IPooledObject>();
                         pooledObject.Deactivate(deactivateOnStart: true);
 
-                        pooledObjectLists[assetAddress].Add(pooledObject);
+                        pooledObjectLists[assetReference.AssetGUID].Add(pooledObject);
 
                         return pooledObject;
                     }

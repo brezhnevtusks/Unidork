@@ -115,7 +115,7 @@ namespace Unidork.ObjectPooling
 		public virtual IPooledObject Spawn(SpawnedObjectData spawnedObjectData, Vector3 position, Quaternion rotation, bool overrideScale = false,
                                    Vector3 scale = default, Transform parent = null, bool autoActivate = true)
         {
-            return Spawn(spawnedObjectData.AssetReference.AssetGUID, position, rotation, overrideScale, scale, parent, autoActivate);
+            return Spawn(spawnedObjectData.AssetReference, position, rotation, overrideScale, scale, parent, autoActivate);
         }
 
 
@@ -133,26 +133,9 @@ namespace Unidork.ObjectPooling
         public virtual IPooledObject Spawn(AssetReference assetReference, Vector3 position, Quaternion rotation,
                                    bool overrideScale = false, Vector3 scale = default, Transform parent = null, bool autoActivate = true)
         {
-            return Spawn(assetReference.AssetGUID, position, rotation, overrideScale, scale, parent, autoActivate);
-        }
-
-        /// <summary>
-        /// Spawns a pooled object at the specified position, rotation, and scale.
-        /// </summary>
-        /// <param name="spawnedObjectAddress">Asset address of the Addressable object that needs to be spawned.</param>
-        /// <param name="position">Position.</param>
-        /// <param name="rotation">Rotation.</param>
-        /// <param name="parent">Transform to use as a parent for the spawned object.</param>
-        /// <param name="autoActivate">Should the object be auto-activated upon spawning?</param>
-        /// <returns>
-        /// An instance of <see cref="IPooledObject"/> or null if no valid object was acquired from the connected pooler.
-        /// </returns>
-        public virtual IPooledObject Spawn(string spawnedObjectAddress, Vector3 position, Quaternion rotation,
-                                   bool overrideScale = false, Vector3 scale = default, Transform parent = null, bool autoActivate = true)
-		{
             objectPooler ??= ObjectPooler.FindPoolerWithName(poolerSettings.Name) ?? ObjectPooler.CreatePooler(poolerSettings);
 
-			IPooledObject spawnedObject = objectPooler.Get(spawnedObjectAddress);            
+			IPooledObject spawnedObject = objectPooler.Get(assetReference);            
 
             if (spawnedObject == null)
             {
@@ -272,8 +255,6 @@ namespace Unidork.ObjectPooling
                     return objectSpawner;
                 }
             }
-            
-            Debug.LogError($"Failed to find an object spawner with name {spawnerName}");
                 
             return null;
         }
