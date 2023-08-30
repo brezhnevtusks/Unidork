@@ -152,7 +152,8 @@ namespace Unidork.AddressableAssetsUtility
         {
             if (!AssetReferenceIsValid(assetReference))
             {
-                throw new ArgumentException("Passed asset reference is not valid!");   
+                Debug.LogError("Passed asset reference is not valid!");   
+                return new AsyncOperationHandle<T>();
             }
                 
             IResourceLocation resourceLocation = AddressablesUtility.GetResourceLocationFromAssetReference(assetReference);
