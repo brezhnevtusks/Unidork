@@ -204,7 +204,7 @@ namespace Unidork.ObjectPooling
 
             foreach (ObjectPoolItemSettings objectPoolItemSettings in settings.GetPoolItemSettings())
 			{
-                if (Equals(objectPoolItemSettings.AssetReference.AssetGUID, assetReference))
+                if (Equals(objectPoolItemSettings.AssetReference.AssetGUID, assetReference.AssetGUID))
 				{
                     if (!objectPoolItemSettings.PoolCanExpand)
 					{
