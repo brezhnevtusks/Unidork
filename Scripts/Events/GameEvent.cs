@@ -1,6 +1,8 @@
 ﻿using Sirenix.OdinInspector;
 using System.Collections.Generic;
+#if DOOZY_UIMANAGER && DOOZY_SIGNALS
 using Doozy.Runtime.Signals;
+#endif
 using UnityEngine;
 
 namespace Unidork.Events
@@ -39,17 +41,7 @@ namespace Unidork.Events
         [SerializeField]
         private bool logToConsole = true;
         
-#if dUI_MANAGER
-        /// <summary>
-        /// Should a Doozy UI event be raised as well?
-        /// </summary>
-        /// <remarks>Only for Doozy version 3!</remarks>
-        [Tooltip("Should a Doozy UI event be raised as well?")]
-        [SerializeField]
-        private bool raiseDoozyUIEvent = false;
-#endif
-        
-#if DOOZY_UI_MANAGER_4
+#if DOOZY_UIMANAGER && DOOZY_SIGNALS
         /// <summary>
         /// Should a Doozy UI signal be sent as well?
         /// </summary>
@@ -97,7 +89,7 @@ namespace Unidork.Events
                 currentListener.OnEventRaised(this);
             }
             
-#if DOOZY_UI_MANAGER_4
+#if DOOZY_UIMANAGER && DOOZY_SIGNALS
             if (raiseDoozySignal)
             {
                 _ = Signal.Send(GameEventSignalCategoryName, name.Replace('_'.ToString(), string.Empty));
