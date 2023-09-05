@@ -17,7 +17,7 @@ namespace Unidork.Events
 			var @event = (GameEvent)target;
 			string eventName = @event.name;
 			
-#if DOOZY_UI_MANAGER_4
+#if DOOZY_UIMANAGER && DOOZY_SIGNALS
 			
 			bool raiseDoozySignal = serializedObject.FindProperty("raiseDoozySignal").boolValue;
 
