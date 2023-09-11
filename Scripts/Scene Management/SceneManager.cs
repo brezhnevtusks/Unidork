@@ -1,6 +1,9 @@
-﻿using System;
-using UnityEngine;
+﻿#if UNIDORK_ADDRESSABLES
+using System;
 using UnityEngine.AddressableAssets;
+#endif
+using System;
+using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
@@ -12,7 +15,8 @@ namespace Unidork.SceneManagement
 	/// </summary>
 	public static class SceneManager
     {
-        #region Load/Unload
+ #if UNIDORK_ADDRESSABLES
+        #region Load/Unload - Addressables
 
         /// <summary>
         /// Loads a scene asynchronously from the passed Addressables asset reference.
@@ -49,7 +53,7 @@ namespace Unidork.SceneManagement
                     Debug.LogError($"Failed to load scene {sceneToLoad.Asset.name}");
                 }
             };
-
+            
             return sceneLoadHandle;
         }
         
@@ -134,6 +138,128 @@ namespace Unidork.SceneManagement
             return unloadHandle;
         }
 
+        #endregion
+#endif
+        
+        #region Load/Unload
+
+        /// <summary>
+        /// Loads a scene asynchronously by name using default Unity scene manager. Can auto-activate..
+        /// </summary>
+        /// <param name="sceneName">Scene name.</param>
+        /// <param name="loadSceneMode">Load scene mode.</param>
+        /// <param name="allowSceneActivation">Should the scene be activated on load?</param>
+        /// <param name="callback">Optional callback.</param>
+        /// <returns>An async load operation.</returns>
+        public static AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool allowSceneActivation, Action<AsyncOperation> callback = null)
+        {
+            return LoadSceneAsync(sceneName, new LoadSceneParameters(loadSceneMode, LocalPhysicsMode.None), allowSceneActivation, callback);
+        }
+        
+        /// <summary>
+        /// Loads a scene asynchronously by name using default Unity scene manager. Can auto-activate..
+        /// </summary>
+        /// <param name="sceneName">Scene name.</param>
+        /// <param name="loadSceneParameters">Load scene parameters that include load scene mode and local physics mode..</param>
+        /// <param name="allowSceneActivation">Should the scene be activated on load?</param>
+        /// <param name="callback">Optional callback.</param>
+        /// <returns>An async load operation.</returns>
+        public static AsyncOperation LoadSceneAsync(string sceneName, LoadSceneParameters loadSceneParameters, bool allowSceneActivation, Action<AsyncOperation> callback = null)
+        {
+            AsyncOperation loadOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, loadSceneParameters);
+            loadOperation.allowSceneActivation = allowSceneActivation;
+            if (callback != null)
+            {
+                loadOperation.completed += callback;
+            }
+            return loadOperation;
+        }
+
+        /// <summary>
+        /// Loads a scene asynchronously by build index using default Unity scene manager. Can auto-activate.
+        /// </summary>
+        /// <param name="sceneBuildIndex">Scene's build index.</param>
+        /// <param name="loadSceneMode">Load scene mode.</param>
+        /// <param name="allowSceneActivation">Should the scene be activated on load?</param>
+        /// <param name="callback">Optional callback.</param>
+        /// <returns>An async load operation.</returns>
+        public static AsyncOperation LoadSceneAsync(int sceneBuildIndex, LoadSceneMode loadSceneMode, bool allowSceneActivation, Action<AsyncOperation> callback = null)
+        {
+            return LoadSceneAsync(sceneBuildIndex, new LoadSceneParameters(loadSceneMode, LocalPhysicsMode.None), allowSceneActivation, callback);
+        }
+
+        /// <summary>
+        /// Loads a scene asynchronously by build index using default Unity scene manager. Can auto-activate.
+        /// </summary>
+        /// <param name="sceneBuildIndex">Scene's build index.</param>
+        /// <param name="loadSceneParameters">Load scene parameters that include load scene mode and local physics mode..</param>
+        /// <param name="allowSceneActivation">Should the scene be activated on load?</param>
+        /// <param name="callback">Optional callback.</param>
+        /// <returns>An async load operation.</returns>
+        public static AsyncOperation LoadSceneAsync(int sceneBuildIndex, LoadSceneParameters loadSceneParameters, bool allowSceneActivation, Action<AsyncOperation> callback = null)
+        {
+            AsyncOperation loadOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneBuildIndex, loadSceneParameters);
+            loadOperation.allowSceneActivation = allowSceneActivation;
+            if (callback != null)
+            {
+                loadOperation.completed += callback;
+            }
+            return loadOperation;
+        }
+
+        /// <summary>
+        ///  Unloads a scene asynchronously by direct reference using the default scene manager.
+        /// </summary>
+        /// <param name="scene">Scene.</param>
+        /// <param name="unloadSceneOptions">Optional unload options.</param>
+        /// <param name="callback">Optional callback.</param>
+        /// <returns>An async unload operation.</returns>
+        public static AsyncOperation UnloadSceneAsync(Scene scene, UnloadSceneOptions unloadSceneOptions = default, Action<AsyncOperation> callback = null)
+        {
+            AsyncOperation unloadOperation = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene, unloadSceneOptions);
+            if (callback != null)
+            {
+                unloadOperation.completed += callback;
+            }
+            return unloadOperation;
+        }
+        
+        /// <summary>
+        ///  Unloads a scene asynchronously by name using the default scene manager.
+        /// </summary>
+        /// <param name="sceneName">Scene name.</param>
+        /// <param name="unloadSceneOptions">Optional unload options.</param>
+        /// <param name="callback">Optional callback.</param>
+        /// <returns>An async unload operation.</returns>
+        
+        public static AsyncOperation UnloadSceneAsync(string sceneName, UnloadSceneOptions unloadSceneOptions = default, Action<AsyncOperation> callback = null)
+        {
+            AsyncOperation unloadOperation = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneName, unloadSceneOptions);
+            if (callback != null)
+            {
+                unloadOperation.completed += callback;
+            }
+            return unloadOperation;
+        }
+        
+        /// <summary>
+        ///  Unloads a scene asynchronously by build index using the default scene manager.
+        /// </summary>
+        /// <param name="sceneBuildIndex">Scene build index.</param>
+        /// <param name="unloadSceneOptions">Optional unload options.</param>
+        /// <param name="callback">Optional callback.</param>
+        /// <returns>An async unload operation.</returns>
+        
+        public static AsyncOperation UnloadSceneAsync(int sceneBuildIndex, UnloadSceneOptions unloadSceneOptions = default, Action<AsyncOperation> callback = null)
+        {
+            AsyncOperation unloadOperation = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneBuildIndex, unloadSceneOptions);
+            if (callback != null)
+            {
+                unloadOperation.completed += callback;
+            }
+            return unloadOperation;
+        }
+        
         #endregion
 
         #region Activate

@@ -10,7 +10,7 @@ namespace Unidork.Events
     /// <summary>
     /// A scriptable object that holds a unique game event type.
     /// </summary>
-    [CreateAssetMenu(fileName = "New Event", menuName = "Scriptable Objects/Events/Event", order = 2)]
+    [CreateAssetMenu(fileName = "EVT_", menuName = "Scriptable Objects/Events/Event", order = 2)]
     public class GameEvent : ScriptableObject
     {
         #region Properties

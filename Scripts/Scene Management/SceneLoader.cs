@@ -1,13 +1,15 @@
 using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
+#if UNIDORK_ADDRESSABLES
 using UnityEngine.AddressableAssets;
+#endif
 using UnityEngine.SceneManagement;
 
 namespace Unidork.SceneManagement
 {
 	/// <summary>
-	/// Loads a scene from an Addressable asset reference.
+	/// Loads a scene from an Addressable asset reference or a scene name (using default scene manager).
 	/// </summary>
 	public class SceneLoader : MonoBehaviour
 	{
@@ -44,13 +46,21 @@ namespace Unidork.SceneManagement
 		[SerializeField]
 		private SceneLoadType loadType;
 		
+	#if UNIDORK_ADDRESSABLES	
 		/// <summary>
 		/// Scene Addressable asset reference.
 		/// </summary>
 		[Tooltip("Scene Addressable asset reference.")]
 		[SerializeField]
 		private AssetReference sceneAssetReference = null;
-
+#endif
+		/// <summary>
+		/// Name of the scene to load using default scene manager.
+		/// </summary>
+		[Tooltip("Name of the scene to load using default scene manager.")]
+		[SerializeField] 
+		private string sceneName = "";
+		
 		/// <summary>
 		/// Time to wait before loading the scene.
 		/// </summary>
@@ -87,7 +97,13 @@ namespace Unidork.SceneManagement
 		private async UniTaskVoid LoadSceneAsync()
 		{
 			await UniTask.Delay(new TimeSpan(0, 0, 0, 0, (int)(delayBeforeLoad * 1000f)));
+#if UNIDORK_ADDRESSABLES
 			_ = SceneManager.LoadSceneAsync(sceneAssetReference, LoadSceneMode.Additive, activateOnLoad: true, setAsActiveScene: true, sceneLoadCallback: null);
+#endif
+			SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive, true).completed += _ =>
+			{
+				UnityEngine.SceneManagement.SceneManager.SetActiveScene(UnityEngine.SceneManagement.SceneManager.GetSceneByName(sceneName));
+			};
 		}
 
 		#endregion

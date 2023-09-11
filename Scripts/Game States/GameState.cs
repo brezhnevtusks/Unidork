@@ -1,15 +1,18 @@
-﻿using Sirenix.OdinInspector;
-using Unidork.Attributes;
+﻿using Unidork.Attributes;
 using Unidork.Events;
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR 
+using Sirenix.OdinInspector;
+using UnityEditor;
+#endif
 
 namespace Unidork.GameStates
 {
 	/// <summary>
 	/// Scriptable object that stores data and handles operations with a game state.
 	/// </summary>
-    [CreateAssetMenu(fileName = "GameState_", menuName = "Game States/New Game State", order = 0)]
+    [CreateAssetMenu(fileName = "GS_", menuName = "Game States/New Game State", order = 0)]
     public class GameState : ScriptableObject
     {
 		#region Properties
