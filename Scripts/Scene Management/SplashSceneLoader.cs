@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using UnityEngine.AddressableAssets;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Unidork.SceneManagement
 {
@@ -12,20 +13,9 @@ namespace Unidork.SceneManagement
 
         public static bool AlreadyLoadedSplash { get; set; }
 
-        public static AssetReference OverrideSceneAssetReference { get; private set; }
-
         #endregion
 
         #region Fields
-
-        /// <summary>
-        /// Override scene to load when starting the game in the editor from the scene where this component is located."
-        /// When left empty, default scene is loaded instead.
-        /// </summary>
-        [Tooltip("Override scene to load when starting the game in the editor from the scene where this component is located." +
-                 "When left empty, default scene is loaded instead.")]
-        [SerializeField] 
-        private AssetReference overrideSceneAssetReference;
 
         /// <summary>
         /// Delay before starting the unload of the splash scene.
@@ -38,25 +28,36 @@ namespace Unidork.SceneManagement
 
         #region Load
 
+#if UNITY_EDITOR
         private void Awake()
         {
-#if UNITY_EDITOR
             if (AlreadyLoadedSplash)
             {
                 return;
             }
             
-            OverrideSceneAssetReference = overrideSceneAssetReference;
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Splash");
-#endif
+            UnityEngine.SceneManagement.SceneManager.LoadScene("S_Splash");
         }
+#endif
 
         /// <summary>
-        /// Tells the <see cref="SceneLoader"/> to unload the splash scene.
+        /// Starts the splash scene unload.
         /// </summary>
         public void UnloadSplashScene()
         {
-            FindObjectOfType<SceneLoader>().StartSplashSceneUnload(0f);
+            UnloadSplashSceneAsync(splashSceneUnloadDelay).Forget();
+        }
+        
+        /// <summary>
+        /// Unloads the splash scene asynchronously after a delay.
+        /// </summary>
+        /// <returns>
+        /// <see cref="UniTaskVoid"/>.
+        /// </returns>
+        private async UniTaskVoid UnloadSplashSceneAsync(float delay)
+        {
+            await UniTask.Delay(new TimeSpan(0, 0, 0, 0, (int)(delay * 1000f)));
+            await UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(0);
         }
 
         #endregion
