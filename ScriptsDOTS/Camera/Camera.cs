@@ -74,7 +74,7 @@ namespace Unidork.DOTS.Camera
 
                     if (mainCameraGo != null)
                     {
-                        mainCamera = mainCameraGo.GetComponentNonAlloc<UnityEngine.Camera>();
+                        mainCamera = mainCameraGo.GetComponent<UnityEngine.Camera>();
                     }
                 }
 
