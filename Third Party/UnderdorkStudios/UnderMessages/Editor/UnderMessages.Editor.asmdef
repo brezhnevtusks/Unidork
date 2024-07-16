@@ -1,0 +1,19 @@
+{
+    "name": "UnderMessages.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:0d520b1bc5a9904938e8e0f99797d678",
+        "GUID:6abe7d7cbadb4d83a635b4df5c571be6"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
