@@ -27,5 +27,5 @@ AssetOrigin:
   productId: 14884
   packageName: I2 Localization
   packageVersion: 2.8.22 f3
-  assetPath: Assets/I2/Localization/Scripts/Editor/Unity XCode/UnityEditor.iOS_I2Loc.Xcode.dll
+  assetPath: Assets/Unidork/Third Party/I2/Localization/Scripts/Editor/Unity XCode/UnityEditor.iOS_I2Loc.Xcode.dll
   uploadId: 636155
