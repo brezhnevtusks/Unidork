@@ -94,7 +94,7 @@ namespace Unidork.Resources
 			instance = this;
 		}
 
-		private void Start()
+		protected virtual void Start()
 		{
 			if (resourceSettings == null)
 			{
