@@ -144,7 +144,7 @@ namespace Unidork.UI
 				return;
 			}
 
-			badgeUser = (IPendingActionBadgeUser)badgeUserGo.GetComponentNonAlloc(typeof(IPendingActionBadgeUser));
+			badgeUser = badgeUserGo.GetComponent<IPendingActionBadgeUser>();
 
 			cancellationTokenSource = new CancellationTokenSource();
 			
@@ -163,20 +163,27 @@ namespace Unidork.UI
 				return;
 			}
 
-			badgeUser.HasPendingActions.Where(hasPendingActions => hasPendingActions == true)
-			         .Subscribe(_ => Show())
-			         .AddTo(disposables);
-
-			badgeUser.HasPendingActions.Where(hasPendingActions => hasPendingActions == false)
-			         .Subscribe(_ => Hide())
-			         .AddTo(disposables);
+			badgeUser
+				.HasPendingActions
+				.Subscribe(hasPendingActions =>
+				{
+					if (hasPendingActions)
+					{
+						Show();
+					}
+					else
+					{
+						Hide();
+					}
+				})
+				.AddTo(disposables);
 			
 			cancellationTokenSource.Dispose();
 		}
 
 		private void Reset()
 		{
-			animator = this.GetComponentNonAlloc<Animator>();
+			animator = GetComponent<Animator>();
 		}
 
 		#endregion

@@ -1,5 +1,3 @@
-#if ADDRESSABLES
-
 using UnityEditor;
 using UnityEngine;
 
@@ -43,5 +41,3 @@ namespace Unidork.AddressableAssetsUtility.Editor
         #endregion
     }
 }
-
-#endif

@@ -1,0 +1,17 @@
+.element-hidden {
+    display: none;
+}
+
+.tag-expanded {
+}
+
+.tag-hidden {
+    display: none;
+}
+
+.tag-selected {
+}
+
+.tag-alternative-background {
+    background-color: var(--unity-colors-alternated_rows-background);
+}

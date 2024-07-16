@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using Unidork.Attributes;
-using Unidork.Extensions;
+using UnderdorkStudios.UnderTools.Extensions;
 using Unidork.Progress;
 using Unidork.Serialization;
 using UniRx;
@@ -66,11 +65,6 @@ namespace Unidork.Unlockables
 		protected UnlockableItemSaveData unlockableItemSaveData;
 
 		/// <summary>
-		/// Path for the unlockable item save data file.
-		/// </summary>
-		protected string unlockableItemSaveDataPath;
-
-		/// <summary>
 		/// Component that is responsible for serializing and deserializing save data.
 		/// </summary>
 		protected BaseSerializationManager serializationManager;
@@ -79,14 +73,6 @@ namespace Unidork.Unlockables
 		/// Component that manages operations with player's progress.
 		/// </summary>
 		protected BaseProgressManager progressManager;
-
-		/// <summary>
-		/// Path of the unlockable item save data file relative to <see cref="Application.persistentDataPath"/>.
-		/// </summary>
-		[Space, BaseHeader, Space]
-		[Tooltip("Path of the unlockable item save data file relative to Application.persistentDataPath.")]
-		[SerializeField]
-		private string unlockableItemSaveDataRelativePath = "/UnlockableItemSaveData.json";
 
 		/// <summary>
 		/// Scriptable object that stores data about items that are 
@@ -110,14 +96,28 @@ namespace Unidork.Unlockables
 		private ProgressUnlockableItemProgressionEntry currentProgressionEntry;
 
 		#endregion
+		
+		#region Constants
+		
+		/// <summary>
+		/// Key to use when saving/loading with Easy Save.
+		/// </summary>
+		private const string UnlockableKeyName = "Ublockables";
+		
+		/// <summary>
+		/// Relative file path to use when saving/loading with Easy Save.
+		/// </summary>
+		private const string UnlockableSavePath = "Unlockables.und";
+		
+		#endregion
 
 		#region Init
 
 		protected virtual void Start()
 		{
-			progressManager = FindObjectOfType<BaseProgressManager>();
+			progressManager = FindAnyObjectByType<BaseProgressManager>();
 
-			serializationManager = FindObjectOfType<BaseSerializationManager>();
+			serializationManager = FindAnyObjectByType<BaseSerializationManager>();
 
 			CurrentProgress = new ReactiveProperty<float>();
 
@@ -273,7 +273,7 @@ namespace Unidork.Unlockables
 		/// </summary>
 		public void SaveData()
 		{
-			BaseSerializationManager.SerializeSaveDataToFile(unlockableItemSaveData, unlockableItemSaveDataPath);
+			BaseSerializationManager.Save(UnlockableKeyName, unlockableItemSaveData, UnlockableSavePath);
 		}
 
 		/// <summary>
@@ -285,7 +285,7 @@ namespace Unidork.Unlockables
 
 			if (serializationManager == null)
 			{
-				serializationManager = FindObjectOfType<BaseSerializationManager>();
+				serializationManager = FindAnyObjectByType<BaseSerializationManager>();
 			}
 
 			SaveData();
@@ -296,10 +296,7 @@ namespace Unidork.Unlockables
 		/// </summary>
 		protected virtual void LoadSaveData()
 		{
-			unlockableItemSaveDataPath = Application.persistentDataPath + unlockableItemSaveDataRelativePath;
-
-			unlockableItemSaveData = 
-				BaseSerializationManager.DeserializeSaveDataFromFile<UnlockableItemSaveData>(unlockableItemSaveDataPath);
+			unlockableItemSaveData = BaseSerializationManager.Load<UnlockableItemSaveData>(UnlockableKeyName, UnlockableSavePath);
 
 			if (unlockableItemSaveData == null)
 			{

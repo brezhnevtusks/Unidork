@@ -50,7 +50,7 @@ namespace Unidork.ObjectPooling
         /// </summary>
         [Tooltip("Array of objects storing settings for each type of item that needs to be put in a pool.")]
         [SerializeField]
-        private ObjectPoolItemSettings[] itemSettings = null;
+        private PooledObjectSettings[] pooledObjectSettings = null;
 
         #endregion
 
@@ -60,34 +60,22 @@ namespace Unidork.ObjectPooling
         /// Gets the item settings,
         /// </summary>
         /// <returns>
-        /// A clone of <see cref="itemSettings"/>.
+        /// A clone of <see cref="pooledObjectSettings"/>.
         /// </returns>
-        public ObjectPoolItemSettings[] GetPoolItemSettings() => (ObjectPoolItemSettings[]) itemSettings.Clone();
+        public PooledObjectSettings[] GetPooledObjectSettings() => (PooledObjectSettings[]) pooledObjectSettings.Clone();
 
         /// <summary>
         /// Gets settings for an item that matches the passed addressable asset reference.
         /// </summary>
         /// <param name="assetReference">Addressable asset reference.</param>
         /// <returns>
-        /// The result of calling <see cref="GetSettingsForItem(string)"/>.
-        /// </returns>
-        public ObjectPoolItemSettings GetSettingsForItem(AssetReference assetReference)
-		{
-            return GetSettingsForItem(assetReference.AssetGUID);
-		}
-
-        /// <summary>
-        /// Gets settings for an item that matches the passed asset address.
-        /// </summary>
-        /// <param name="assetAddress">Asset address.</param>
-        /// <returns>
         /// Settings that match the passed asset address or null if such settings don't exist.
         /// </returns>
-        public ObjectPoolItemSettings GetSettingsForItem(string assetAddress)
+        public PooledObjectSettings GetSettingsByAssetReference(AssetReference assetReference)
         {
-            foreach (ObjectPoolItemSettings settings in itemSettings)
+            foreach (PooledObjectSettings settings in pooledObjectSettings)
             {
-                if (settings.AssetReference.AssetGUID == assetAddress)
+                if (settings.AssetReference == assetReference)
                 {
                     return settings;
                 }

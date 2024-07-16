@@ -1,3 +1,5 @@
+#if UNIDORK_ADDRESSABLES
+
 using MoreMountains.Feedbacks;
 using Sirenix.OdinInspector;
 using Unidork.Attributes;
@@ -301,3 +303,5 @@ namespace Unidork.Feedbacks
 		#endregion		
 	}
 }
+
+#endif

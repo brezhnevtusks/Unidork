@@ -1,3 +1,5 @@
+#if UNIDORK_ADDRESSABLES
+
 using System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -23,3 +25,5 @@ namespace Unidork.WeightedSelection
 #endif
     }
 }
+
+#endif

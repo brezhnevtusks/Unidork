@@ -1,3 +1,5 @@
+#if UNIDORK_ADDRESSABLES
+
 using Unidork.Attributes;
 using Unidork.Extensions;
 using Unidork.ObjectPooling;
@@ -147,3 +149,5 @@ namespace Unidork.Graphics
         #endregion
     }
 }
+
+#endif

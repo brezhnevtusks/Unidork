@@ -9,12 +9,12 @@ namespace Unidork.WeightedSelection
     [Serializable]
     public class WeightedObject_WeightedObjectTable : WeightedObjectBase
     {
-        public new WeightedObjectTableBase Object => @object;
+        public new WeightedTableBase Object => @object;
         
-        public override Type GetWeightedObjectType() => typeof(WeightedObjectTableBase);
+        public override Type GetWeightedObjectType() => typeof(WeightedTableBase);
         
         [SerializeField]
-        protected new WeightedObjectTableBase @object;
+        protected new WeightedTableBase @object;
 
 #if UNITY_EDITOR
         [SerializeField]

@@ -3,7 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Doozy.Runtime",
-        "Unidork.Extensions"
+        "UnderTools.Extensions"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

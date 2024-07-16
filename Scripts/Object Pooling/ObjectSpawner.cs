@@ -1,8 +1,8 @@
 ﻿using System;
 using Sirenix.Utilities;
 using System.Collections.Generic;
+using UnderdorkStudios.UnderTools.Extensions;
 using Unidork.Attributes;
-using Unidork.Extensions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -54,21 +54,21 @@ namespace Unidork.ObjectPooling
         /// </summary>
         [Tooltip("Settings to use when creating the pooler that will be tied to this spawner.")]
         [SerializeField]
-        private ObjectPoolerSettings poolerSettings = null;
+        private ObjectPoolerSettings poolerSettings;
 
         /// <summary>
         /// Transform that serves as a holder for spawned objects in case no other transform is provided by calling scripts.
         /// </summary>
         [Tooltip("Transform that serves as a holder for spawned objects in case no other transform is provided by calling scripts.")]
         [SerializeField]
-        private Transform defaultSpawnedObjectHolder = null;
+        private Transform defaultSpawnedObjectHolder;
 
         /// <summary>
         /// Should this spawner be initialized in Start() method?
         /// </summary>
         [Tooltip("Should this spawner be initialized in Start() method?")]
         [SerializeField]
-        private bool initOnStart = false;
+        private bool initOnStart;
 
         /// <summary>
         /// Object pooler that stores objects spawned by this spawner.
@@ -78,7 +78,7 @@ namespace Unidork.ObjectPooling
         /// <summary>
         /// List of active spawned objects.
         /// </summary>
-        private readonly List<IPooledObject> spawnedObjects = new List<IPooledObject>();
+        private readonly List<IPooledObject> spawnedObjects = new();
         
         #endregion
 
@@ -99,25 +99,6 @@ namespace Unidork.ObjectPooling
 		#endregion
 
 		#region Spawn
-
-		/// <summary>
-		/// Spawns a pooled object at the specified position, rotation, and scale.
-		/// </summary>
-		/// <param name="spawnedObjectData">Object that stores data about an object that needs to be spawned.</param>
-		/// <param name="position">Position.</param>
-		/// <param name="rotation">Rotation.</param>
-		/// <param name="scale">Scale.</param>
-		/// <param name="parent">Transform to use as a parent for the spawned object.</param>
-		/// <param name="autoActivate">Should the object be auto-activated upon spawning?</param>
-		/// <returns>
-		/// An instance of <see cref="IPooledObject"/> or null if no valid object was acquired from the connected pooler.
-		/// </returns>
-		public virtual IPooledObject Spawn(SpawnedObjectData spawnedObjectData, Vector3 position, Quaternion rotation, bool overrideScale = false,
-                                   Vector3 scale = default, Transform parent = null, bool autoActivate = true)
-        {
-            return Spawn(spawnedObjectData.AssetReference, position, rotation, overrideScale, scale, parent, autoActivate);
-        }
-
 
         /// <summary>
         /// Spawns a pooled object at the specified position, rotation, and scale.
@@ -264,7 +245,7 @@ namespace Unidork.ObjectPooling
 		/// </summary>
 		public static void UpdateSpawnerList()
 		{
-            ObjectSpawner[] objectSpawnerArray = FindObjectsOfType<ObjectSpawner>();
+            ObjectSpawner[] objectSpawnerArray = FindObjectsByType<ObjectSpawner>(FindObjectsSortMode.None);
             objectSpawners = objectSpawnerArray.ToList(objectSpawnerArray.Length);
 		}
 

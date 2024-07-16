@@ -1,7 +1,7 @@
-﻿using Lofelt.NiceVibrations;
-using System.Collections.Generic;
-using Unidork.Attributes;
+﻿using System;
+using Unidork.Extensions;
 using Unidork.Serialization;
+using UniRx;
 using UnityEngine;
 
 namespace Unidork.Settings
@@ -9,24 +9,39 @@ namespace Unidork.Settings
 	/// <summary>
 	/// Base class for managers that handle operations with basic game settings: sound, music, vibrations.
 	/// </summary>
-    public class SettingsManager : MonoBehaviour
+    public abstract class SettingsManager : MonoBehaviour
     {
 		#region Properties
 
 		/// <summary>
-		/// Is sound currently enabled?
+		/// Has the manager been initialized?
 		/// </summary>
-		public bool SoundEnabled => IsSettingOfTypeEnabled(SettingsType.Sound);
+		public static bool IsInitialized => SoundEffectsEnabled != null;
+		
+		/// <summary>
+		/// Are sound effects enabled?
+		/// </summary>
+		public static ReactiveProperty<bool> SoundEffectsEnabled { get; private set; }
+		
+		/// <summary>
+		/// Is music enabled?
+		/// </summary>
+		public static ReactiveProperty<bool> MusicEnabled { get; private set; }
 
 		/// <summary>
-		/// Is music currently enabled?
+		/// Are vibrations enabled?
 		/// </summary>
-		public bool MusicEnabled => IsSettingOfTypeEnabled(SettingsType.Music);
+		public static ReactiveProperty<bool> VibrationsEnabled { get; private set; }
 
 		/// <summary>
-		/// Are vibrations currently enabled?
+		/// Current sound volume.
 		/// </summary>
-		public bool VibrationsEnabled => IsSettingOfTypeEnabled(SettingsType.Vibrations);		
+		public static ReactiveProperty<float> SoundEffectsVolume { get; private set; }
+
+		/// <summary>
+		/// Current music volume.
+		/// </summary>
+		public static ReactiveProperty<float> MusicVolume { get; private set; }
 
 		#endregion
 
@@ -37,65 +52,49 @@ namespace Unidork.Settings
 		/// </summary>
 		protected string saveVersion;
 
-		/// <summary>
-		/// Path to the persistent data directory.
-		/// </summary>
-		protected string persistentDataPath;
-
-		/// <summary>
-		/// Path of the settings save data file relative to <see cref="Application.persistentDataPath"/>.
-		/// </summary>
-		[Space, SettingsHeader, Space]
-		[Tooltip("Path of the settings save data file relative to Application.persistentDataPath.")]
-		[SerializeField]
-		private string settingsSaveDataRelativePath = "/SettingsSaveData.json";
-
-		/// <summary>
-		/// Dictionary storing settings data where key is settings type and value is a Boolean
-		/// specifying whether that setting is currently enabled.
-		/// </summary>
-		private Dictionary<SettingsType, bool> settingsDictionary;
-
-		/// <summary>
-		/// Object that stores settings save data.
-		/// </summary>
+	    /// <summary>
+	    /// Settings save data.
+	    /// </summary>
 		private SettingsSaveData settingsSaveData;
 
+		#endregion
+		
+		#region Constants
+		
+		/// <summary>
+		/// Key to use when saving/loading with Easy Save.
+		/// </summary>
+		private const string SettingsKeyName = "Settings";
+		
+		/// <summary>
+		/// Relative file path to use when saving/loading with Easy Save.
+		/// </summary>
+		private const string SettingsSavePath = "Settings.und";
+		
 		#endregion
 
 		#region Init
 
+		protected void Start()
+		{
+			Init();	
+		}
+		
 		/// <summary>
-		/// Loads settings save data or create a new instance of settings if that data is null.
+		/// Loads settings save data and initialized the manager.
 		/// </summary>
-		protected virtual void LoadSaveData()
+		protected virtual void Init()
 		{
 			saveVersion = BaseSerializationManager.SaveVersion;
-			persistentDataPath = Application.persistentDataPath;
 
-			string settingsSaveDataPath = Application.persistentDataPath + settingsSaveDataRelativePath;
+			settingsSaveData = BaseSerializationManager.Load(SettingsKeyName, SettingsSavePath, SettingsSaveData.CreateDefault());
 
-			settingsSaveData = BaseSerializationManager.DeserializeSaveDataFromFile<SettingsSaveData>(settingsSaveDataPath);
+			SoundEffectsEnabled = new ReactiveProperty<bool>(settingsSaveData.SoundEffectsEnabled);
+			MusicEnabled = new ReactiveProperty<bool>(settingsSaveData.MusicEnabled);
+			VibrationsEnabled = new ReactiveProperty<bool>(settingsSaveData.VibrationsEnabled);
 
-			if (settingsSaveData == null)
-			{
-				ResetSaveData();
-			}
-
-			settingsDictionary.Add(SettingsType.Sound, settingsSaveData.SoundEnabled);
-			settingsDictionary.Add(SettingsType.Music, settingsSaveData.MusicEnabled);
-			settingsDictionary.Add(SettingsType.Vibrations, settingsSaveData.VibrationsEnabled);
-
-			foreach (KeyValuePair<SettingsType, bool> kvp in settingsDictionary) 
-			{
-				HandleSettingsToggle(kvp.Key);
-			}
-		}
-
-		protected virtual void Start()
-		{
-			settingsDictionary = new Dictionary<SettingsType, bool>();
-			LoadSaveData();			
+			SoundEffectsVolume = new ReactiveProperty<float>(settingsSaveData.SoundVolume);
+			MusicVolume = new ReactiveProperty<float>(settingsSaveData.MusicVolume);
 		}
 
 		#endregion
@@ -103,62 +102,63 @@ namespace Unidork.Settings
 		#region Settings
 
 		/// <summary>
-		/// Sets the value of the dicrionary entry in <see cref="settingsDictionary"/> for 
-		/// the passed settings type to the opposite Boolean value.
+		/// Toggles the boolean value of a setting of passed type.
 		/// </summary>
-		/// <param name="settingsType">Settings type.</param>
-		public void ToggleSettingsOfType(SettingsType settingsType)
+		/// <param name="settingType">Settings type.</param>
+		public static void ToggleSetting(SettingType settingType)
 		{
-			foreach (KeyValuePair<SettingsType, bool> kvp in settingsDictionary)
+			switch (settingType)
 			{
-				SettingsType key = kvp.Key;
-
-				if (key == settingsType)
+				case SettingType.SoundEffects:
 				{
-					settingsDictionary[key] = !settingsDictionary[key];
-					HandleSettingsToggle(settingsType);
-					SerializeSettingOfType(settingsType);
+					SoundEffectsEnabled.Invert();
 					break;
 				}
-			}
-		}
-
-		/// <summary>
-		/// Checks whether a setting of passed type is enabled.
-		/// </summary>
-		/// <param name="settingsType"></param>
-		/// <returns>True if setting is enabled, False otherwise.</returns>
-		public bool IsSettingOfTypeEnabled(SettingsType settingsType)
-		{
-			foreach (KeyValuePair<SettingsType, bool> kvp in settingsDictionary)
-			{
-				if (kvp.Key == settingsType)
+				case SettingType.Music:
 				{
-					return kvp.Value;
+					MusicEnabled.Invert();
+					break;
 				}
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Performs necessary operations after a certain in-game setting is toggled
-		/// </summary>
-		/// <param name="settingsType">Settings type.</param>
-		private void HandleSettingsToggle(SettingsType settingsType)
-		{
-			switch (settingsType)
-			{
-				case SettingsType.Sound:
+				case SettingType.Vibrations:
+				{
+					VibrationsEnabled.Invert();
 					break;
-				case SettingsType.Music:
-					break;
-				case SettingsType.Vibrations:
-					HapticController.hapticsEnabled = VibrationsEnabled;
-					break;
+				}
 				default:
+				{
+					throw new ArgumentOutOfRangeException(nameof(settingType), settingType, null);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sets the value of the specified setting.
+		/// </summary>
+		/// <param name="settingType">Setting type.</param>
+		/// <param name="value">Value to set.</param>
+		public static void SetValue(SettingType settingType, float value)
+		{
+			switch (settingType)
+			{
+				case SettingType.SoundEffects:
+				{
+					SoundEffectsVolume.Value = value;
 					break;
-			}			
+				}
+				case SettingType.Music:
+				{
+					MusicVolume.Value = value;
+					break;
+				}
+				case SettingType.Vibrations:
+				{
+					break;
+				}
+				default:
+				{
+					throw new ArgumentOutOfRangeException(nameof(settingType), settingType, null);
+				}
+			}
 		}
 
 		#endregion
@@ -166,42 +166,28 @@ namespace Unidork.Settings
 		#region Serialization
 
 		/// <summary>
+		/// Saves all settings.
+		/// </summary>
+		public void SaveSettings()
+		{
+			settingsSaveData.SoundEffectsEnabled = SoundEffectsEnabled.Value;
+			settingsSaveData.SoundVolume = SoundEffectsVolume.Value;
+
+			settingsSaveData.MusicEnabled = MusicEnabled.Value;
+			settingsSaveData.MusicVolume = MusicVolume.Value;
+
+			settingsSaveData.VibrationsEnabled = VibrationsEnabled.Value;
+			
+			BaseSerializationManager.Save(SettingsKeyName, settingsSaveData, SettingsSavePath);
+		}
+		
+		/// <summary>
 		/// Creates a new instance of settings data and writes it to disk.
 		/// </summary>
 		public void ResetSaveData()
 		{
-			string settingsSaveDataPath = Application.persistentDataPath + settingsSaveDataRelativePath;
-
-			settingsSaveData = new SettingsSaveData(saveVersion);
-			BaseSerializationManager.SerializeSaveDataToFile(settingsSaveData, settingsSaveDataPath);
-		}
-
-		/// <summary>
-		/// Writes the value of the setting of passed type to the save data object and serializes data to disk.
-		/// </summary>
-		/// <param name="settingsType">Settings type.</param>
-		protected virtual void SerializeSettingOfType(SettingsType settingsType)
-		{
-			bool settingValue = settingsDictionary[settingsType];
-
-			switch (settingsType)
-			{
-				case SettingsType.Sound:
-					settingsSaveData.SoundEnabled = settingValue;
-					break;
-				case SettingsType.Music:
-					settingsSaveData.MusicEnabled = settingValue;
-					break;
-				case SettingsType.Vibrations:
-					settingsSaveData.VibrationsEnabled = settingValue;
-					break;
-				default:
-					break;
-			}
-
-			string settingsSaveDataPath = Application.persistentDataPath + settingsSaveDataRelativePath;
-
-			BaseSerializationManager.SerializeSaveDataToFile(settingsSaveData, settingsSaveDataPath);
+			settingsSaveData = new SettingsSaveData(saveVersion, DateTime.Now);
+			BaseSerializationManager.Save(SettingsKeyName, settingsSaveData, SettingsSavePath);
 		}
 
 		#endregion

@@ -5,3 +5,10 @@ AssemblyDefinitionImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 4.1.2
+  assetPath: Assets/Unidork/Third Party/Lofelt/NiceVibrations/Scripts/Editor/Lofelt.NiceVibrations.Editor.asmdef
+  uploadId: 667855

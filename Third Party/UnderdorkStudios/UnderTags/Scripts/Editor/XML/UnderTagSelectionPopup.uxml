@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UnderdorkStudios/UnderTags/Scripts/Editor/CSS/UnderTagSelectionPopup.uss?fileID=7433441132597879392&amp;guid=cde6834a92f3182668257b7409ba0b18&amp;type=3#UnderTagSelectionPopup" />
+    <UnderdorkStudios.UnderTags.Editor.UnderTagSelectionPopupVisualElement style="width: auto;">
+        <ui:VisualElement name="header-container">
+            <ui:VisualElement name="filter-icon" />
+            <ui:TextField picking-mode="Ignore" value="Filter Tags..." name="filter-text-field" />
+        </ui:VisualElement>
+        <ui:VisualElement name="selected-tags-root-container" style="flex-grow: 1;">
+            <ui:VisualElement name="selected-tags-label-container">
+                <ui:Label tabindex="-1" text="Selected Tags" parse-escape-sequences="true" display-tooltip-when-elided="true" name="selected-tags-label" />
+            </ui:VisualElement>
+            <ui:ScrollView name="selected-tags-scroll-view">
+                <ui:VisualElement name="selected-tags-container" style="flex-grow: 1;" />
+            </ui:ScrollView>
+        </ui:VisualElement>
+    </UnderdorkStudios.UnderTags.Editor.UnderTagSelectionPopupVisualElement>
+</ui:UXML>

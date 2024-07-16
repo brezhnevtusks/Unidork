@@ -5,3 +5,10 @@ DefaultImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 
+  assetPath: Assets/Unidork/Third Party/Lofelt/NiceVibrations/Plugins/iOS/LofeltHaptics.framework/Modules/module.modulemap
+  uploadId: 0

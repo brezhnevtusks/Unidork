@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using UnderdorkStudios.UnderTools.Extensions;
 using Unidork.Attributes;
 using Unidork.Extensions;
 using Unidork.Utility;
+using UniRx;
 using UnityEngine;
 
 namespace Unidork.OffScreenTargets
@@ -64,7 +66,7 @@ namespace Unidork.OffScreenTargets
 		/// <summary>
 		/// Is this component currently paused?
 		/// </summary>
-		public bool IsPaused { get; private set; }
+		public ReactiveProperty<bool> IsPaused { get; private set; }
 
 		#endregion
 		
@@ -215,6 +217,8 @@ namespace Unidork.OffScreenTargets
 			{
 				Disable();
 			}
+			
+			PauseManager.RegisterPausable(this);
 		}
 
 		#endregion
@@ -223,7 +227,7 @@ namespace Unidork.OffScreenTargets
 
 		private void Update()
 		{
-			if (IsPaused || detectionOrigin == null)
+			if (IsPaused.Value || detectionOrigin == null)
 			{
 				return;
 			}
@@ -300,7 +304,7 @@ namespace Unidork.OffScreenTargets
 		{
 			foreach (Collider collider in colliders)
 			{
-				IOffScreenTarget target = (IOffScreenTarget)collider.gameObject.GetComponentInHierarchyNonAlloc(typeof(IOffScreenTarget), searchChildrenFirst: false);
+				IOffScreenTarget target = collider.gameObject.GetComponentInParent<IOffScreenTarget>();
 
 				if (target is not { OffScreenTargetIsActive: true })
 				{
@@ -436,7 +440,7 @@ namespace Unidork.OffScreenTargets
 		/// </summary>
 		public virtual void Enable()
 		{
-			PausableObjectManager.RegisterPausableObject(this);
+			PauseManager.RegisterPausable(this);
 			enabled = true;
 		}
 
@@ -445,23 +449,18 @@ namespace Unidork.OffScreenTargets
 		/// </summary>
 		public virtual void Disable()
 		{
-			PausableObjectManager.UnregisterPausableObject(this);
+			PauseManager.UnregisterPausable(this);
 			enabled = false;
 		}
 
 		#endregion
 
-		#region Pause
+		#region Destroy
 
-		/// <summary>
-		/// Pauses the component.
-		/// </summary>
-		public void Pause() => IsPaused = true;
-
-		/// <summary>
-		/// Unpauses the component.
-		/// </summary>
-		public void Unpause() => IsPaused = false;
+		private void OnDestroy()
+		{
+			PauseManager.UnregisterPausable(this);
+		}
 
 		#endregion
 	}

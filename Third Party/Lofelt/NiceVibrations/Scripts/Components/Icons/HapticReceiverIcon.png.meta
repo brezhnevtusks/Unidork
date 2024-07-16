@@ -90,3 +90,10 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 4.1.2
+  assetPath: Assets/Unidork/Third Party/Lofelt/NiceVibrations/Scripts/Components/Icons/HapticReceiverIcon.png
+  uploadId: 667855

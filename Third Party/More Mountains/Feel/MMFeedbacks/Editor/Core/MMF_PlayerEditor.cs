@@ -384,8 +384,6 @@ namespace MoreMountains.Feedbacks
                 
 				EditorGUILayout.Space(10);
 				EditorGUILayout.LabelField(_timingText, EditorStyles.boldLabel);
-				EditorGUILayout.PropertyField(_mmfeedbacksForceTimescaleMode);
-				EditorGUILayout.PropertyField(_mmfeedbacksForcedTimescaleMode);
 				EditorGUILayout.PropertyField(_mmfeedbacksDurationMultiplier);
 				EditorGUILayout.PropertyField(_mmfeedbacksRandomizeDuration);
 				EditorGUILayout.PropertyField(_mmfeedbacksRandomDurationMultiplier);
@@ -394,6 +392,8 @@ namespace MoreMountains.Feedbacks
 				EditorGUILayout.PropertyField(_mmfeedbacksInitialDelay);
 				EditorGUILayout.PropertyField(_mmfeedbacksChanceToPlay);
 				EditorGUILayout.PropertyField(_mmfeedbacksPlayerTimescaleMode);
+				EditorGUILayout.PropertyField(_mmfeedbacksForceTimescaleMode);
+				EditorGUILayout.PropertyField(_mmfeedbacksForcedTimescaleMode);
 
 				EditorGUILayout.Space(10);
 				EditorGUILayout.LabelField(_rangeText, EditorStyles.boldLabel);
@@ -426,6 +426,15 @@ namespace MoreMountains.Feedbacks
 				EditorGUILayout.Space(10);
 				EditorGUILayout.LabelField(_eventsText, EditorStyles.boldLabel);
 				EditorGUILayout.PropertyField(_mmfeedbacksEvents);
+			
+				if (!Application.isPlaying && TargetMmfPlayer.HasAutomaticShakerSetup)
+				{
+					EditorGUILayout.Space(10);
+					if (GUILayout.Button("Automatic Shaker Setup"))
+					{
+						TargetMmfPlayer.AutomaticShakerSetup();
+					}
+				}
 			}
 		}
         
@@ -1058,7 +1067,7 @@ namespace MoreMountains.Feedbacks
 
 		#region Events
 
-		protected void OnDisable()
+		protected virtual void OnDisable()
 		{
 			foreach (KeyValuePair<int, MMF_FeedbackInspector> inspector in MMF_FeedbackInspectors)
 			{
@@ -1067,38 +1076,17 @@ namespace MoreMountains.Feedbacks
 			EditorApplication.playModeStateChanged -= ModeChanged;
 		}
 
-		public void ModeChanged(PlayModeStateChange playModeState)
+		public virtual void ModeChanged(PlayModeStateChange playModeState)
 		{
 			switch (playModeState)
 			{
-				case PlayModeStateChange.ExitingPlayMode:
-					if (_keepPlayModeChanges.boolValue)
-					{
-						MMF_PlayerCopy.ShouldKeepChanges.Add(TargetMmfPlayer);
-						CopyAll();    
-					}
-					break;
-                
 				case PlayModeStateChange.EnteredEditMode:
-                    
-					if (MMF_PlayerCopy.ShouldKeepChanges.Contains(TargetMmfPlayer))
-					{
-						ReplaceAll();
-						if (MMF_PlayerConfiguration.Instance.AutoDisableKeepPlaymodeChanges)
-						{
-							serializedObject.Update();
-							_keepPlayModeChanges.boolValue = false;    
-							serializedObject.ApplyModifiedProperties();
-						}
-						MMF_PlayerCopy.ShouldKeepChanges.Remove(TargetMmfPlayer);
-					}
 					ForceRepaint();
-                    
 					break;
 			}
 		}
-
-		public void ForceRepaint()
+		
+		public virtual void ForceRepaint()
 		{
 			MMF_FeedbackInspectors.Clear();
 			Initialization();
@@ -1106,7 +1094,7 @@ namespace MoreMountains.Feedbacks
 			Repaint();
 		}
         
-		void Reset()
+		protected virtual void Reset()
 		{
 			ForceRepaint();
 		}

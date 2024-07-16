@@ -11,23 +11,17 @@ namespace Unidork.Utility
         [SerializeField] private bool raiseOnlyOnce;
         [SerializeField] private bool raiseOnStart;
 
+        private bool wasRaised;
+        
         #endregion
-
-        #region Init
 
         private void Start()
         {
-            if (!raiseOnStart)
+            if (raiseOnStart)
             {
-                return;
+                RaiseEvent();
             }
-            
-            RaiseEvent();
         }
-
-        #endregion
-
-        private bool wasRaised;
 
         public void RaiseEvent()
         {

@@ -15,12 +15,13 @@ namespace Unidork.Math
 		/// </summary>
 		/// <remarks>Unit prefix is actually used as a suffix in our case, trailing the number.</remarks>
 		/// <param name="number">Number to round.</param>
+		/// <param name="minDigitsToAddPrefix">Prefix will only be added if the number of digits is at least as large as this value.</param>
 		/// <returns>
 		/// A string that is the result of calling <see cref="GetFormattedNumberWithUnitPrefix(long)"/>.
 		/// </returns>
-		public static string GetFormattedNumberWithUnitPrefix(double number)
+		public static string GetFormattedNumberWithUnitPrefix(double number, int minDigitsToAddPrefix = 3)
 		{
-			return GetFormattedNumberWithUnitPrefix((int) number);
+			return GetFormattedNumberWithUnitPrefix((int) number, minDigitsToAddPrefix);
 		}
 
 		/// <summary>
@@ -28,12 +29,19 @@ namespace Unidork.Math
 		/// </summary>
 		/// /// <remarks>Unit prefix is actually used as a suffix in our case, trailing the number.</remarks>
 		/// <param name="number">Number to round.</param>
+		/// <param name="minDigitsToAddPrefix">Prefix will only be added if the number of digits is at least as large as this value.</param>
 		/// <returns>
 		/// A string that contains of the formatted version of the number and a unit suffix, if any.
 		/// </returns>
-		public static string GetFormattedNumberWithUnitPrefix(long number)
+		public static string GetFormattedNumberWithUnitPrefix(long number, int minDigitsToAddPrefix = 3)
 		{
 			long numberOfDigits = number.GetNumberOfDigits();
+
+			if (numberOfDigits < minDigitsToAddPrefix)
+			{
+				return number.ToString();
+			}
+			
 			string unitPrefix = GetUnitPrefix(numberOfDigits);
 			
 			string formattedNumber = string.Format(new IntegerFormatter(), "{0:K}", number);

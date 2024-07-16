@@ -1,4 +1,4 @@
-using Cinemachine;
+using Unity.Cinemachine;
 using UnityEngine;
 
 namespace Unidork.CameraUtility
@@ -32,7 +32,7 @@ namespace Unidork.CameraUtility
 
         protected override void PostPipelineStageCallback(CinemachineVirtualCameraBase vcam, CinemachineCore.Stage stage, ref CameraState state, float deltaTime)
         {
-            if (stage == m_ApplyAfter && deltaTime >= 0)
+            if (stage == ApplyAfter && deltaTime >= 0)
             {
                 if (impulseListenerTransform == null)
                 {
@@ -40,15 +40,15 @@ namespace Unidork.CameraUtility
                     return;
                 }
                 
-                bool haveImpulse = CinemachineImpulseManager.Instance.GetImpulseAt(impulseListenerTransform.position, m_Use2DDistance, m_ChannelMask, 
+                bool haveImpulse = CinemachineImpulseManager.Instance.GetImpulseAt(impulseListenerTransform.position, Use2DDistance, ChannelMask, 
                     out var impulsePos, out var impulseRot);
                 
-                bool haveReaction = m_ReactionSettings.GetReaction(deltaTime, impulsePos, out var reactionPos, out var reactionRot);
+                bool haveReaction = ReactionSettings.GetReaction(deltaTime, impulsePos, out var reactionPos, out var reactionRot);
 
                 if (haveImpulse)
                 {
-                    impulseRot = Quaternion.SlerpUnclamped(Quaternion.identity, impulseRot, m_Gain);
-                    impulsePos *= m_Gain;
+                    impulseRot = Quaternion.SlerpUnclamped(Quaternion.identity, impulseRot, Gain);
+                    impulsePos *= Gain;
                 }
                 if (haveReaction)
                 {
@@ -57,7 +57,7 @@ namespace Unidork.CameraUtility
                 }
                 if (haveImpulse || haveReaction)
                 {
-                    if (m_UseCameraSpace)
+                    if (UseCameraSpace)
                     {
                         impulsePos = state.RawOrientation * impulsePos;
                     }

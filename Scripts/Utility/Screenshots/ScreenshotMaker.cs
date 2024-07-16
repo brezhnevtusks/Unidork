@@ -2,7 +2,7 @@
 using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
-using Unidork.Extensions;
+using UnderdorkStudios.UnderTools.Extensions;
 using UnityEngine;
 
 namespace Unidork.Utility
@@ -151,7 +151,7 @@ namespace Unidork.Utility
         /// </summary>
         private void GetScreenSpaceOverlayCanvases()
 		{
-            Canvas[] canvasArray = FindObjectsOfType<Canvas>();
+            Canvas[] canvasArray = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
 			screenSpaceOverlayCanvases = canvasArray.ToList(canvasArray.Length);
 
             for (int i = screenSpaceOverlayCanvases.Count - 1; i >= 0; i--)

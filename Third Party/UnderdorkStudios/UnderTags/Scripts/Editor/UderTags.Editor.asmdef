@@ -1,0 +1,29 @@
+{
+    "name": "UnderTags.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:37618fc917fa4d97b56fc02508da0ea7",
+        "GUID:478a2357cc57436488a56e564b08d223",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:6fa730dad28f4c90b4a43a3de0032c60",
+        "GUID:6abe7d7cbadb4d83a635b4df5c571be6",
+        "GUID:30ccc82aac0b4d8cb7072ecd3c509ff7"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "1.0.0",
+            "define": "UNDERTAGS_NEW_INPUT"
+        }
+    ],
+    "noEngineReferences": false
+}

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Sirenix.Utilities;
-using Unidork.Extensions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -10,7 +9,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 namespace Unidork.ObjectPooling
 {
     /// <summary>
-    /// Manages a pool of objects that can be used by an <see cref="ObjectSpawner/>.
+    /// Manages a pool of objects that can be used by an <see cref="ObjectSpawner"/>.
     /// </summary>
     public class ObjectPooler
     {
@@ -48,7 +47,7 @@ namespace Unidork.ObjectPooling
         /// <summary>
         /// Dictionary where an asset guid is the key and a list of pooled objects corresponding with that asset are the value.
         /// </summary>
-        private readonly Dictionary<string, List<IPooledObject>> pooledObjectLists = new();
+        private readonly Dictionary<AssetReference, List<IPooledObject>> pooledObjectLists = new();
 
         #endregion
         
@@ -66,7 +65,7 @@ namespace Unidork.ObjectPooling
             
             pooledObjectHolder = settings.PooledObjectHolder;
             
-            CreatePoolAsync(settings.GetPoolItemSettings()).Forget();
+            CreatePoolAsync(settings.GetPooledObjectSettings()).Forget();
         }
 
         #endregion
@@ -79,7 +78,7 @@ namespace Unidork.ObjectPooling
         /// </summary>
         /// <param name="itemSettingsArray">Object pool item settings.</param>
         /// <exception cref="ArgumentException">Thrown when passed settings array is null or empty.</exception>
-        private async UniTaskVoid CreatePoolAsync(ObjectPoolItemSettings[] itemSettingsArray)
+        private async UniTaskVoid CreatePoolAsync(PooledObjectSettings[] itemSettingsArray)
         {
             await Addressables.InitializeAsync().ToUniTask();
             
@@ -103,7 +102,7 @@ namespace Unidork.ObjectPooling
 
             List<UniTask> poolTasks = new List<UniTask>();
             
-            foreach (ObjectPoolItemSettings itemSettings in itemSettingsArray)
+            foreach (PooledObjectSettings itemSettings in itemSettingsArray)
             {
                 poolTasks.Add(CreatePooledObjectListAsync(itemSettings));
             }
@@ -117,9 +116,9 @@ namespace Unidork.ObjectPooling
         /// </summary>
         /// <param name="itemSettings">Object pool item settings.</param>
         /// <exception cref="ArgumentException">Thrown when the pool already contains items matching the passed handle.</exception>
-        private async UniTask CreatePooledObjectListAsync(ObjectPoolItemSettings itemSettings)
+        private async UniTask CreatePooledObjectListAsync(PooledObjectSettings itemSettings)
         {
-            if (pooledObjectLists.ContainsKey(itemSettings.AssetReference.AssetGUID))
+            if (pooledObjectLists.ContainsKey(itemSettings.AssetReference))
             {
                 throw new ArgumentException($"{Name} already contains a pool for asset with address {itemSettings.AssetReference.AssetGUID}");
             }
@@ -138,13 +137,13 @@ namespace Unidork.ObjectPooling
             
             for (var i = 1; i <= itemSettings.NumberToPool; i++)
             {
-                var pooledObject = (IPooledObject)Addressables.InstantiateAsync(itemSettings.AssetReference).Result.GetComponentInChildrenNonAlloc(typeof(IPooledObject));
+                var pooledObject = Addressables.InstantiateAsync(itemSettings.AssetReference).Result.GetComponentInChildren<IPooledObject>();
                 pooledObject.SetParent(pooledObjectHolder);
                 pooledObject.Deactivate(deactivateOnStart: true);
                 pooledObjectList.Add(pooledObject);
             }
 
-            pooledObjectLists.Add(itemSettings.AssetReference.AssetGUID, pooledObjectList);
+            pooledObjectLists.Add(itemSettings.AssetReference, pooledObjectList);
             
             if (itemSettings.PoolCanExpand)
 			{
@@ -159,7 +158,7 @@ namespace Unidork.ObjectPooling
         /// </summary>
         private void Destroy()
         {
-            foreach (KeyValuePair<string, List<IPooledObject>> kvp in pooledObjectLists)
+            foreach (KeyValuePair<AssetReference, List<IPooledObject>> kvp in pooledObjectLists)
             {
                 List<IPooledObject> pooledObjects = kvp.Value;
 
@@ -189,7 +188,7 @@ namespace Unidork.ObjectPooling
         /// contain any items matching the passed asset address.</exception>
         public IPooledObject Get(AssetReference assetReference)
         {
-            if (!pooledObjectLists.TryGetValue(assetReference.AssetGUID, out List<IPooledObject> pooledObjects))
+            if (!pooledObjectLists.TryGetValue(assetReference, out List<IPooledObject> pooledObjects))
             {
                 throw new ArgumentException($"{Name} doesn't contain items that match asset with gui {assetReference}");
             }
@@ -202,24 +201,25 @@ namespace Unidork.ObjectPooling
                 }
             }
 
-            foreach (ObjectPoolItemSettings objectPoolItemSettings in settings.GetPoolItemSettings())
+            foreach (PooledObjectSettings objectPoolItemSettings in settings.GetPooledObjectSettings())
 			{
                 if (Equals(objectPoolItemSettings.AssetReference.AssetGUID, assetReference.AssetGUID))
-				{
+                {
                     if (!objectPoolItemSettings.PoolCanExpand)
 					{
                         return null;
 					}
-                    else
-					{
-                        var pooledObject = Addressables.InstantiateAsync(assetReference, pooledObjectHolder).Result.GetComponentInChildren<IPooledObject>();
-                        pooledObject.Deactivate(deactivateOnStart: true);
 
-                        pooledObjectLists[assetReference.AssetGUID].Add(pooledObject);
+                    var pooledObject = Addressables
+                        .InstantiateAsync(assetReference, pooledObjectHolder).Result
+                        .GetComponentInChildren<IPooledObject>();
+                    
+                    pooledObject.Deactivate(deactivateOnStart: true);
 
-                        return pooledObject;
-                    }
-				}
+                    pooledObjectLists[assetReference].Add(pooledObject);
+
+                    return pooledObject;
+                }
 			}
 
             return null;            

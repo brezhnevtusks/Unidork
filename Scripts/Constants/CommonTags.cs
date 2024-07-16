@@ -17,11 +17,15 @@ namespace Unidork.Constants
         public const string UICamera = "UICamera";
         public const string SplashCamera = "SplashCamera";
 
+        public const string GameStateSwitcher = "GameStateSwitcher";
+
         public const string Level = "Level";
         public const string Stage = "Stage";
 
         public const string Start = "Start";
         public const string Finish = "Finish";
+
+        public const string ResourceManager = "ResourceManager";
 
 	    public const string QuestBarHolder = "QuestBarHolder";
     }

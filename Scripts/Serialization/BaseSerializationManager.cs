@@ -1,6 +1,4 @@
-﻿using System.IO;
-using Unidork.Attributes;
-using Unidork.FileUtility;
+﻿using Unidork.Attributes;
 using UnityEngine;
 
 namespace Unidork.Serialization
@@ -56,67 +54,39 @@ namespace Unidork.Serialization
 
 		#region Serialize
 
-		#region Json
-
 		/// <summary>
-		/// Serializes save data to a json and writes it to disk at specified path.
+		/// Saves data to a file using Easy Save.
 		/// </summary>
-		/// <param name="saveData">Save data to serialize.</param>
-		/// <param name="savePath">Save file path.</param>
-		public static void SerializeSaveDataToFile(BaseSaveData saveData, string savePath)
+		/// <param name="key">Key.</param>
+		/// <param name="data">Save data.</param>
+		/// <param name="filePath">Save file path.</param>
+		/// <param name="settings">Settings.</param>
+		/// <typeparam name="T">Type of save data.</typeparam>
+		public static void Save<T>(string key, T data, string filePath, ES3Settings settings = null) where T : BaseSaveData
 		{
-			string saveJson = SerializeSaveDataToJson(saveData);
-			File.WriteAllText(savePath, saveJson);
+			ES3.Save(key, data, filePath, settings);
 		}
-		
-		/// <summary>
-		/// Serializes a <see cref="BaseSaveData"/> object to Json.
-		/// </summary>
-		/// <param name="saveData">Save data.</param>
-		/// <returns>
-		/// A Json representation of the passed save data object.
-		/// </returns>
-		protected static string SerializeSaveDataToJson(BaseSaveData saveData) => JsonUtility.ToJson(saveData);
-
-		#endregion
-
-		#endregion
-
-		#region Deserialize
-
-		#region Json
 
 		/// <summary>
-		/// Deserializes data at specified file path into an object of specified type.
+		/// Loads data from a file using Easy Save.
 		/// </summary>
+		/// <param name="key">Key.</param>
 		/// <param name="filePath">File path.</param>
-		/// <typeparam name="T">Type of object to deserialize.</typeparam>
+		/// <param name="settings">Load settings.</param>
+		/// <typeparam name="T">Type of save data.</typeparam>
 		/// <returns>
-		/// An instance of <typeparamref name="T"/>.
+		/// An instance of <see cref="T"/> if load succeeds. Otherwise Easy Save will throw an exception.
 		/// </returns>
-		public static T DeserializeSaveDataFromFile<T>(string filePath) where T : BaseSaveData
+		public static T Load<T>(string key, string filePath, T defaultValue = default, ES3Settings settings = null) where T : BaseSaveData
 		{
-			string saveJson = FileUtils.GetByteStringFromFile(filePath);
-
-			if (string.IsNullOrEmpty(saveJson))
+			if (!ES3.FileExists(filePath, settings) || !ES3.KeyExists(key, filePath, settings))
 			{
-				return null;
+				ES3.Save(key, defaultValue, filePath, settings);
+				return defaultValue;
 			}
 			
-			return DeserializeSaveDataFromJson<T>(saveJson);
+			return ES3.Load<T>(key, filePath, settings);
 		}
-		
-		/// <summary>
-		/// Deserializes the passed Json string into an object of specified type.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <typeparam name="T">Type of object to deserialize.</typeparam>
-		/// <returns>
-		/// An instance of <typeparamref name="T"/>.
-		/// </returns>
-		protected static T DeserializeSaveDataFromJson<T>(string json) where T : BaseSaveData => JsonUtility.FromJson<T>(json);
-
-		#endregion
 
 		#endregion
 	}

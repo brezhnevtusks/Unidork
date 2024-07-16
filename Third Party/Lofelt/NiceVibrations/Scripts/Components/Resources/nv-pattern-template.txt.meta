@@ -5,3 +5,10 @@ TextScriptImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 4.1.2
+  assetPath: Assets/Unidork/Third Party/Lofelt/NiceVibrations/Scripts/Components/Resources/nv-pattern-template.txt
+  uploadId: 667855

@@ -2,11 +2,17 @@
     "name": "Unidork.Settings",
     "rootNamespace": "",
     "references": [
+        "GUID:49a2a1ed1b55f7fa5994009a6172b28c",
         "GUID:57a0b9bc628ab4740af4b6f1f0b2e134",
-        "GUID:8087d854c1f812e4b9a74437dfc524e0",
         "GUID:4ee1b0f5de000e041a6521f50852d501",
         "GUID:e3849d08bb4c0424eb45023c3b3ac9f6",
-        "GUID:f2624564a2dc98e43b069312b63c832f"
+        "GUID:9549780f47e97fc4aae12a67385fdc4b",
+        "GUID:f2624564a2dc98e43b069312b63c832f",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:ccbb9e063a08b6c4186c5e6067fd7e58",
+        "Unidork.AddressableUtility.Editor",
+        "Unidork.FileUtility",
+        "Unidork.Tweens"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

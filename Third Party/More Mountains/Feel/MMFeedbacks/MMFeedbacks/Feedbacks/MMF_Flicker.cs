@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -10,6 +12,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback lets you flicker the color of a specified renderer (sprite, mesh, etc) for a certain duration, at the specified octave, and with the specified color. Useful when a character gets hit, for example (but so much more!).")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Renderer/Flicker")]
 	public class MMF_Flicker : MMF_Feedback
 	{
@@ -44,9 +47,10 @@ namespace MoreMountains.Feedbacks
 		/// the duration of the flicker when getting damage
 		[Tooltip("the duration of the flicker when getting damage")]
 		public float FlickerDuration = 0.2f;
-		/// the frequency at which to flicker
-		[Tooltip("the frequency at which to flicker")]
-		public float FlickerOctave = 0.04f;
+		/// the duration of the period for the flicker
+		[Tooltip("the duration of the period for the flicker")]
+		[FormerlySerializedAs("FlickerOctave")]
+		public float FlickerPeriod = 0.04f;
 		/// the color we should flicker the sprite to 
 		[Tooltip("the color we should flicker the sprite to")]
 		[ColorUsage(true, true)]
@@ -158,7 +162,8 @@ namespace MoreMountains.Feedbacks
 			}
 			for (int i = 0; i < MaterialIndexes.Length; i++)
 			{
-				_coroutines[i] = Owner.StartCoroutine(Flicker(BoundRenderer, i, _initialFlickerColors[i], FlickerColor, FlickerOctave, FeedbackDuration));
+				if (_coroutines[i] != null) { Owner.StopCoroutine(_coroutines[i]); }
+				_coroutines[i] = Owner.StartCoroutine(Flicker(BoundRenderer, i, _initialFlickerColors[i], FlickerColor, FlickerPeriod, FeedbackDuration));
 			}
 		}
 

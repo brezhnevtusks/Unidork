@@ -143,7 +143,7 @@ namespace Unidork.UI
 			    return;
 		    }
 		    
-		    textMaterial.SetColor(ShaderConstants.UnderlayColorId, underlayColor);	
+		    textMaterial.SetColor(ShaderConstants.UnderlayColor, underlayColor);	
 	    }
 
 	    /// <summary>
@@ -157,7 +157,7 @@ namespace Unidork.UI
 			    return;
 		    }
 		    
-		    textMaterial.SetFloat(ShaderConstants.UnderlayOffsetXId, underlayOffsetX);
+		    textMaterial.SetFloat(ShaderConstants.UnderlayOffsetX, underlayOffsetX);
 	    }
 	    
 	    /// <summary>
@@ -171,7 +171,7 @@ namespace Unidork.UI
 			    return;
 		    }
 		    
-		    textMaterial.SetFloat(ShaderConstants.UnderlayOffsetYId, underlayOffsetY);
+		    textMaterial.SetFloat(ShaderConstants.UnderlayOffsetY, underlayOffsetY);
 	    }
 
 	    /// <summary>
@@ -185,7 +185,7 @@ namespace Unidork.UI
 			    return;
 		    }
 		    
-		    textMaterial.SetFloat(ShaderConstants.UnderlayDilateId, underlayDilate);   
+		    textMaterial.SetFloat(ShaderConstants.UnderlayDilate, underlayDilate);   
 	    }
 	    
 	    /// <summary>
@@ -199,7 +199,7 @@ namespace Unidork.UI
 			    return;
 		    }
 		    
-		    textMaterial.SetFloat(ShaderConstants.UnderlaySoftnessId, underlaySoftness);   
+		    textMaterial.SetFloat(ShaderConstants.UnderlaySoftness, underlaySoftness);   
 	    }
 
 		#endregion

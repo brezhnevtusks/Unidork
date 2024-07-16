@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace Unidork.WeightedSelection.Editor
 {
-    [CustomEditor(typeof(WeightedObjectTableBase))]
+    [CustomEditor(typeof(WeightedTableBase))]
     public class WeightedObjectTableEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            var table = (WeightedObjectTableBase)serializedObject.targetObject;
+            var table = (WeightedTableBase)serializedObject.targetObject;
 
             SerializedProperty objects = serializedObject.FindProperty("objects");
         
@@ -31,11 +31,11 @@ namespace Unidork.WeightedSelection.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        protected virtual void DrawCustomTypeButtons(WeightedObjectTableBase table)
+        protected virtual void DrawCustomTypeButtons(WeightedTableBase table)
         {
         }
 
-        private void DrawBuiltInTypeButtons(WeightedObjectTableBase table)
+        private void DrawBuiltInTypeButtons(WeightedTableBase table)
         {
             if (GUILayout.Button("ADD FLOAT"))
             {
@@ -48,13 +48,13 @@ namespace Unidork.WeightedSelection.Editor
                 table.GetObjects().Add(new WeightedObject_Int());
                 EditorUtility.SetDirty(table);
             }
-        
+#if UNIDORK_ADDRESSABLES 
             if (GUILayout.Button("ADD ASSET REF"))
             {
                 table.GetObjects().Add(new WeightedObject_AssetReference());
                 EditorUtility.SetDirty(table);
             }
-        
+#endif
             if (GUILayout.Button("ADD TABLE REF"))
             {
                 table.GetObjects().Add(new WeightedObject_WeightedObjectTable());

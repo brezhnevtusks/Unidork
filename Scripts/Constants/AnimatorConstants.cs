@@ -30,6 +30,7 @@ namespace Unidork.Constants
         public const string OutroAnimatorTag = "Outro";
         public const string PressAnimatorTag = "Press";
 	    public const string PlayAnimatorTag = "Play";
+	    public const string StartAnimatorTag = "Start";
 
 	    public const string ShowAnimatorTag = "Show";
 	    public const string HideAnimatorTag = "Hide";
@@ -76,6 +77,7 @@ namespace Unidork.Constants
         public static readonly int OutroAnimatorHash = Animator.StringToHash(OutroAnimatorTag);
         public static readonly int PressAnimatorHash = Animator.StringToHash(PressAnimatorTag);
 	    public static readonly int PlayAnimatorHash = Animator.StringToHash(PlayAnimatorTag);
+	    public static readonly int StartAnimatorHash = Animator.StringToHash(StartAnimatorTag);
 
 	    public static readonly int MoveSpeedAnimatorHash = Animator.StringToHash("MoveSpeed");
 

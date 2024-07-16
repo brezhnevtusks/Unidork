@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using Unidork.Extensions;
+using UnderdorkStudios.UnderTools.Extensions;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -245,6 +245,18 @@ namespace Unidork.WeightedSelection
 			{
 				group.SelectionChance = group.Weight / totalWeight * 100f;
 			}
+		}
+
+		#endregion
+
+		#region Constructor
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="value">Values stored in this weighted object group.</param>
+		public WeightedObjectGroupWithRarity(List<TObject> value) : base(value)
+		{
 		}
 
 		#endregion

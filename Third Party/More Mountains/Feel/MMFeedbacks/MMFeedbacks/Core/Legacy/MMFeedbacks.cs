@@ -19,7 +19,7 @@ namespace MoreMountains.Feedbacks
 	/// This class provides a custom inspector to add and customize feedbacks, and public methods to trigger them, stop them, etc.
 	/// You can either use it on its own, or bind it from another class and trigger it from there.
 	/// </summary>
-	[AddComponentMenu("More Mountains/Feedbacks/MMFeedbacks")]
+	[AddComponentMenu("")]
 	public class MMFeedbacks : MonoBehaviour
 	{
 		/// the possible directions MMFeedbacks can be played
@@ -147,7 +147,7 @@ namespace MoreMountains.Feedbacks
 		/// if you don't stop your MMFeedbacks it'll remain true of course
 		public bool IsPlaying { get; protected set; }
 		/// if this MMFeedbacks is playing the time since it started playing
-		public float ElapsedTime => IsPlaying ? GetTime() - _lastStartAt : 0f;
+		public virtual float ElapsedTime => IsPlaying ? GetTime() - _lastStartAt : 0f;
 		/// the amount of times this MMFeedbacks has been played
 		public int TimesPlayed { get; protected set; }
 		/// whether or not the execution of this MMFeedbacks' sequence is being prevented and waiting for a Resume() call
@@ -174,13 +174,14 @@ namespace MoreMountains.Feedbacks
 						}
 					}
 				}
-				return InitialDelay + total;
+				return ComputedInitialDelay + total;
 			}
 		}
         
 		public virtual float GetTime() { return (PlayerTimescaleMode == TimescaleModes.Scaled) ? Time.time : Time.unscaledTime; }
 		public virtual float GetDeltaTime() { return (PlayerTimescaleMode == TimescaleModes.Scaled) ? Time.deltaTime : Time.unscaledDeltaTime; }
-        
+		public virtual float ComputedInitialDelay => ApplyTimeMultiplier(InitialDelay);
+		
 		protected float _startTime = 0f;
 		protected float _holdingMax = 0f;
 		protected float _lastStartAt = -float.MaxValue;
@@ -247,7 +248,7 @@ namespace MoreMountains.Feedbacks
 		/// <summary>
 		/// Initializes the MMFeedbacks, setting this MMFeedbacks as the owner
 		/// </summary>
-		public virtual void Initialization()
+		public virtual void Initialization(bool forceInitIfPlaying = false)
 		{
 			Initialization(this.gameObject);
 		}
@@ -298,6 +299,18 @@ namespace MoreMountains.Feedbacks
 		public virtual async System.Threading.Tasks.Task PlayFeedbacksTask(Vector3 position, float feedbacksIntensity = 1.0f, bool forceRevert = false)
 		{
 			PlayFeedbacks(position, feedbacksIntensity, forceRevert);
+			while (IsPlaying)
+			{
+				await System.Threading.Tasks.Task.Yield();
+			}
+		}
+        
+		/// <summary>
+		/// Plays all feedbacks and awaits until completion
+		/// </summary>
+		public virtual async System.Threading.Tasks.Task PlayFeedbacksTask()
+		{
+			PlayFeedbacks();
 			while (IsPlaying)
 			{
 				await System.Threading.Tasks.Task.Yield();
@@ -465,7 +478,7 @@ namespace MoreMountains.Feedbacks
 			_totalDuration = TotalDuration;
 			CheckForPauses();
             
-			if (InitialDelay > 0f)
+			if (ComputedInitialDelay > 0f)
 			{
 				StartCoroutine(HandleInitialDelayCo(position, feedbacksIntensity, forceRevert));
 			}
@@ -527,7 +540,7 @@ namespace MoreMountains.Feedbacks
 		protected virtual IEnumerator HandleInitialDelayCo(Vector3 position, float feedbacksIntensity, bool forceRevert = false)
 		{
 			IsPlaying = true;
-			yield return MMFeedbacksCoroutine.WaitFor(InitialDelay);
+			yield return MMFeedbacksCoroutine.WaitFor(ComputedInitialDelay);
 			PreparePlay(position, feedbacksIntensity, forceRevert);
 		}
         
@@ -586,157 +599,7 @@ namespace MoreMountains.Feedbacks
 		/// <returns></returns>
 		protected virtual IEnumerator PausedFeedbacksCo(Vector3 position, float feedbacksIntensity)
 		{
-			IsPlaying = true;
-
-			int i = (Direction == Directions.TopToBottom) ? 0 : Feedbacks.Count-1;
-
-			while ((i >= 0) && (i < Feedbacks.Count))
-			{
-				if (!IsPlaying)
-				{
-					yield break;
-				}
-
-				if (Feedbacks[i] == null)
-				{
-					yield break;
-				}
-                
-				if (((Feedbacks[i].Active) && (Feedbacks[i].ScriptDrivenPause)) || InScriptDrivenPause)
-				{
-					InScriptDrivenPause = true;
-
-					bool inAutoResume = (Feedbacks[i].ScriptDrivenPauseAutoResume > 0f); 
-					float scriptDrivenPauseStartedAt = GetTime();
-					float autoResumeDuration = Feedbacks[i].ScriptDrivenPauseAutoResume;
-                    
-					while (InScriptDrivenPause)
-					{
-						if (inAutoResume && (GetTime() - scriptDrivenPauseStartedAt > autoResumeDuration))
-						{
-							ResumeFeedbacks();
-						}
-						yield return null;
-					} 
-				}
-
-				// handles holding pauses
-				if ((Feedbacks[i].Active)
-				    && ((Feedbacks[i].HoldingPause == true) || (Feedbacks[i].LooperPause == true))
-				    && (Feedbacks[i].ShouldPlayInThisSequenceDirection))
-				{
-					Events.TriggerOnPause(this);
-					// we stay here until all previous feedbacks have finished
-					while (GetTime() - _lastStartAt < _holdingMax)
-					{
-						yield return null;
-					}
-					_holdingMax = 0f;
-					_lastStartAt = GetTime();
-				}
-
-				// plays the feedback
-				if (FeedbackCanPlay(Feedbacks[i]))
-				{
-					Feedbacks[i].Play(position, feedbacksIntensity);
-				}
-
-				// Handles pause
-				if ((Feedbacks[i].Pause != null) && (Feedbacks[i].Active) && (Feedbacks[i].ShouldPlayInThisSequenceDirection))
-				{
-					bool shouldPause = true;
-					if (Feedbacks[i].Chance < 100)
-					{
-						float random = Random.Range(0f, 100f);
-						if (random > Feedbacks[i].Chance)
-						{
-							shouldPause = false;
-						}
-					}
-
-					if (shouldPause)
-					{
-						yield return Feedbacks[i].Pause;
-						Events.TriggerOnResume(this);
-						_lastStartAt = GetTime();
-						_holdingMax = 0f;
-					}
-				}
-
-				// updates holding max
-				if (Feedbacks[i].Active)
-				{
-					if ((Feedbacks[i].Pause == null) && (Feedbacks[i].ShouldPlayInThisSequenceDirection) && (!Feedbacks[i].Timing.ExcludeFromHoldingPauses))
-					{
-						float feedbackDuration = Feedbacks[i].TotalDuration;
-						_holdingMax = Mathf.Max(feedbackDuration, _holdingMax);
-					}
-				}
-
-				// handles looper
-				if ((Feedbacks[i].LooperPause == true)
-				    && (Feedbacks[i].Active)
-				    && (Feedbacks[i].ShouldPlayInThisSequenceDirection)
-				    && (((Feedbacks[i] as MMFeedbackLooper).NumberOfLoopsLeft > 0) || (Feedbacks[i] as MMFeedbackLooper).InInfiniteLoop))
-				{
-					// we determine the index we should start again at
-					bool loopAtLastPause = (Feedbacks[i] as MMFeedbackLooper).LoopAtLastPause;
-					bool loopAtLastLoopStart = (Feedbacks[i] as MMFeedbackLooper).LoopAtLastLoopStart;
-
-					int newi = 0;
-
-					int j = (Direction == Directions.TopToBottom) ? i - 1 : i + 1;
-
-					while ((j >= 0) && (j <= Feedbacks.Count))
-					{
-						// if we're at the start
-						if (j == 0)
-						{
-							newi = j - 1;
-							break;
-						}
-						if (j == Feedbacks.Count)
-						{
-							newi = j ;
-							break;
-						}
-						// if we've found a pause
-						if ((Feedbacks[j].Pause != null)
-						    && (Feedbacks[j].FeedbackDuration > 0f)
-						    && loopAtLastPause && (Feedbacks[j].Active))
-						{
-							newi = j;
-							break;
-						}
-						// if we've found a looper start
-						if ((Feedbacks[j].LooperStart == true)
-						    && loopAtLastLoopStart
-						    && (Feedbacks[j].Active))
-						{
-							newi = j;
-							break;
-						}
-
-						j += (Direction == Directions.TopToBottom) ? -1 : 1;
-					}
-					i = newi;
-				}
-				i += (Direction == Directions.TopToBottom) ? 1 : -1;
-			}
-			float unscaledTimeAtEnd = GetTime();
-			while (GetTime() - unscaledTimeAtEnd < _holdingMax)
-			{
-				yield return null;
-			}
-            
-			while (HasFeedbackStillPlaying())
-			{
-				yield return null;
-			}
-            
-			IsPlaying = false;
-			Events.TriggerOnComplete(this);
-			ApplyAutoRevert();
+			yield return null;
 		}
 
 		#endregion

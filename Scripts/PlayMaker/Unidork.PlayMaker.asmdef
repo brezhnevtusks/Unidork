@@ -2,9 +2,7 @@
     "name": "Unidork.PlayMaker",
     "rootNamespace": "",
     "references": [
-        "PlayMakerAssembly",
-        "Unidork.Extensions",
-        "Unidork.Variables"
+        "PlayMakerAssembly"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

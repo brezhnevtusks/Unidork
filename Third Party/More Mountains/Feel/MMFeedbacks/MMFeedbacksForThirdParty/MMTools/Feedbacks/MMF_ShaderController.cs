@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -10,6 +11,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback lets you trigger a one time play on a target ShaderController.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("Renderer/ShaderController")]
 	public class MMF_ShaderController : MMF_Feedback
 	{
@@ -41,6 +43,11 @@ namespace MoreMountains.Feedbacks
 		/// whether this should revert to original at the end
 		[Tooltip("whether this should revert to original at the end")]
 		public bool RevertToInitialValueAfterEnd = false;
+		
+		/// whether or not to initialize the initial value to the current value on a OneTime play
+		[Tooltip("whether or not to initialize the initial value to the current value on a OneTime play")]
+		[MMFEnumCondition("Mode", (int)Modes.OneTime)]
+		public bool GetInitialValueOnOneTime = false;
 		/// the duration of the One Time shake
 		[Tooltip("the duration of the One Time shake")]
 		[MMFEnumCondition("Mode", (int)Modes.OneTime)]
@@ -144,6 +151,7 @@ namespace MoreMountains.Feedbacks
 			if (Mode == Modes.OneTime)
 			{
 				shaderController.OneTimeDuration = FeedbackDuration;
+				shaderController.GetInitialValueOnOneTime = GetInitialValueOnOneTime;
 				shaderController.OneTimeAmplitude = OneTimeAmplitude;
 				shaderController.OneTimeCurve = OneTimeCurve;
 				if (NormalPlayDirection)

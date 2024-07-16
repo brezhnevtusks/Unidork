@@ -11,6 +11,7 @@ namespace Unidork.Feedbacks
 	/// Feedback that sets a game object's layer to a specific value.
 	/// </summary>
 	[System.Serializable]
+	[UsedImplicitly]
 	[FeedbackPath("GameObject/Set Layer")]
 	[FeedbackHelp("Sets a game object's layer to a specific value.")]
 	public class SetLayerFeedback : MMF_Feedback
@@ -30,6 +31,8 @@ namespace Unidork.Feedbacks
 		/// <summary>
 		/// Game object to set layer on.
 		/// </summary>
+		[MMFInspectorGroup("Set Layer", true)]
+
 		[Tooltip("Game object to set layer on.")]
 		[SerializeField]
 		private GameObject targetGameObject = null;
@@ -44,10 +47,15 @@ namespace Unidork.Feedbacks
 
 		#endregion
 
-		#region Feedback
+		#region Play
 
 		protected override void CustomPlayFeedback(Vector3 position, float feedbacksIntensity = 1)
 		{
+			if (!Active)
+			{
+				return;
+			}
+			
 			targetGameObject.layer = layerMask;
 		}
 

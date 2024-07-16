@@ -1,6 +1,3 @@
-#if ADDRESSABLES
-
-using Unidork.Extensions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -51,16 +48,17 @@ namespace Unidork.AddressableAssetsUtility
 		protected override void Execute()
 		{
 			gameObjectLoadHandle = LoadAssetAsync<GameObject>(GameObjectAssetReference);
-			
+
 			gameObjectLoadHandle.Completed += completionHandle =>
 			{
 				if (completionHandle.Status == AsyncOperationStatus.Succeeded)
 				{
-					T component = gameObjectLoadHandle.Result.GetComponentNonAlloc<T>();
+					T component = gameObjectLoadHandle.Result.GetComponent<T>();
 
 					if (component == null)
 					{
-						Complete(null, false, $"Loaded Addressable game object doesn't have a component of type {typeof(T)}!", true);
+						Complete(null, false,
+						         $"Loaded Addressable game object doesn't have a component of type {typeof(T)}!", true);
 					}
 					else
 					{
@@ -69,8 +67,9 @@ namespace Unidork.AddressableAssetsUtility
 
 					return;
 				}
-				
-				Complete(null, false, $"Failed to load game object asset with GUID: {GameObjectAssetReference.AssetGUID}", true);
+
+				Complete(null, false,
+				         $"Failed to load game object asset with GUID: {GameObjectAssetReference.AssetGUID}", true);
 			};
 		}
 
@@ -84,5 +83,3 @@ namespace Unidork.AddressableAssetsUtility
 		#endregion
 	}
 }
-
-#endif

@@ -1,4 +1,6 @@
-﻿using Doozy.Editor.Signals.ScriptableObjects;
+﻿#if DOOZY_UIMANAGER && DOOZY_SIGNALS
+using Doozy.Editor.Signals.ScriptableObjects;
+#endif
 using Sirenix.OdinInspector.Editor;
 
 namespace Unidork.Events

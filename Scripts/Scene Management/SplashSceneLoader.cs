@@ -36,7 +36,7 @@ namespace Unidork.SceneManagement
                 return;
             }
             
-            UnityEngine.SceneManagement.SceneManager.LoadScene("S_Splash");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("SCN_Splash");
         }
 #endif
 
@@ -57,7 +57,7 @@ namespace Unidork.SceneManagement
         private async UniTaskVoid UnloadSplashSceneAsync(float delay)
         {
             await UniTask.Delay(new TimeSpan(0, 0, 0, 0, (int)(delay * 1000f)));
-            await UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(0);
+            await UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(0).ToUniTask();
         }
 
         #endregion

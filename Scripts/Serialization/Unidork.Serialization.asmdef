@@ -2,6 +2,7 @@
     "name": "Unidork.Serialization",
     "rootNamespace": "",
     "references": [
+        "GUID:49a2a1ed1b55f7fa5994009a6172b28c",
         "GUID:c4f0b0bb44f44344991769319cafa9d1",
         "GUID:4ee1b0f5de000e041a6521f50852d501",
         "GUID:da6fd876070406c4cbadc740247bdec0"

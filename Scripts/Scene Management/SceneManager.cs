@@ -1,9 +1,8 @@
-﻿#if UNIDORK_ADDRESSABLES
-using System;
+﻿using System;
+using UnityEngine;
+#if ADDRESSABLES
 using UnityEngine.AddressableAssets;
 #endif
-using System;
-using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
@@ -15,7 +14,7 @@ namespace Unidork.SceneManagement
 	/// </summary>
 	public static class SceneManager
     {
- #if UNIDORK_ADDRESSABLES
+ #if ADDRESSABLES
         #region Load/Unload - Addressables
 
         /// <summary>
@@ -29,10 +28,10 @@ namespace Unidork.SceneManagement
         /// <returns>
         /// Async operation handle for the scene load.
         /// </returns>
-        public static AsyncOperationHandle LoadSceneAsync(AssetReference sceneToLoad, LoadSceneMode loadSceneMode, bool activateOnLoad, bool setAsActiveScene,
-                                                     Action sceneLoadCallback = null)
+        public static AsyncOperationHandle<SceneInstance> LoadSceneAsync(AssetReference sceneToLoad, LoadSceneMode loadSceneMode, 
+                                                          bool activateOnLoad, bool setAsActiveScene, Action sceneLoadCallback = null)
         {
-            AsyncOperationHandle sceneLoadHandle = Addressables.LoadSceneAsync(sceneToLoad, loadSceneMode, activateOnLoad);
+            AsyncOperationHandle<SceneInstance> sceneLoadHandle = Addressables.LoadSceneAsync(sceneToLoad, loadSceneMode, activateOnLoad);
 
             sceneLoadHandle.Completed += _ =>
             {
@@ -40,13 +39,11 @@ namespace Unidork.SceneManagement
                 {
                     sceneLoadCallback?.Invoke();
 
-                    if (!setAsActiveScene)
+                    if (setAsActiveScene)
                     {
-                        return;
+                        SceneInstance sceneInstance = sceneLoadHandle.Result;
+                        UnityEngine.SceneManagement.SceneManager.SetActiveScene(sceneInstance.Scene);
                     }
-
-                    var sceneInstance = (SceneInstance)sceneLoadHandle.Result;
-                    UnityEngine.SceneManagement.SceneManager.SetActiveScene(sceneInstance.Scene);
                 }
                 else
                 {
@@ -68,10 +65,10 @@ namespace Unidork.SceneManagement
         /// <returns>
         /// Async operation handle for the scene load.
         /// </returns>
-        public static AsyncOperationHandle LoadSceneAsync(string sceneAssetAddress, LoadSceneMode loadSceneMode, bool activateOnLoad, bool setAsActiveScene,
-                                                     Action sceneLoadCallback = null)
+        public static AsyncOperationHandle<SceneInstance> LoadSceneAsync(string sceneAssetAddress, LoadSceneMode loadSceneMode, 
+                                                                         bool activateOnLoad, bool setAsActiveScene, Action sceneLoadCallback = null)
         {
-            AsyncOperationHandle sceneLoadHandle = Addressables.LoadSceneAsync(sceneAssetAddress, loadSceneMode, activateOnLoad);
+            AsyncOperationHandle<SceneInstance> sceneLoadHandle = Addressables.LoadSceneAsync(sceneAssetAddress, loadSceneMode, activateOnLoad);
 
             sceneLoadHandle.Completed += _ =>
             {
@@ -79,13 +76,11 @@ namespace Unidork.SceneManagement
                 {
                     sceneLoadCallback?.Invoke();
 
-                    if (!setAsActiveScene)
+                    if (setAsActiveScene)
                     {
-                        return;
+                        SceneInstance sceneInstance = sceneLoadHandle.Result;
+                        UnityEngine.SceneManagement.SceneManager.SetActiveScene(sceneInstance.Scene);
                     }
-
-                    var sceneInstance = (SceneInstance)sceneLoadHandle.Result;
-                    UnityEngine.SceneManagement.SceneManager.SetActiveScene(sceneInstance.Scene);
                 }
                 else
                 {
@@ -102,21 +97,22 @@ namespace Unidork.SceneManagement
         /// <param name="sceneHandle">Async operation handle.</param>
         /// <param name="sceneUnloadCallback">Optional callback to invoke when the scene is unloaded.</param>
         /// <param name="autoReleaseHandle">Should the handle be automatically released after the unload?</param>
-        public static AsyncOperationHandle UnloadSceneAsync(in AsyncOperationHandle sceneHandle, Action sceneUnloadCallback = null, bool autoReleaseHandle = false)
+        public static AsyncOperationHandle<SceneInstance> UnloadSceneAsync(AsyncOperationHandle<SceneInstance> sceneHandle, 
+                                                                           Action sceneUnloadCallback = null, bool autoReleaseHandle = false)
         {
             if (!sceneHandle.IsValid())
             {
                 Debug.LogError("Trying to unload a scene handle that is invalid!");
-                return new AsyncOperationHandle();
+                return new AsyncOperationHandle<SceneInstance>();
             }
 
             if (sceneHandle.Status != AsyncOperationStatus.Succeeded)
             {
                 Debug.LogError("Trying to unload a scene handle that didn't complete successfully!");
-                return new AsyncOperationHandle();
+                return new AsyncOperationHandle<SceneInstance>();
             }
 
-            AsyncOperationHandle unloadHandle = Addressables.UnloadSceneAsync(sceneHandle);
+            AsyncOperationHandle<SceneInstance> unloadHandle = Addressables.UnloadSceneAsync(sceneHandle, false);
             
             unloadHandle.Completed += _ =>
             {
@@ -144,27 +140,29 @@ namespace Unidork.SceneManagement
         #region Load/Unload
 
         /// <summary>
-        /// Loads a scene asynchronously by name using default Unity scene manager. Can auto-activate..
+        /// Loads a scene asynchronously by name using default Unity scene manager. Can auto-activate.
         /// </summary>
         /// <param name="sceneName">Scene name.</param>
         /// <param name="loadSceneMode">Load scene mode.</param>
         /// <param name="allowSceneActivation">Should the scene be activated on load?</param>
         /// <param name="callback">Optional callback.</param>
         /// <returns>An async load operation.</returns>
-        public static AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool allowSceneActivation, Action<AsyncOperation> callback = null)
+        public static AsyncOperation LoadSceneAsync(string sceneName, LoadSceneMode loadSceneMode, bool allowSceneActivation, 
+                                                    Action<AsyncOperation> callback = null)
         {
             return LoadSceneAsync(sceneName, new LoadSceneParameters(loadSceneMode, LocalPhysicsMode.None), allowSceneActivation, callback);
         }
         
         /// <summary>
-        /// Loads a scene asynchronously by name using default Unity scene manager. Can auto-activate..
+        /// Loads a scene asynchronously by name using default Unity scene manager. Can auto-activate.
         /// </summary>
         /// <param name="sceneName">Scene name.</param>
         /// <param name="loadSceneParameters">Load scene parameters that include load scene mode and local physics mode..</param>
         /// <param name="allowSceneActivation">Should the scene be activated on load?</param>
         /// <param name="callback">Optional callback.</param>
         /// <returns>An async load operation.</returns>
-        public static AsyncOperation LoadSceneAsync(string sceneName, LoadSceneParameters loadSceneParameters, bool allowSceneActivation, Action<AsyncOperation> callback = null)
+        public static AsyncOperation LoadSceneAsync(string sceneName, LoadSceneParameters loadSceneParameters, bool allowSceneActivation, 
+                                                    Action<AsyncOperation> callback = null)
         {
             AsyncOperation loadOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, loadSceneParameters);
             loadOperation.allowSceneActivation = allowSceneActivation;
@@ -183,7 +181,8 @@ namespace Unidork.SceneManagement
         /// <param name="allowSceneActivation">Should the scene be activated on load?</param>
         /// <param name="callback">Optional callback.</param>
         /// <returns>An async load operation.</returns>
-        public static AsyncOperation LoadSceneAsync(int sceneBuildIndex, LoadSceneMode loadSceneMode, bool allowSceneActivation, Action<AsyncOperation> callback = null)
+        public static AsyncOperation LoadSceneAsync(int sceneBuildIndex, LoadSceneMode loadSceneMode, bool allowSceneActivation, 
+                                                    Action<AsyncOperation> callback = null)
         {
             return LoadSceneAsync(sceneBuildIndex, new LoadSceneParameters(loadSceneMode, LocalPhysicsMode.None), allowSceneActivation, callback);
         }
@@ -196,7 +195,8 @@ namespace Unidork.SceneManagement
         /// <param name="allowSceneActivation">Should the scene be activated on load?</param>
         /// <param name="callback">Optional callback.</param>
         /// <returns>An async load operation.</returns>
-        public static AsyncOperation LoadSceneAsync(int sceneBuildIndex, LoadSceneParameters loadSceneParameters, bool allowSceneActivation, Action<AsyncOperation> callback = null)
+        public static AsyncOperation LoadSceneAsync(int sceneBuildIndex, LoadSceneParameters loadSceneParameters, bool allowSceneActivation, 
+                                                    Action<AsyncOperation> callback = null)
         {
             AsyncOperation loadOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneBuildIndex, loadSceneParameters);
             loadOperation.allowSceneActivation = allowSceneActivation;
@@ -214,7 +214,8 @@ namespace Unidork.SceneManagement
         /// <param name="unloadSceneOptions">Optional unload options.</param>
         /// <param name="callback">Optional callback.</param>
         /// <returns>An async unload operation.</returns>
-        public static AsyncOperation UnloadSceneAsync(Scene scene, UnloadSceneOptions unloadSceneOptions = default, Action<AsyncOperation> callback = null)
+        public static AsyncOperation UnloadSceneAsync(Scene scene, UnloadSceneOptions unloadSceneOptions = default, 
+                                                      Action<AsyncOperation> callback = null)
         {
             AsyncOperation unloadOperation = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene, unloadSceneOptions);
             if (callback != null)
@@ -232,7 +233,8 @@ namespace Unidork.SceneManagement
         /// <param name="callback">Optional callback.</param>
         /// <returns>An async unload operation.</returns>
         
-        public static AsyncOperation UnloadSceneAsync(string sceneName, UnloadSceneOptions unloadSceneOptions = default, Action<AsyncOperation> callback = null)
+        public static AsyncOperation UnloadSceneAsync(string sceneName, UnloadSceneOptions unloadSceneOptions = default, 
+                                                      Action<AsyncOperation> callback = null)
         {
             AsyncOperation unloadOperation = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneName, unloadSceneOptions);
             if (callback != null)
@@ -250,7 +252,8 @@ namespace Unidork.SceneManagement
         /// <param name="callback">Optional callback.</param>
         /// <returns>An async unload operation.</returns>
         
-        public static AsyncOperation UnloadSceneAsync(int sceneBuildIndex, UnloadSceneOptions unloadSceneOptions = default, Action<AsyncOperation> callback = null)
+        public static AsyncOperation UnloadSceneAsync(int sceneBuildIndex, UnloadSceneOptions unloadSceneOptions = default, 
+                                                      Action<AsyncOperation> callback = null)
         {
             AsyncOperation unloadOperation = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(sceneBuildIndex, unloadSceneOptions);
             if (callback != null)

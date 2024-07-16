@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;using UnityEngine.Scripting.APIUpdating;
+
 namespace MoreMountains.Feedbacks
 {
 	/// <summary>
@@ -8,6 +9,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[AddComponentMenu("")]
 	[FeedbackHelp("This feedback will cause a pause when met, preventing any other feedback lower in the sequence to run until it's complete.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks")]
 	[FeedbackPath("Pause/Pause")]
 	public class MMF_Pause : MMF_Feedback
 	{
@@ -54,7 +56,7 @@ namespace MoreMountains.Feedbacks
 		/// <returns></returns>
 		protected virtual IEnumerator PauseWait()
 		{
-			yield return WaitFor(PauseDuration);
+			yield return WaitFor(ApplyTimeMultiplier(PauseDuration));
 		}
 
 		/// <summary>
@@ -83,12 +85,20 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-            
+
+			ProcessNewPauseDuration();
+			Owner.StartCoroutine(PlayPause());
+		}
+
+		/// <summary>
+		/// Computes a new pause duration if needed
+		/// </summary>
+		protected virtual void ProcessNewPauseDuration()
+		{
 			if (RandomizePauseDuration && RandomizeOnEachPlay)
 			{
 				PauseDuration = Random.Range(MinPauseDuration, MaxPauseDuration);
 			}
-			Owner.StartCoroutine(PlayPause());
 		}
 
 		/// <summary>

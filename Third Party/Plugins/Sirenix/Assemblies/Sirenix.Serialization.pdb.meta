@@ -1,7 +1,14 @@
 fileFormatVersion: 2
-guid: 7834cc287358939d1bce36537b941be6
+guid: 5f3147f7af4c49739579b966c4580a6f
 timeCreated: 1488828285
 DefaultImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 89041
+  packageName: Odin Inspector and Serializer
+  packageVersion: 3.3.1.4
+  assetPath: Assets/Unidork/Third Party/Plugins/Sirenix/Assemblies/Sirenix.Serialization.pdb
+  uploadId: 674883

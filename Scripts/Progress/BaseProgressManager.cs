@@ -57,7 +57,7 @@ namespace Unidork.Progress
 
 		protected virtual void Start()
 		{
-			serializationManager = FindObjectOfType<BaseSerializationManager>();
+			serializationManager = FindAnyObjectByType<BaseSerializationManager>();
 			LoadSaveData();
 		}
 

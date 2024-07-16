@@ -3,7 +3,15 @@
     "rootNamespace": "",
     "references": [
         "PlayMakerAssembly",
-        "Unidork.PlayMaker"
+        "Unidork.PlayMaker",
+        "Unidork.Attributes",
+        "Unidork.Events",
+        "Unidork.Extensions",
+        "Unidork.Tweens",
+        "Unidork.Variables",
+        "UniRx",
+        "Doozy.Runtime",
+        "UnderTools.Extensions"
     ],
     "includePlatforms": [
         "Editor"

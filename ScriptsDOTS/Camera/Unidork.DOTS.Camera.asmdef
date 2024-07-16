@@ -1,0 +1,26 @@
+{
+    "name": "Unidork.DOTS.Camera",
+    "rootNamespace": "",
+    "references": [
+        "GUID:2665a8d13d1b3f18800f46e256720795",
+        "GUID:0a6c2723dfa91ae48ab1b93d2c2e184f",
+        "GUID:9549780f47e97fc4aae12a67385fdc4b",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:734d92eba21c94caba915361bd5ac177",
+        "GUID:d8b63aba1907145bea998dd612889d6b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "ENTITIES",
+        "COLLECTIONS",
+        "MATHEMATICS",
+        "BURST"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

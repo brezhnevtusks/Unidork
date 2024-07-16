@@ -1,6 +1,7 @@
 ﻿using MoreMountains.Tools;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {
@@ -13,6 +14,7 @@ namespace MoreMountains.Feedbacks
 	[FeedbackHelp("This feedback will let you target (almost) any property, on any object in your scene. " +
 	              "It also works on scriptable objects. Drag an object, select a property, and setup your feedback " +
 	              "to update that property over time.")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("GameObject/Property")]
 	public class MMF_Property : MMF_Feedback
 	{
@@ -27,6 +29,8 @@ namespace MoreMountains.Feedbacks
 		public override string RequiresSetupText { get { return "This feedback requires that a Target be set to be able to work properly. You can set one below."; } }
 		#endif
 		public override bool HasRandomness => true;
+		public override bool CanForceInitialValue => true;
+		public override bool ForceInitialValueDelayed => true;
 		public override bool HasCustomInspectors => true;
         
 		/// the possible modes for this feedback
@@ -142,9 +146,11 @@ namespace MoreMountains.Feedbacks
 					{
 						return;
 					}
+					if (_coroutine != null) { Owner.StopCoroutine(_coroutine); }
 					_coroutine = Owner.StartCoroutine(UpdateValueSequence(intensityMultiplier));
 					break;
 				case Modes.ToDestination:
+					if (_coroutine != null) { Owner.StopCoroutine(_coroutine); }
 					_coroutine = Owner.StartCoroutine(ToDestinationSequence(intensityMultiplier));
 					break;
 			}

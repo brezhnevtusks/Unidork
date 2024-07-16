@@ -51,7 +51,7 @@ namespace Unidork.WeightedSelection
         #region Fields
 
         /// <summary>
-        /// Selected bject or value.
+        /// Selected object or value.
         /// </summary>
         [PropertyOrder(2)]
         [Tooltip("Selected object or value.")]
@@ -72,6 +72,19 @@ namespace Unidork.WeightedSelection
         [PropertyOrder(4)]
         [SerializeField, ReadOnly]
         private float selectionChance;
+        
+        #endregion
+        
+        #region Constructor
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="value">Value stored in this object.</param>
+        public WeightedObject(TObject value)
+        {
+            @object = value;
+        }
         
         #endregion
     }

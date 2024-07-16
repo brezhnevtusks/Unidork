@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using Unidork.Attributes;
-using Unidork.Extensions;
+using UnderdorkStudios.UnderTools.Extensions;
 using Unidork.Serialization;
 using UnityEngine;
 
@@ -12,33 +11,15 @@ namespace Unidork.QuestSystem
 		#region Fields
 		
 		/// <summary>
-		/// Path to the persistent data directory.
-		/// </summary>
-		protected string persistentDataPath;
-		
-		/// <summary>
 		/// Objects storing saved quest data.
 		/// </summary>
 		protected QuestSaveData<TQuestCategory> questSaveData;
-		
-		/// <summary>
-		/// Path of the quest save data file relative to <see cref="Application.persistentDataPath"/>.
-		/// </summary>
-		[Space, BaseHeader, Space]
-		[Tooltip("Path of the quest save data file relative to Application.persistentDataPath.")]
-		[SerializeField]
-		private string questSaveDataRelativePath = "/QuestSaveData.json";
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[SerializeField] 
 		private QuestDatabase<TQuest, TQuestCategory> questDatabase = null;
-
-		/// <summary>
-		/// Path at which quest save data is stored.
-		/// </summary>
-		private string questSaveDataPath;
 
 		/// <summary>
 		/// Dictionary storing quests that are currently active in the game.
@@ -51,6 +32,20 @@ namespace Unidork.QuestSystem
 		private readonly Dictionary<QuestType, List<TQuest>> activeQuestDictionary = new Dictionary<QuestType, List<TQuest>>();
 
 		#endregion
+		
+		#region Constants
+		
+		/// <summary>
+		/// Key to use when saving/loading with Easy Save.
+		/// </summary>
+		private const string QuestKeyName = "Quests";
+		
+		/// <summary>
+		/// Relative file path to use when saving/loading with Easy Save.
+		/// </summary>
+		private const string QuestSavePath = "Quests.und";
+		
+		#endregion
 
 		#region Init
 
@@ -61,11 +56,8 @@ namespace Unidork.QuestSystem
 		
 		private void Start()
 		{
-			persistentDataPath = Application.persistentDataPath;
-
-			questSaveDataPath = persistentDataPath + questSaveDataRelativePath;
 			
-			questSaveData = BaseSerializationManager.DeserializeSaveDataFromFile<QuestSaveData<TQuestCategory>>(questSaveDataPath);
+			questSaveData = BaseSerializationManager.Load<QuestSaveData<TQuestCategory>>(QuestKeyName, QuestSavePath);
 
 			if (questSaveData != null)
 			{
@@ -107,7 +99,7 @@ namespace Unidork.QuestSystem
 		/// </summary>
 		public void SerializeSaveData()
 		{
-			BaseSerializationManager.SerializeSaveDataToFile(questSaveData, questSaveDataPath);
+			BaseSerializationManager.Save(QuestKeyName, questSaveData, QuestSavePath);
 		}
 		
 		/// <summary>
@@ -116,7 +108,7 @@ namespace Unidork.QuestSystem
 		public void ResetSaveData()
 		{
 			questSaveData = new QuestSaveData<TQuestCategory>(BaseSerializationManager.SaveVersion);
-			BaseSerializationManager.SerializeSaveDataToFile(questSaveData, questSaveDataPath);
+			SerializeSaveData();
 		}
 
 		#endregion

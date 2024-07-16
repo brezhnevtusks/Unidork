@@ -37,7 +37,7 @@ namespace Unidork.Utility
         /// <param name="levelDestroyListener">Listener to add.</param>
         public static void RegisterListener(ILevelDestroyListener levelDestroyListener)
         {
-            listeners.Add(levelDestroyListener);
+            _ = listeners.Add(levelDestroyListener);
         }
 
         
@@ -53,7 +53,7 @@ namespace Unidork.Utility
                 return;
             }
             
-            listeners.Remove(levelDestroyListener);
+            _ = listeners.Remove(levelDestroyListener);
         }
 
         /// <summary>

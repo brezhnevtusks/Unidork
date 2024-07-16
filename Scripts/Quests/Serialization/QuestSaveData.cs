@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unidork.Serialization;
 
@@ -36,7 +37,7 @@ namespace Unidork.QuestSystem
 		/// Constructor.
 		/// </summary>
 		/// <param name="saveVersion">Save version.</param>
-		public QuestSaveData(string saveVersion) : base(saveVersion)
+		public QuestSaveData(string saveVersion) : base(saveVersion, DateTime.Now)
 		{
 			savedQuests = new List<SavedQuest<TQuestCategory>>();
 		}

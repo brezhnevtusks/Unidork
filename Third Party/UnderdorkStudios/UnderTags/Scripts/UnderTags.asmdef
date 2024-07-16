@@ -1,0 +1,18 @@
+{
+    "name": "UnderTags",
+    "rootNamespace": "",
+    "references": [
+        "GUID:30ccc82aac0b4d8cb7072ecd3c509ff7",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:6abe7d7cbadb4d83a635b4df5c571be6"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

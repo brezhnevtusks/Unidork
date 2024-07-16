@@ -1,0 +1,23 @@
+{
+    "name": "Unidork.Timeline.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f06555f75b070af458a003d92f9efb00",
+        "GUID:02f771204943f4a40949438e873e3eff",
+        "GUID:6abe7d7cbadb4d83a635b4df5c571be6",
+        "GUID:871790c10dd081608bb931024fffc064",
+        "Doozy.Runtime",
+        "Unidork.Events"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

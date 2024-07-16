@@ -5,6 +5,7 @@ using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+using UnityEngine.Scripting.APIUpdating;
 
 namespace MoreMountains.Feedbacks
 {    
@@ -13,6 +14,7 @@ namespace MoreMountains.Feedbacks
 	/// </summary>
 	[ExecuteAlways]
 	[AddComponentMenu("")]
+	[MovedFrom(false, null, "MoreMountains.Feedbacks.MMTools")]
 	[FeedbackPath("Audio/MMSoundManager Sound")]
 	[FeedbackHelp("This feedback will let you play a sound via the MMSoundManager. You will need a game object in your scene with a MMSoundManager object on it for this to work.")]
 	public class MMF_MMSoundManagerSound : MMF_Feedback
@@ -22,6 +24,8 @@ namespace MoreMountains.Feedbacks
 		/// sets the inspector color for this feedback
 		#if UNITY_EDITOR
 		public override Color FeedbackColor { get { return MMFeedbacksInspectorColors.SoundsColor; } }
+		public override bool HasCustomInspectors => true;
+		public override bool HasAutomaticShakerSetup => true;
 		public override bool EvaluateRequiresSetup()
 		{
 			bool requiresSetup = false;
@@ -49,7 +53,6 @@ namespace MoreMountains.Feedbacks
 		public override string RequiredTargetText { get { return Sfx != null ? Sfx.name + " - ID:" + ID : "";  } }
 
 		public override string RequiresSetupText { get { return "This feedback requires that you set an Audio clip in its Sfx slot below, or one or more clips in the Random Sfx array."; } }
-		public override bool HasCustomInspectors { get { return true; } }
 		#endif
 
 		/// the duration of this feedback is the duration of the clip being played
@@ -282,10 +285,15 @@ namespace MoreMountains.Feedbacks
 		protected int _currentIndex = 0;
 		protected Vector3 _gizmoCenter;
 		protected MMShufflebag<int> _randomUniqueShuffleBag;
+		protected AudioClip _lastPlayedClip;
 		
 		protected override void CustomInitialization(MMF_Player owner)
 		{
 			base.CustomInitialization(owner);
+			HandleSO();
+
+			_lastPlayedClip = null;
+			
 			if (RandomUnique)
 			{
 				_randomUniqueShuffleBag = new MMShufflebag<int>(RandomSfx.Length);
@@ -301,6 +309,7 @@ namespace MoreMountains.Feedbacks
 		/// </summary>
 		public override void InitializeCustomAttributes()
 		{
+			base.InitializeCustomAttributes();
 			TestPlayButton = new MMF_Button("Debug Play Sound", TestPlaySound);
 			TestStopButton = new MMF_Button("Debug Stop Sound", TestStopSound);
 			ResetSequentialIndexButton = new MMF_Button("Reset Sequential Index", ResetSequentialIndex);
@@ -317,16 +326,9 @@ namespace MoreMountains.Feedbacks
 			{
 				return;
 			}
-
-			HandleSO();
             
 			float intensityMultiplier = ComputeIntensity(feedbacksIntensity, position);
             
-			if (Sfx != null)
-			{
-				PlaySound(Sfx, position, intensityMultiplier);
-				return;
-			}
 
 			if (RandomSfx.Length > 0)
 			{
@@ -335,7 +337,14 @@ namespace MoreMountains.Feedbacks
 				if (_randomClip != null)
 				{
 					PlaySound(_randomClip, position, intensityMultiplier);
+					return;
 				}
+			}
+			
+			if (Sfx != null)
+			{
+				PlaySound(Sfx, position, intensityMultiplier);
+				return;
 			}
 		}
 
@@ -495,12 +504,12 @@ namespace MoreMountains.Feedbacks
 			_options.SpatialBlendCurve = SpatialBlendCurve;
 			_options.UseReverbZoneMixCurve = UseReverbZoneMixCurve;
 			_options.ReverbZoneMixCurve = ReverbZoneMixCurve;
-			
-			_options.DoNotAutoRecycleIfNotDonePlaying = (_randomPlaybackDuration > 0) ? true : false;
+			_options.DoNotAutoRecycleIfNotDonePlaying = true;
 
 			_playedAudioSource = MMSoundManagerSoundPlayEvent.Trigger(sfx, _options);
 
 			_lastPlayTimestamp = FeedbackTime;
+			_lastPlayedClip = sfx;
 		}
 
 		/// <summary>
@@ -529,6 +538,11 @@ namespace MoreMountains.Feedbacks
 			float longest = 0f;
 			if ((randomSfx != null) && (randomSfx.Length > 0))
 			{
+				if (_lastPlayedClip != null)
+				{
+					return _lastPlayedClip.length;	
+				}
+				
 				foreach (AudioClip clip in randomSfx)
 				{
 					if ((clip != null) && (clip.length > longest))
@@ -555,6 +569,20 @@ namespace MoreMountains.Feedbacks
 			Gizmos.DrawWireSphere(_gizmoCenter, MinDistance);
 			Gizmos.color = MaxDistanceColor;
 			Gizmos.DrawWireSphere(_gizmoCenter, MaxDistance);
+		}
+		
+		/// <summary>
+		/// Automatically tries to add a MMSoundManager to the scene if none are present
+		/// </summary>
+		public override void AutomaticShakerSetup()
+		{
+			MMSoundManager soundManager = (MMSoundManager)Object.FindObjectOfType(typeof(MMSoundManager));
+			if (soundManager == null)
+			{
+				GameObject soundManagerGo = new GameObject("MMSoundManager");
+				soundManagerGo.AddComponent<MMSoundManager>();
+				MMDebug.DebugLogInfo( "Added a MMSoundManager to the scene. You're all set.");
+			}
 		}
 
 		#region TestMethods
@@ -591,6 +619,7 @@ namespace MoreMountains.Feedbacks
 			_editorAudioSource = temporaryAudioHost.AddComponent<AudioSource>() as AudioSource;
 			PlayAudioSource(_editorAudioSource, tmpAudioClip, volume, pitch, _randomPlaybackTime, _randomPlaybackDuration);
 			_lastPlayTimestamp = FeedbackTime;
+			_lastPlayedClip = tmpAudioClip;
 			float length = (_randomPlaybackDuration > 0) ? _randomPlaybackDuration : tmpAudioClip.length;
 			length *= 1000;
 			length = length / Mathf.Abs(pitch);
@@ -698,6 +727,15 @@ namespace MoreMountains.Feedbacks
 		{
 			base.OnValidate();
 			RandomizeTimes();
+			
+			if ((RandomSfx != null) && (RandomSfx.Length > 0))
+			{
+				_randomUniqueShuffleBag = new MMShufflebag<int>(RandomSfx.Length);
+				for (int i = 0; i < RandomSfx.Length; i++)
+				{
+					_randomUniqueShuffleBag.Add(i,1);
+				}
+			}
 		}
 
 		#endregion

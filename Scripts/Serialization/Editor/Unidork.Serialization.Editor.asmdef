@@ -2,7 +2,11 @@
     "name": "Unidork.Serialization.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:f2624564a2dc98e43b069312b63c832f"
+        "GUID:f2624564a2dc98e43b069312b63c832f",
+        "EasySave3",
+        "Unidork.AddressableUtility.Editor",
+        "Unidork.Attributes",
+        "Unidork.FileUtility"
     ],
     "includePlatforms": [
         "Editor"

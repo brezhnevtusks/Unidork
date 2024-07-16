@@ -36,6 +36,18 @@ namespace Unidork.WeightedSelection
         
         #endregion
 
+        #region Constructor
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="value">Value stored in this weighted object.</param>
+        public WeightedObjectWithRarity(TObject value) : base(value)
+        {
+        }
+        
+        #endregion
+
 #if UNITY_EDITOR
         
         #region Editor

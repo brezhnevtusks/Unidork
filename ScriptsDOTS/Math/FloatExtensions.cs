@@ -6,17 +6,17 @@ namespace Unidork.DOTS.Math
     {
         #region Constants
         
-        public static readonly float2 Float2Up = new(0f, 1f);
-        public static readonly float2 Float2Down = new(0f, -1f);
-        public static readonly float2 Float2Right = new(1f, 0f);
-        public static readonly float2 Float2Left = new(-1f, 0f);
+        public static readonly float2 F2Up = new(0f, 1f);
+        public static readonly float2 F2Down = -F2Up;
+        public static readonly float2 F2Right = new(1f, 0f);
+        public static readonly float2 F2Left = -F2Right;
         
-        public static readonly float3 Float3Up = new(0f, 1f, 0f);
-        public static readonly float3 Float3Down = new(0f, -1f, 0f);
-        public static readonly float3 Float3Right = new(1f, 0f, 0f);
-        public static readonly float3 Float3Left = new(-1f, 0f, 0f);
-        public static readonly float3 Float3Forward = new(0f, 0f, 1f);
-        public static readonly float3 Float3Back = new(0f, 0f, -1f);
+        public static readonly float3 F3Up = new(0f, 1f, 0f);
+        public static readonly float3 F3Down = -F3Up;
+        public static readonly float3 F3Right = new(1f, 0f, 0f);
+        public static readonly float3 F3Left = -F3Right;
+        public static readonly float3 F3Forward = new(0f, 0f, 1f);
+        public static readonly float3 F3Back = -F3Forward;
         
         #endregion
         
@@ -41,11 +41,11 @@ namespace Unidork.DOTS.Math
         /// <summary>
         /// Checks if given float2 is equal to float2.zero.
         /// </summary>
-        /// <param name="float2">Float2.</param>
+        /// <param name="f2">Float2.</param>
         /// <returns>True if both components are zero, False otherwise.</returns>
-        public static bool IsZero(this float2 float2)
+        public static bool IsZero(this float2 f2)
         {
-            return float2.Equals(float2.zero);
+            return f2.Equals(float2.zero);
         }
         
         #endregion
@@ -55,56 +55,55 @@ namespace Unidork.DOTS.Math
         /// <summary>
         /// Checks if given float3 is equal to float3.zero.
         /// </summary>
-        /// <param name="float3">Float3.</param>
+        /// <param name="f3">Float3.</param>
         /// <returns>True if all components are zero, False otherwise.</returns>
-        public static bool IsZero(this float3 float3)
+        public static bool IsZero(this float3 f3)
         {
-            return float3.Equals(float3.zero);
+            return f3.Equals(float3.zero);
         }
         
-        /// <summary>
-        /// Gets the angle between two float3 vectors.
-        /// </summary>
-        /// <param name="firstVector">First vector.</param>
-        /// <param name="secondVector">Second vector.</param>
-        /// <returns>A float representing angle between vectors in degrees.</returns>
-        public static float AngleDegrees(float3 firstVector, float3 secondVector)
-        {
-            float dot = math.dot(firstVector, secondVector);
-            return dot < 0.999998986721039f ? math.acos(math.min(math.abs(dot), 1f)) * 2f : 0f;
-        }
+        #endregion
+
+        #region Smooth damp
 
         /// <summary>
-        /// Gets the angle between two float3 vectors.
+        /// Equivalent of Unity's SmoothDamp() using Unity.Mathematics. Smoothly interpolates from one value to another.
         /// </summary>
-        /// <param name="firstVector">First vector.</param>
-        /// <param name="secondVector">Second vector.</param>
-        /// <returns>A float representing angle between vectors in radians.</returns>
-        public static float AngleRadians(float3 firstVector, float3 secondVector)
+        /// <param name="current">Value to interpolate from.</param>
+        /// <param name="target">Value to interpolate to.</param>
+        /// <param name="currentChangeRate">Current change rate (per frame).</param>
+        /// <param name="smoothTime">Interpolation duration.</param>
+        /// <param name="deltaTime">Delta time.</param>
+        /// <param name="maxChangeRate">Max change rate (per frame).</param>
+        /// <returns>
+        /// A float representing interpolated value on this frame.
+        /// </returns>
+        public static float SmoothDamp(float current, float target, ref float currentChangeRate, 
+                                       float smoothTime, float deltaTime, float maxChangeRate = float.MaxValue)
         {
-            return math.radians(AngleDegrees(firstVector, secondVector));
-        }
-        
-        /// <summary>
-        /// Rotates a float3 vectors towards a target.
-        /// </summary>
-        /// <param name="startVector">Start vector.</param>
-        /// <param name="targetVector">Target vector.</param>
-        /// <param name="maxDegrees">Maximum allowed frame rotation in degrees.</param>
-        /// <returns>Rotated float3.</returns>
-        public static float3 RotateTowards(float3 startVector, float3 targetVector, float maxDegrees)
-        {
-            float angleBetweenQuaternions = AngleDegrees(startVector, targetVector);
-
-            if (angleBetweenQuaternions < float.Epsilon)
+            smoothTime = math.max(0.0001f, smoothTime);
+            
+            float num1 = 2f / smoothTime;
+            float num2 = num1 * deltaTime;
+            float num3 = 1f / (1f + num2 + 0.47999998927116394f * num2 * num2 + 0.23499999940395355f * num2 * num2 * num2);
+            float num4 = current - target;
+            float num5 = target;
+            float max = maxChangeRate * smoothTime;
+            float num6 = math.clamp(num4, -max, max);
+            target = current - num6;
+            float num7 = (currentChangeRate + num1 * num6) * deltaTime;
+            currentChangeRate = (currentChangeRate - num1 * num7) * num3;
+            float num8 = target + (num6 + num7) * num3;
+            
+            if (num5 - (double)current > 0f == num8 > (double)num5)
             {
-                return startVector;
+                num8 = num5;
+                currentChangeRate = (num8 - num5) / deltaTime;
             }
             
-            float lerpAmount = math.min(1f, maxDegrees / angleBetweenQuaternions);
-            return math.lerp(startVector, targetVector, lerpAmount);
+            return num8;
         }
-        
+
         #endregion
     }
 }

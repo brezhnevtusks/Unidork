@@ -1,5 +1,3 @@
-#if ADDRESSABLES
-
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -64,5 +62,3 @@ namespace Unidork.AddressableAssetsUtility
 		}
 	}
 }
-
-#endif

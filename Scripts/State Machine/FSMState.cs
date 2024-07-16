@@ -1,8 +1,7 @@
 ﻿using Sirenix.OdinInspector;
+using UnderdorkStudios.UnderTools.Extensions;
 using Unidork.Attributes;
-using Unidork.Extensions;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Unidork.StateMachine
 {
@@ -63,7 +62,6 @@ namespace Unidork.StateMachine
 		/// </summary>
 		[Space, Title("ENTRY", TitleAlignment = TitleAlignments.Centered, HorizontalLine = false), Space]
 		[Tooltip("Optional actions to perform when the state is entered.")]
-		[FormerlySerializedAs("enterActions")]
 		[SerializeField]
 		protected FSMAction[] entryActions = null;
 

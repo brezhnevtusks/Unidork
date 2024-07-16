@@ -1,3 +1,5 @@
+#if UNIDORK_ADDRESSABLES
+
 using Sirenix.OdinInspector;
 using Unidork.Events;
 using UniRx;
@@ -124,3 +126,5 @@ namespace Unidork.Variables
         #endregion
     }
 }
+
+#endif

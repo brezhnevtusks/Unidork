@@ -1,7 +1,6 @@
 using Sirenix.OdinInspector;
 using Unidork.Attributes;
 using Unidork.Constants;
-using Unidork.Extensions;
 using Unidork.StateMachine;
 using UniRx;
 using UnityEngine;
@@ -65,7 +64,7 @@ namespace Unidork.Animations
 				return;
 			}
 
-			animator = gameObject.GetComponentInChildrenNonAlloc<Animator>();
+			animator = gameObject.GetComponentInChildren<Animator>();
 		}
 
 		protected virtual void Start()

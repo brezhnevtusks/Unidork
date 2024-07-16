@@ -1,6 +1,5 @@
 #if TILEMAP2D && TILEMAP2D_EXTRAS
 
-using Unidork.Extensions;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -33,7 +32,7 @@ namespace Unidork.TilemapTools
 			{
 				GameObject gameObject = objectHolder.GetChild(i).gameObject;
 
-				var tilemapGeneratedObject = (ITilemapGeneratedObject<T>)gameObject.GetComponentNonAlloc(typeof(ITilemapGeneratedObject<T>));
+				var tilemapGeneratedObject = gameObject.GetComponent<ITilemapGeneratedObject<T>>();
 
 				if (tilemapGeneratedObject == null)
 				{
@@ -91,7 +90,7 @@ namespace Unidork.TilemapTools
 				return default;
 			}
 
-			var tilemapGeneratedObject = (ITilemapGeneratedObject<T>)objectToInstantiate.GetComponentNonAlloc(typeof(ITilemapObjectGenerator<T>));
+			var tilemapGeneratedObject = objectToInstantiate.GetComponent<ITilemapGeneratedObject<T>>();
 
 			if (tilemapGeneratedObject == null)
 			{

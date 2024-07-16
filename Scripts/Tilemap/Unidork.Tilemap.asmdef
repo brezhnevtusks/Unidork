@@ -2,11 +2,17 @@
     "name": "Unidork.Tilemap",
     "rootNamespace": "",
     "references": [
+        "GUID:6abe7d7cbadb4d83a635b4df5c571be6",
         "GUID:9549780f47e97fc4aae12a67385fdc4b",
         "GUID:3a9781db4804a9945b9883f3a7c46d45",
-        "GUID:613783dc1674e844b87788ea74ede0f6"
+        "GUID:613783dc1674e844b87788ea74ede0f6",
+        "GUID:4ee1b0f5de000e041a6521f50852d501",
+        "GUID:18e9565d05249e342a1199f1a71803fb",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -1,7 +1,10 @@
 {
     "name": "Unidork.Math",
     "references": [
-        "GUID:9549780f47e97fc4aae12a67385fdc4b"
+        "GUID:9549780f47e97fc4aae12a67385fdc4b",
+        "Unidork.Attributes",
+        "UniRx",
+        "Unidork.Tweens"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

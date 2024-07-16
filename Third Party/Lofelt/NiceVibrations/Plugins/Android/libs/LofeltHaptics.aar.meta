@@ -30,3 +30,10 @@ PluginImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 183370
+  packageName: Feel
+  packageVersion: 4.1.2
+  assetPath: Assets/Unidork/Third Party/Lofelt/NiceVibrations/Plugins/Android/libs/LofeltHaptics.aar
+  uploadId: 667855

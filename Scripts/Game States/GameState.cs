@@ -1,4 +1,5 @@
-﻿using Unidork.Attributes;
+﻿using UnderdorkStudios.UnderTags;
+using Unidork.Attributes;
 using Unidork.Events;
 using UnityEngine;
 
@@ -21,9 +22,9 @@ namespace Unidork.GameStates
 		/// Name of the game state.
 		/// </summary>
 		/// <value>
-		/// Gets the value of the string field stateName.
+		/// Gets the value of the <see cref="UnderTag"/> field stateName.
 		/// </value>
-		public string StateName => stateName;
+		public UnderTag StateName => stateName;
 
 		#endregion
 
@@ -35,7 +36,7 @@ namespace Unidork.GameStates
 		[Space, SettingsHeader, Space]
 		[Tooltip("Name of the game state.")]
 		[SerializeField]
-		private string stateName = null;
+		private UnderTag stateName = null;
 
 		/// <summary>
 		/// Optional event to raise when the state is entered.

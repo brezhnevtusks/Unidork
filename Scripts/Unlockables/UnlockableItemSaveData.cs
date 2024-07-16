@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unidork.Serialization;
 using UnityEngine;
@@ -67,7 +68,6 @@ namespace Unidork.Unlockables
 		/// </summary>
 		[SerializeField]
 		private List<int> unlockedProgressUnlockableItemIds;	
-		
 
 		/// <summary>
 		/// Index of the <see cref="ProgressUnlockableItemData"/>
@@ -90,7 +90,7 @@ namespace Unidork.Unlockables
 		/// Constructor.
 		/// </summary>
 		/// <param name="saveVersion">Save version.</param>
-		public UnlockableItemSaveData(string saveVersion) : base(saveVersion)
+		public UnlockableItemSaveData(string saveVersion) : base(saveVersion, DateTime.Now)
 		{
 			unlockedItemIds = new List<int>();
 			unlockedProgressUnlockableItemIds = new List<int>();

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Unidork.Attributes;
-using Unidork.Extensions;
 using Unidork.Tweens;
 using Unidork.Utility;
+using UniRx;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -19,7 +19,7 @@ namespace Unidork.OffScreenTargets
 		/// <summary>
 		/// Is this UI currently paused?
 		/// </summary>
-		public bool IsPaused { get; private set; }
+		public ReactiveProperty<bool> IsPaused { get; private set; }
 
 		#endregion
 
@@ -138,7 +138,7 @@ namespace Unidork.OffScreenTargets
 
 		private void Update()
 		{
-			if (IsPaused || !indicatorAssetLoaded)
+			if (IsPaused.Value || !indicatorAssetLoaded)
 			{
 				return;
 			}
@@ -270,7 +270,7 @@ namespace Unidork.OffScreenTargets
 			GameObject indicatorGo = Instantiate(indicatorLoadHandle.Result, indicatorHolder);
 			// Indicator will enable itself after the icon asset is loaded
 			indicatorGo.SetActive(false);
-			var indicator = indicatorGo.GetComponentNonAlloc<OffScreenTargetIndicator>();
+			var indicator = indicatorGo.GetComponent<OffScreenTargetIndicator>();
 			
 			indicator.Enable(targetData, indicatorScaleUpTweenSettings);
 			
@@ -331,7 +331,7 @@ namespace Unidork.OffScreenTargets
 				offScreenTargetDetector = detector;
 			}
 
-			PausableObjectManager.RegisterPausableObject(this);
+			PauseManager.RegisterPausable(this);
 			enabled = true;
 		}
 
@@ -340,23 +340,9 @@ namespace Unidork.OffScreenTargets
 		/// </summary>
 		public virtual void Disable()
 		{
-			PausableObjectManager.UnregisterPausableObject(this);
+			PauseManager.UnregisterPausable(this);
 			enabled = false;
 		}
-
-		#endregion
-
-		#region Pause
-
-		/// <summary>
-		/// Pauses the component.
-		/// </summary>
-		public virtual void Pause() => IsPaused = true;
-
-		/// <summary>
-		/// Unpauses the component.
-		/// </summary>
-		public virtual void Unpause() => IsPaused = false;
 
 		#endregion
 	}

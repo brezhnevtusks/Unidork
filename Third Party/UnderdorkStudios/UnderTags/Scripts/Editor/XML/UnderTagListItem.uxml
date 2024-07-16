@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UnderdorkStudios/UnderTags/Scripts/Editor/CSS/UnderTagListItem.uss?fileID=7433441132597879392&amp;guid=8ed438fd67916b40dac9204ca32293fd&amp;type=3#UnderTagListItem" />
+    <UnderdorkStudios.UnderTags.Editor.UnderTagListItemVisualElement name="tag-container" style="flex-direction: column; justify-content: center; flex-basis: auto; align-self: stretch;">
+        <ui:VisualElement name="main-tag-container">
+            <ui:VisualElement name="expand-tag-container">
+                <ui:VisualElement name="expand-tag-arrow" />
+                <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="tag-label" style="align-items: center; align-self: center; justify-content: flex-start;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="button-container">
+                <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="add-child-tag-button" focusable="false" tooltip="Enable input window and prepare to add a child for this tag." />
+                <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="remove-tag-button" focusable="false" tooltip="Deletes a tag and all its descendants from hierarchy." />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="child-tag-container" />
+    </UnderdorkStudios.UnderTags.Editor.UnderTagListItemVisualElement>
+</ui:UXML>

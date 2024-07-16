@@ -2,9 +2,10 @@
     "name": "Unidork.Extensions",
     "rootNamespace": "",
     "references": [
-        "Unidork.Tweens",
-        "UniRx",
-        "Unity.TextMeshPro"
+        "GUID:18e9565d05249e342a1199f1a71803fb",
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "Unidork.Attributes"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

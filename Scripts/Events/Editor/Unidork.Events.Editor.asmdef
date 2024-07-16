@@ -5,7 +5,11 @@
         "Doozy.Editor",
         "Doozy.Runtime",
         "Unidork.Events",
-        "Unidork.Extensions"
+        "Unidork.Extensions",
+        "Unidork.Attributes",
+        "Unidork.Tweens",
+        "UniRx",
+        "UnderTools.Extensions"
     ],
     "includePlatforms": [
         "Editor"

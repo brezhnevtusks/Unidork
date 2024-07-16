@@ -4,8 +4,21 @@ using UniRx;
 
 namespace Unidork.Extensions
 {
+    public static class ReactivePropertyExtensions
+    {
+        /// <summary>
+        /// Inverts the value of a ReactiveProperty that stores a boolean.
+        /// </summary>
+        /// <param name="property">Property.</param>
+        public static void Invert(this ReactiveProperty<bool> property)
+        {
+            property.Value = !property.Value;
+        }
+    }
+    
 	public static class UnityUIExtensions
     {
+        
         /// <summary>
         /// Creates a subscription for a TextMeshProUGUI component.
         /// </summary>
@@ -37,8 +50,7 @@ namespace Unidork.Extensions
                                                      TextMeshProUGUI textMeshProUGUI,
                                                      string format)
         {
-            return source.SubscribeWithState(textMeshProUGUI, 
-                (x, t) => t.text = string.Format(format, x));
+            return source.SubscribeWithState(textMeshProUGUI, (x, t) => t.text = string.Format(format, x));
         }
     }
 }

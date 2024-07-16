@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Unidork.Serialization
 {
@@ -18,6 +19,14 @@ namespace Unidork.Serialization
 		/// </value>
 		public string SaveVersion {	get => saveVersion; set => saveVersion = value; }
 
+		/// <summary>
+		/// Save data timestamp.
+		/// </summary>
+		/// <value>
+		/// Gets the value of the field timestamp.
+		/// </value>
+		public DateTime Timestamp => timestamp;
+
 		#endregion
 
 		#region Fields
@@ -28,6 +37,12 @@ namespace Unidork.Serialization
 		[SerializeField] 
 		private string saveVersion;
 
+		/// <summary>
+		/// Save data timestamp.
+		/// </summary>
+		[SerializeField] 
+		private DateTime timestamp;
+
 		#endregion
 
 		#region Constructor
@@ -36,9 +51,11 @@ namespace Unidork.Serialization
 		/// Constructor.
 		/// </summary>
 		/// <param name="saveVersion">Save version for this save data.</param>
-		public BaseSaveData(string saveVersion)
+		/// <param name="timestamp">Save data timestamp.</param>
+		public BaseSaveData(string saveVersion, DateTime timestamp)
 		{
 			this.saveVersion = saveVersion;
+			this.timestamp = timestamp;
 		}
 
 		#endregion
