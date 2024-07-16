@@ -724,7 +724,7 @@ namespace I2.Loc
 		{
             if (s_RecycledEditor==null)
             {
-                FieldInfo info = typeof(EditorGUI).GetField("s_RecycledEditor", BindingFlags.NonPublic | BindingFlags.Static);
+	            PropertyInfo info = typeof(EditorGUI).GetProperty("s_RecycledEditor", BindingFlags.NonPublic | BindingFlags.Static);
                 s_RecycledEditor = info.GetValue(null);
             }
 
