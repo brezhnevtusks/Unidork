@@ -20,7 +20,12 @@ namespace Unidork.UI
 		/// </returns>
 		public static bool IsPointerOverUIElement()
 		{
-			return IsPointerOverUIElement(GetRaycastResultsAtPointerPosition());
+			return IsPositionOverUIElement(GetRaycastResultsAtPointerPosition());
+		}
+
+		public static bool IsPositionOverUIElement(Vector3 screenPosition)
+		{
+			return IsPositionOverUIElement(GetRaycastResultsAtPosition(screenPosition));
 		}
 
 		/// <summary>
@@ -32,7 +37,7 @@ namespace Unidork.UI
 		/// </returns>
 		public static bool IsPointerOverUIElement(LayerMask uiLayerMask)
 		{
-			return IsPointerOverUIElement(GetRaycastResultsAtPointerPosition(), uiLayerMask);
+			return IsPositionOverUIElement(GetRaycastResultsAtPointerPosition(), uiLayerMask);
 		}
 
 		/// <summary>
@@ -40,7 +45,7 @@ namespace Unidork.UI
 		/// </summary>
 		/// <param name="raycastResults">Raycast results at pointer position.</param>
 		/// <returns></returns>
-		private static bool IsPointerOverUIElement(List<RaycastResult> raycastResults)
+		private static bool IsPositionOverUIElement(List<RaycastResult> raycastResults)
 		{
 			int uiLayer = LayerMask.NameToLayer("UI");
 			
@@ -63,7 +68,7 @@ namespace Unidork.UI
 		/// <param name="raycastResults">Raycast results at pointer position.</param>
 		/// <param name="uiLayerMask">UI layer mask.</param>
 		/// <returns></returns>
-		private static bool IsPointerOverUIElement(List<RaycastResult> raycastResults, LayerMask uiLayerMask)
+		private static bool IsPositionOverUIElement(List<RaycastResult> raycastResults, LayerMask uiLayerMask)
 		{
 			foreach (var curRaycastResult in raycastResults)
 			{
@@ -84,10 +89,15 @@ namespace Unidork.UI
 		/// <returns>A list of <see cref="RaycastResult"/>.</returns>
 		static List<RaycastResult> GetRaycastResultsAtPointerPosition()
 		{
+			return GetRaycastResultsAtPosition(Input.mousePosition);
+		}
+
+		static List<RaycastResult> GetRaycastResultsAtPosition(Vector3 screenPosition)
+		{
 			PointerEventData eventData = new PointerEventData(EventSystem.current)
-			                             {
-				                             position = Input.mousePosition
-			                             };
+			{
+				position = screenPosition
+			};
 			
 			var raycastResults = new List<RaycastResult>();
 			EventSystem.current.RaycastAll(eventData, raycastResults);

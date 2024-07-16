@@ -1,7 +1,9 @@
+using System;
 using Sirenix.Utilities;
 using System.Collections.Generic;
 using UnderdorkStudios.UnderTools.Extensions;
 using Unidork.Attributes;
+using Unidork.Extensions;
 using UnityEngine;
 
 namespace Unidork.ObjectPooling
@@ -9,7 +11,7 @@ namespace Unidork.ObjectPooling
 	/// <summary>
 	/// Spawns objects on request. Objects are acquired from an <see cref="objectPooler"/> that this component creates on start.
 	/// </summary>
-	public class GenericObjectSpawner<T> : MonoBehaviour
+	public class ObjectSpawner<T> : MonoBehaviour where T : Enum
     {
         #region Properties
 
@@ -37,7 +39,7 @@ namespace Unidork.ObjectPooling
         /// <summary>
         /// List of all spawners currently present in the game.
         /// </summary>
-        private static List<GenericObjectSpawner<T>> objectSpawners;
+        private static List<ObjectSpawner<T>> objectSpawners;
 
         /// <summary>
         /// Spawner's name.
@@ -205,7 +207,7 @@ namespace Unidork.ObjectPooling
         /// <returns>
         /// An instance of <see cref="ObjectSpawner"/> that matches the passed name, null otherwise.
         /// </returns>
-        public static GenericObjectSpawner<T> GetSpawnerWithName(string spawnerName)
+        public static ObjectSpawner<T> GetSpawnerWithName(string spawnerName)
         {
             if (objectSpawners.IsNullOrEmpty())
             {
@@ -214,7 +216,7 @@ namespace Unidork.ObjectPooling
 
             var updateSpawnerList = false;
 
-            foreach (GenericObjectSpawner<T> objectSpawner in objectSpawners)
+            foreach (ObjectSpawner<T> objectSpawner in objectSpawners)
             {
                 if (objectSpawner == null)
                 {
@@ -228,7 +230,7 @@ namespace Unidork.ObjectPooling
                 UpdateSpawnerList();
 			}
 
-            foreach (GenericObjectSpawner<T> objectSpawner in objectSpawners)
+            foreach (ObjectSpawner<T> objectSpawner in objectSpawners)
             {
                 if (objectSpawner.Name == spawnerName)
                 {
@@ -244,7 +246,7 @@ namespace Unidork.ObjectPooling
 		/// </summary>
 		public static void UpdateSpawnerList()
 		{
-            GenericObjectSpawner<T>[] objectSpawnerArray = FindObjectsByType<GenericObjectSpawner<T>>(FindObjectsSortMode.None);
+            ObjectSpawner<T>[] objectSpawnerArray = FindObjectsByType<ObjectSpawner<T>>(FindObjectsSortMode.None);
             objectSpawners = objectSpawnerArray.ToList(objectSpawnerArray.Length);
 		}
 
@@ -267,7 +269,7 @@ namespace Unidork.ObjectPooling
 		/// <param name="spawnerName">Spawner name.</param>
 		public static void DestroySpawnerWithName(string spawnerName)
 		{
-            GenericObjectSpawner<T> spawnerToDestroy = GetSpawnerWithName(spawnerName);
+            ObjectSpawner<T> spawnerToDestroy = GetSpawnerWithName(spawnerName);
 
             if (spawnerToDestroy == null)
 			{

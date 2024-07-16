@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Sirenix.Utilities;
+using Unidork.Extensions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -9,9 +10,9 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 namespace Unidork.ObjectPooling
 {
     /// <summary>
-    /// Manages a pool of objects that can be used by an <see cref="GenericObjectSpawner{T}"/>.
+    /// Manages a pool of objects that can be used by an <see cref="ObjectSpawner{T}"/>.
     /// </summary>
-    public class ObjectPooler<T>
+    public class ObjectPooler<T> where T : Enum
     {
         #region Properties
 
@@ -137,9 +138,9 @@ namespace Unidork.ObjectPooling
             
             for (var i = 1; i <= itemSettings.NumberToPool; i++)
             {
-                var pooledObject = Addressables
+                var pooledObject = (IPooledObject<T>)Addressables
                     .InstantiateAsync(itemSettings.AssetReference).Result
-                    .GetComponentInChildren<IPooledObject<T>>();
+                    .GetComponentInChildren(typeof(IPooledObject<T>));
                 
                 pooledObject.SetParent(pooledObjectHolder);
                 pooledObject.Deactivate(deactivateOnStart: true);
@@ -210,7 +211,7 @@ namespace Unidork.ObjectPooling
                     if (pooledObjectSettings.PoolCanExpand)
                     {
                         var pooledObject = Addressables
-                            .InstantiateAsync(pooledObjectSettings.AssetReference, pooledObjectHolder).Result
+                            .InstantiateAsync(objectType, pooledObjectHolder).Result
                             .GetComponentInChildren<IPooledObject<T>>();
                         
                         pooledObject.Deactivate(deactivateOnStart: true);

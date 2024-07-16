@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnderdorkStudios.UnderTools.Extensions;
 using Unidork.Attributes;
+using Unidork.Scripts.Resources;
 using Unidork.Serialization;
 using UniRx;
 using UnityEngine;
@@ -26,7 +27,7 @@ namespace Unidork.Resources
 		/// <summary>
 		/// Reactive dictionary where key is the resource id and value is the owned amount.
 		/// </summary>
-		public static ReactiveDictionary<int, double> Resources { get; protected set; }
+		public static ReactiveDictionary<T, double> Resources { get; protected set; }
 
 		/// <summary>
 		/// Event that is raised when resource manager data is reset.
@@ -109,70 +110,125 @@ namespace Unidork.Resources
 		#endregion
 
 		#region Resources
-		
+
 		/// <summary>
-		/// Checks whether the amount of resource player has with specified ID is equal to or bigger that the passed amount.
+		/// Checks whether the amount of resource player has with specified type is equal to or bigger that the passed amount.
 		/// </summary>
-		/// <param name="resourceId">Resource ID></param>
-		/// <param name="amount">Amount to check against.</param>
+		/// <param name="resourceType">Resource type.</param>
+		/// <param name="amount">Amount to check.</param>
 		/// <returns>
 		/// True if the player owns at least as much specified resource as the passed amount, False otherwise.
 		/// </returns>
-		public static bool HasEnoughResource(int resourceId, double amount)
+		public static bool HasEnoughResource(T resourceType, double amount)
 		{
-			if (Resources.TryGetValue(resourceId, out double ownedAmount))
+			if (Resources.TryGetValue(resourceType, out double ownedAmount))
 			{
 				return ownedAmount >= amount;
 			}
 
-			Debug.LogWarning($"ResourceManager doesn't have an entry for Resource with id {resourceId}!");
+			Debug.LogWarning($"ResourceManager doesn't have an entry for Resource with id {resourceType}!");
 			return false;
 		}
 
 		/// <summary>
-		/// Gets the amount of resource with specified ID that player owns.
+		/// Checks whether player has enough resource using data from passed <see cref="ResourceAmount{T}"/>.
 		/// </summary>
-		/// <param name="resourceId">Resource ID.</param>
+		/// <param name="resource">Resource.</param>
 		/// <returns>
-		/// A double value that represents the amount of owned resource.
+		/// True if the player owns enough of the specified resource, False otherwise.
 		/// </returns>
-		public static double GetResourceAmount(int resourceId)
+		public static bool HasEnoughResource(ResourceAmount<T> resource)
 		{
-			if (Resources.TryGetValue(resourceId, out double amount))
+			return HasEnoughResource(resource.ResourceType, resource.Amount);
+		}
+
+		/// <summary>
+		/// Checks whether player has enough resources using data from passed <see cref="ResourceAmount{T}"/>.
+		/// </summary>
+		/// <param name="resources">Resources.</param>
+		/// <returns>
+		/// True if the player owns enough of the specified resources, False otherwise.
+		/// </returns>
+		public static bool HasEnoughResources(ResourceAmount<T>[] resources)
+		{
+			foreach (ResourceAmount<T> resource in resources)
 			{
-				return amount;
+				if (!HasEnoughResource(resource))
+				{
+					return false;
+				}
 			}
 
-			Debug.LogWarning($"ResourceManager doesn't have an entry for Resource with id {resourceId}!");
-			return 0d;
+			return true;
 		}
 
 		/// <summary>
-		/// Decreases the amount of resource with passed id by the specified value.
+		/// Decreases the amount of resource with passed type by the specified value.
 		/// </summary>
-		/// <param name="resourceId">Resource Id.</param>
+		/// <param name="resourceType">Resource type.</param>
 		/// <param name="amount">Amount to spend.</param>
-		public static void SpendResource(int resourceId, double amount)
+		public static void SpendResource(T resourceType, double amount)
 		{
-			AddResource(resourceId, -amount);
+			AddResource(resourceType, -amount);
+		}
+		
+		/// <summary>
+		/// Decreases the amount of resource using data from passed <see cref="ResourceAmount{T}"/>.
+		/// </summary>
+		/// <param name="resource">Resource.</param>
+		public static void SpendResource(ResourceAmount<T> resource)
+		{
+			SpendResource(resource.ResourceType, resource.Amount);
 		}
 
 		/// <summary>
-		/// Increases the amount of resource with passed id by the specified value.
+		/// Decreases the amount of resources using data from passed <see cref="ResourceAmount{T}"/>.
 		/// </summary>
-		/// <param name="resourceId">Resource Id.</param>
-		/// <param name="amount">Amount to spend.</param>
-		/// <param name="saveData"></param>
-		public static void AddResource(int resourceId, double amount, bool saveData = true)
+		/// <param name="resources">Resources.</param>
+		public static void SpendResources(ResourceAmount<T>[] resources)
 		{
-			if (Resources.ContainsKey(resourceId))
+			foreach (ResourceAmount<T> resource in resources)
 			{
-				Resources[resourceId] += amount;
+				SpendResource(resource);
+			}
+		}
+
+		/// <summary>
+		/// Increases the amount of resource with passed type by the specified value.
+		/// </summary>
+		/// <param name="resourceType">Resource type.</param>
+		/// <param name="amount">Amount to spend.</param>
+		public static void AddResource(T resourceType, double amount)
+		{
+			if (Resources.ContainsKey(resourceType))
+			{
+				Resources[resourceType] += amount;
 				instance.hasDataToSave = true;
 				return;
 			}
 			
-			Debug.LogError($"ResourceManager doesn't have an entry for Resource with id {resourceId}!");
+			Debug.LogError($"ResourceManager doesn't have an entry for Resource with type {resourceType}!");
+		}
+
+		/// <summary>
+		/// Increases the amount of resource using data from passed <see cref="ResourceAmount{T}"/>.
+		/// </summary>
+		/// <param name="resource">Resource amount.</param>
+		public static void AddResource(ResourceAmount<T> resource)
+		{
+			AddResource(resource.ResourceType, resource.Amount);
+		}
+
+		/// <summary>
+		/// Increases the amount of resources using data from passed <see cref="ResourceAmount{T}"/>.
+		/// </summary>
+		/// <param name="resources">Resources.</param>
+		public static void AddResources(ResourceAmount<T>[] resources)
+		{
+			foreach (ResourceAmount<T> resource in resources)
+			{
+				AddResource(resource);
+			}
 		}
 
 		/// <summary>
@@ -183,7 +239,7 @@ namespace Unidork.Resources
 		/// </returns>
 		protected virtual void InitResources()
 		{
-			Resources = new ReactiveDictionary<int, double>();
+			Resources = new ReactiveDictionary<T, double>();
             
 			ResourceSaveData<T> resourceSaveData = BaseSerializationManager.Load<ResourceSaveData<T>>(ResourceKeyName, ResourceSavePath);
 
@@ -191,7 +247,7 @@ namespace Unidork.Resources
 			{
 				foreach (ResourceData<T> resourceData in resourceSettings.Resources)
 				{
-					Resources.Add(resourceData.Id, resourceData.Amount);
+					Resources.Add(resourceData.Type, resourceData.Amount);
 				}
 				
 				SaveData();
@@ -200,7 +256,7 @@ namespace Unidork.Resources
 			{
 				foreach (ResourceData<T> resourceData in resourceSaveData.Data)
 				{
-					Resources.Add(resourceData.Id, resourceData.Amount);
+					Resources.Add(resourceData.Type, resourceData.Amount);
 
 				}
 			}
@@ -234,7 +290,7 @@ namespace Unidork.Resources
 
 			var index = 0;
 			
-			foreach (KeyValuePair<int, double> kvp in Resources)
+			foreach (KeyValuePair<T, double> kvp in Resources)
 			{
 				// Don't waste space saving user-friendly resource names
 				resources[index] = new ResourceData<T>((T)(object)kvp.Key, "", kvp.Value);

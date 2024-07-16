@@ -32,19 +32,76 @@ MonoBehaviour:
     assemblyNames:
     - ALINE
     - Assembly-CSharp
+    - Assembly-CSharp-firstpass
+    - BSR.Achievements
+    - BSR.Ads
+    - BSR.Animations
+    - BSR.Banks
+    - BSR.Base
+    - BSR.Boosts
+    - BSR.Camera
+    - BSR.Common
+    - BSR.Constants
+    - BSR.Core
+    - BSR.Debug
+    - BSR.Environment
+    - BSR.EscapeBuildings
+    - BSR.EscapeTools
+    - BSR.GameConfig
+    - BSR.Health
+    - BSR.Input
+    - BSR.Localization
+    - BSR.Mercs
+    - BSR.Mission
+    - BSR.Movement
+    - BSR.Particles
+    - BSR.Resources
+    - BSR.Robbers
+    - BSR.Scenes
+    - BSR.Serialization
+    - BSR.Settings
+    - BSR.Shop
+    - BSR.Timers
+    - BSR.Transforms
+    - BSR.Tweens
+    - BSR.UI
+    - BSR.Utility
+    - BSR.Weapons
+    - Doozy.Runtime
     - EasySave3
+    - GameAnalytics.Runtime
+    - Google.Play.Games
     - I2Localization.Runtime
     - Lofelt.NiceVibrations
     - MoreMountains.Tools
+    - PlayFab
+    - Renge.ProgressBar
+    - Rukhanka.Hybrid
+    - Rukhanka.Runtime
+    - Rukhanka.Toolbox
     - SerializableCollections
+    - SingularityGroup.HotReload.Runtime
+    - SingularityGroup.HotReload.Runtime.Public
+    - Sirenix.OdinInspector.Modules.Unity.Addressables
+    - UnderMessages
+    - UnderSkills
     - UnderTags
     - UnderTools.Extensions
     - UnderTools.Serialization
+    - Unidork.AddressableUtility
     - Unidork.Animations
     - Unidork.Attributes
     - Unidork.Audio
+    - Unidork.Camera.Cinemachine
+    - Unidork.CameraUtility
     - Unidork.Constants
     - Unidork.DeviceUtility
+    - Unidork.DoozyUI
+    - Unidork.DOTS.Camera
+    - Unidork.DOTS.Collections
+    - Unidork.DOTS.Extensions
+    - Unidork.DOTS.Lookups
+    - Unidork.DOTS.Math
     - Unidork.Events
     - Unidork.Extensions
     - Unidork.Feedbacks
@@ -53,10 +110,13 @@ MonoBehaviour:
     - Unidork.GraphicsUtility
     - Unidork.Math
     - Unidork.Misc
+    - Unidork.ObjectPooling
+    - Unidork.OffScreenTargets
     - Unidork.PlayMaker
     - Unidork.Progress
     - Unidork.QuestSystem
     - Unidork.Resources
+    - Unidork.SceneManagement
     - Unidork.Serialization
     - Unidork.Settings
     - Unidork.StateMachine
@@ -65,6 +125,7 @@ MonoBehaviour:
     - Unidork.Tweens
     - Unidork.UI
     - Unidork.UniRx
+    - Unidork.Unlockables
     - Unidork.Utility
     - Unidork.Variables
     - Unidork.WeightedSelection
@@ -74,6 +135,14 @@ MonoBehaviour:
     - UniTask.DOTween
     - UniTask.Linq
     - UniTask.TextMeshPro
+    - VoxelBusters.CoreLibrary
+    - VoxelBusters.CoreLibrary.NativePlugins
+    - VoxelBusters.CoreLibrary.NativePlugins.AndroidModule
+    - VoxelBusters.CoreLibrary.NativePlugins.iOSModule
+    - VoxelBusters.CoreLibrary.Parser
+    - VoxelBusters.EssentialKit
+    - VoxelBusters.EssentialKit.AndroidModule
+    - VoxelBusters.EssentialKit.iOSModule
     showAdvancedSettings: 1
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1

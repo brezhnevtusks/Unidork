@@ -8,7 +8,7 @@ namespace Unidork.ObjectPooling
 	/// Contains settings for an <see cref="ObjectPooler"/>.
 	/// </summary>
 	[System.Serializable]
-    public class ObjectPoolerSettings<T>
+    public class ObjectPoolerSettings<T> where T : System.Enum
     {
         #region Properties
 
@@ -49,6 +49,7 @@ namespace Unidork.ObjectPooling
         /// <summary>
         /// Array of objects storing settings for each type of item that needs to be put in a pool.
         /// </summary>
+        [FormerlySerializedAs("itemSettings")]
         [Tooltip("Array of objects storing settings for each type of item that needs to be put in a pool.")]
         [SerializeField]
         private PooledObjectSettings<T>[] pooledObjectSettings = null;

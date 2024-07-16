@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Sirenix.Utilities;
+using Unidork.Extensions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -137,7 +138,7 @@ namespace Unidork.ObjectPooling
             
             for (var i = 1; i <= itemSettings.NumberToPool; i++)
             {
-                var pooledObject = Addressables.InstantiateAsync(itemSettings.AssetReference).Result.GetComponentInChildren<IPooledObject>();
+                var pooledObject = (IPooledObject)Addressables.InstantiateAsync(itemSettings.AssetReference).Result.GetComponentInChildren(typeof(IPooledObject));
                 pooledObject.SetParent(pooledObjectHolder);
                 pooledObject.Deactivate(deactivateOnStart: true);
                 pooledObjectList.Add(pooledObject);

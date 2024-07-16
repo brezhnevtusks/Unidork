@@ -3,6 +3,7 @@ using Sirenix.Utilities;
 using System.Collections.Generic;
 using UnderdorkStudios.UnderTools.Extensions;
 using Unidork.Attributes;
+using Unidork.Extensions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -54,21 +55,21 @@ namespace Unidork.ObjectPooling
         /// </summary>
         [Tooltip("Settings to use when creating the pooler that will be tied to this spawner.")]
         [SerializeField]
-        private ObjectPoolerSettings poolerSettings;
+        private ObjectPoolerSettings poolerSettings = null;
 
         /// <summary>
         /// Transform that serves as a holder for spawned objects in case no other transform is provided by calling scripts.
         /// </summary>
         [Tooltip("Transform that serves as a holder for spawned objects in case no other transform is provided by calling scripts.")]
         [SerializeField]
-        private Transform defaultSpawnedObjectHolder;
+        private Transform defaultSpawnedObjectHolder = null;
 
         /// <summary>
         /// Should this spawner be initialized in Start() method?
         /// </summary>
         [Tooltip("Should this spawner be initialized in Start() method?")]
         [SerializeField]
-        private bool initOnStart;
+        private bool initOnStart = false;
 
         /// <summary>
         /// Object pooler that stores objects spawned by this spawner.
@@ -78,7 +79,7 @@ namespace Unidork.ObjectPooling
         /// <summary>
         /// List of active spawned objects.
         /// </summary>
-        private readonly List<IPooledObject> spawnedObjects = new();
+        private readonly List<IPooledObject> spawnedObjects = new List<IPooledObject>();
         
         #endregion
 

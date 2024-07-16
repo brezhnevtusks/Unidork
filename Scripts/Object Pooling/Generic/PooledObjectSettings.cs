@@ -7,9 +7,17 @@ namespace Unidork.ObjectPooling
     /// Stores settings for an item that is part of an object pool.
     /// </summary>
     [System.Serializable]
-    public class PooledObjectSettings<T>
+    public class PooledObjectSettings<T> where T : System.Enum
     {
         #region Properties
+
+        /// <summary>
+        /// Reference to the addressable asset that contains the object prefab.
+        /// </summary>
+        /// <value>
+        /// Gets the value of the field assetReference.
+        /// </value>
+        public AssetReference AssetReference => assetReference;
 
         /// <summary>
         /// Pooled object's type.
@@ -18,14 +26,6 @@ namespace Unidork.ObjectPooling
         /// Gets the value of the field objectType.
         /// </value>
         public T ObjectType => objectType;
-        
-        /// <summary>
-        /// Reference to the addressable asset that contains the object prefab.
-        /// </summary>
-        /// <value>
-        /// Gets the value of the field assetReference.
-        /// </value>
-        public AssetReference AssetReference => assetReference;
 
         /// <summary>
         /// Number of objects to put in the pool.
@@ -48,18 +48,18 @@ namespace Unidork.ObjectPooling
         #region Fields
 
         /// <summary>
-        /// Pooled object's type.
-        /// </summary>
-        [Tooltip("Pooled object's type.")]
-        [SerializeField]
-        private T objectType;
-        
-        /// <summary>
         /// Reference to the addressable asset that contains the object prefab.
         /// </summary>    
         [Tooltip("Reference to the addressable asset that contains the object prefab.")]
         [SerializeField]
         private AssetReference assetReference = null;
+
+        /// <summary>
+        /// Pooled object's type.
+        /// </summary>
+        [Tooltip("Pooled object's type.")]
+        [SerializeField]
+        private T objectType;
         
         /// <summary>
         /// Number of objects to put in the pool.

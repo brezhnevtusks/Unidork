@@ -15,5 +15,11 @@ namespace Unidork.Scripts.Resources
 
         [SerializeField] private T resourceType;
         [SerializeField] private double amount;
+        
+        public ResourceAmount(T resourceType, double amount)
+        {
+            this.resourceType = resourceType;
+            this.amount = amount;
+        }
     }
 }
