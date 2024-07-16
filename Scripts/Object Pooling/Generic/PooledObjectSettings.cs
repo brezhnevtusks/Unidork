@@ -7,7 +7,7 @@ namespace Unidork.ObjectPooling
     /// Stores settings for an item that is part of an object pool.
     /// </summary>
     [System.Serializable]
-    public class PooledObjectSettings<T> where T : System.Enum
+    public class PooledObjectSettings<T>
     {
         #region Properties
 

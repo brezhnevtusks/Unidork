@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Sirenix.Utilities;
-using Unidork.Extensions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -12,7 +11,7 @@ namespace Unidork.ObjectPooling
     /// <summary>
     /// Manages a pool of objects that can be used by an <see cref="ObjectSpawner{T}"/>.
     /// </summary>
-    public class ObjectPooler<T> where T : Enum
+    public class ObjectPooler<T>
     {
         #region Properties
 

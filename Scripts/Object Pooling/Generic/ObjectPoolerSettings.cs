@@ -8,7 +8,7 @@ namespace Unidork.ObjectPooling
 	/// Contains settings for an <see cref="ObjectPooler"/>.
 	/// </summary>
 	[System.Serializable]
-    public class ObjectPoolerSettings<T> where T : System.Enum
+    public class ObjectPoolerSettings<T>
     {
         #region Properties
 

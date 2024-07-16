@@ -11,7 +11,7 @@ namespace Unidork.ObjectPooling
 	/// <summary>
 	/// Spawns objects on request. Objects are acquired from an <see cref="objectPooler"/> that this component creates on start.
 	/// </summary>
-	public class ObjectSpawner<T> : MonoBehaviour where T : Enum
+	public class ObjectSpawner<T> : MonoBehaviour
     {
         #region Properties
 

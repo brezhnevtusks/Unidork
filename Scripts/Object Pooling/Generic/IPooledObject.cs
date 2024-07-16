@@ -5,7 +5,7 @@ namespace Unidork.ObjectPooling
     /// <summary>
     /// Interface for objects that can be pooled by an <see cref="ObjectPooler"/>.
     /// </summary>
-    public interface IPooledObject<out T> where T : System.Enum
+    public interface IPooledObject<out T>
     {
         /// <summary>
         /// Pooled object type.
