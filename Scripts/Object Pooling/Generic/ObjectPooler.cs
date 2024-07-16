@@ -210,7 +210,7 @@ namespace Unidork.ObjectPooling
                     if (pooledObjectSettings.PoolCanExpand)
                     {
                         var pooledObject = Addressables
-                            .InstantiateAsync(objectType, pooledObjectHolder).Result
+                            .InstantiateAsync(pooledObjectSettings.AssetReference, pooledObjectHolder).Result
                             .GetComponentInChildren<IPooledObject<T>>();
                         
                         pooledObject.Deactivate(deactivateOnStart: true);
