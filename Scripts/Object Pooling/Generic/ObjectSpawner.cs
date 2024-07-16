@@ -3,7 +3,6 @@ using Sirenix.Utilities;
 using System.Collections.Generic;
 using UnderdorkStudios.UnderTools.Extensions;
 using Unidork.Attributes;
-using Unidork.Extensions;
 using UnityEngine;
 
 namespace Unidork.ObjectPooling
