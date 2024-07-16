@@ -1,1 +1,1 @@
-Unidork is a repo I started putting together several years ago when I began working in the hyper-casual segment. It contains various modules and utilities that can be used for developing games with the Unity engine. It is focused on the mobile segment but not limited to it. Some things are still WIP but those that aren't can and have been used in real projects.
+
