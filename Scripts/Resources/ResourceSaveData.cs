@@ -1,8 +1,8 @@
 ﻿using System;
-using Unidork.Resources;
+using Unidork.Serialization;
 using UnityEngine;
 
-namespace Unidork.Serialization
+namespace Unidork.Resources
 {
 	/// <summary>
 	/// Stores resource save data.

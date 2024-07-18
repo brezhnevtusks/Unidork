@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnderdorkStudios.UnderTools.Extensions;
 using Unidork.Attributes;
-using Unidork.Scripts.Resources;
 using Unidork.Serialization;
 using UniRx;
 using UnityEngine;

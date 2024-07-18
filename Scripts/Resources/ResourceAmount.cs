@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Unidork.Scripts.Resources
+namespace Unidork.Resources
 {
     /// <summary>
     /// Helper class to store an amount of resource.
