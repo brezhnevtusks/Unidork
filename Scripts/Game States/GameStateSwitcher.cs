@@ -1,5 +1,4 @@
-﻿using Sirenix.OdinInspector;
-using Unidork.Attributes;
+﻿using Unidork.Attributes;
 using Unidork.UniRx;
 #if ADDRESSABLES
 using Unidork.SceneManagement;
@@ -17,49 +16,9 @@ namespace Unidork.GameStates
 	    #region Properties
 
 	    /// <summary>
-	    /// Current game state object.
-	    /// </summary>
-	    /// <value>
-	    /// Gets and sets the value of the field value.
-	    /// </value>
-	    public GameState CurrentGameState
-	    {
-		    get => currentGameState;
-
-		    set
-		    {
-			    previousGameState = currentGameState;
-			    
-			    bool switchingToSameState = currentGameState == value;
-
-			    if (currentGameState != null && !switchingToSameState)
-			    {
-				    currentGameState.OnStateExited();
-			    }
-
-			    currentGameState = value;
-
-			    if (currentGameState != null && !switchingToSameState)
-			    {
-				    currentGameState.OnStateEntered();
-			    }
-
-			    CurrentGameStateReactive.Value = value;
-		    }
-	    }
-
-	    /// <summary>
 	    /// Reactive property that other objects can subscribe to track current game state changes.
 	    /// </summary>
-	    public static ReactivePropertyWithOldValue<GameState> CurrentGameStateReactive { get; private set; }
-
-	    /// <summary>
-	    /// Previous game state.
-	    /// </summary>
-	    /// <returns>
-	    /// Gets the value of the field previousGameState.
-	    /// </returns>
-	    public GameState PreviousGameState => previousGameState;
+	    public static ReactivePropertyWithOldValue<GameState> GameState { get; private set; }
 
 	    #endregion
 	    
@@ -72,18 +31,6 @@ namespace Unidork.GameStates
 	    [Tooltip("Game state to set on start. If left blank, will default to game state with name \"Splash\".")]
 	    [SerializeField]
 	    private GameState startState;
-
-        /// <summary>
-        /// Current game state.
-        /// </summary>
-        [ShowInInspector, ReadOnly]
-        private GameState currentGameState;
-
-        /// <summary>
-        /// Previous game state.
-        /// </summary>
-        [ShowInInspector, ReadOnly]
-        private GameState previousGameState;
         
 	    /// <summary>
 	    /// Should state changes be logged to console?
@@ -105,7 +52,10 @@ namespace Unidork.GameStates
 				return;
 			}
 #endif
-			CurrentGameStateReactive = new ReactivePropertyWithOldValue<GameState>(null);
+			GameState = new ReactivePropertyWithOldValue<GameState>(null);
+			GameState
+				.Subscribe(OnStateSwitched)
+				.AddTo(this);
 			
 			SwitchToState(startState);
 
@@ -125,14 +75,31 @@ namespace Unidork.GameStates
 		/// <param name="newGameState">New game state.</param>
 		public virtual void SwitchToState(GameState newGameState)
 		{
-            CurrentGameState = newGameState;
+            GameState.Value = newGameState;
 
-			if (!logStateChangesToConsole || newGameState == null)
+            if (logStateChangesToConsole && newGameState != null)
+            {
+	            Debug.Log($"Switched to state: {newGameState.StateName}");
+            }
+		}
+
+		private void OnStateSwitched(GameState newGameState)
+		{
+			if (newGameState != null)
 			{
-				return;
+				newGameState.OnStateEntered();
 			}
-			
-			Debug.Log($"Switched to state: {newGameState.StateName}");
+			else
+			{
+				Debug.LogError("Trying to switch to a null GameState!");
+			}
+
+			GameState oldGameState = GameState.OldValue;
+
+			if (oldGameState != null)
+			{
+				oldGameState.OnStateExited();
+			}
 		}
 
 		#endregion
