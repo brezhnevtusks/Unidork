@@ -1,6 +1,6 @@
 using Doozy.Runtime.UIManager.Components;
 
-namespace Unidork.Scripts.Doozy
+namespace Unidork.Doozy
 {
     public static class DoozyExtensions
     {
