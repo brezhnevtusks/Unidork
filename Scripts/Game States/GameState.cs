@@ -1,12 +1,7 @@
-﻿using UnderdorkStudios.UnderTags;
+﻿using UnderdorkStudios.UnderMessages;
+using UnderdorkStudios.UnderTags;
 using Unidork.Attributes;
-using Unidork.Events;
 using UnityEngine;
-
-#if UNITY_EDITOR 
-using Sirenix.OdinInspector;
-using UnityEditor;
-#endif
 
 namespace Unidork.GameStates
 {
@@ -28,6 +23,12 @@ namespace Unidork.GameStates
 
 		#endregion
 
+		#region Constants
+
+		public const string Game_State_Channel = "Message.GameState";
+
+		#endregion
+
 		#region Fields
 
 		/// <summary>
@@ -39,42 +40,19 @@ namespace Unidork.GameStates
 		private UnderTag stateName = null;
 
 		/// <summary>
-		/// Optional event to raise when the state is entered.
+		/// Optional message to send when the state is entered.
 		/// </summary>
 		[Space, EventsHeader, Space]
-		[Tooltip("Optional event to raise when the state is entered.")]
+		[Tooltip("Optional message to send when the state is entered.")]
 		[SerializeField]
-		private GameEvent eventToRaiseOnStateEntered = null;
+		private UnderTag messageToSendOnStateEntered = null;
 
 		/// <summary>
-		/// Optional event to raise when the state is exited.
+		/// Optional message to send when the state is exited.
 		/// </summary>
-		[Tooltip("Optional event to raise when the state is exited.")]
+		[Tooltip("Optional message to send when the state is exited.")]
 		[SerializeField]
-		private GameEvent eventToRaiseOnStateExited = null;
-
-#if UNITY_EDITOR
-	    [Button("CREATE EVENTS", ButtonSizes.Medium), GUIColor(0, 1, 0)]
-		private void CreateEvents()
-		{
-			string path = AssetDatabase.GetAssetPath(this);
-			string[] splitPath = path.Split('.');
-			string folderPath = splitPath[0].Replace(name, "");
-
-			GameEvent onEnteredEvent = ScriptableObject.CreateInstance<GameEvent>();
-			onEnteredEvent.name = $"EVT_OnEntered{stateName}GameState";
-			eventToRaiseOnStateEntered = onEnteredEvent;
-			AssetDatabase.CreateAsset(onEnteredEvent, folderPath + onEnteredEvent.name + ".asset");
-			
-			GameEvent onExitedEvent = CreateInstance<GameEvent>();
-			onExitedEvent.name = $"EVT_OnExited{stateName}GameState";
-			eventToRaiseOnStateExited = onExitedEvent;
-			AssetDatabase.CreateAsset(onExitedEvent, folderPath + onExitedEvent.name + ".asset");
-			
-			AssetDatabase.SaveAssets();
-			AssetDatabase.Refresh();
-		}
-#endif
+		private UnderTag messageToSendOnStateExited = null;
 		
 		#endregion
 
@@ -85,9 +63,9 @@ namespace Unidork.GameStates
 		/// </summary>
 		public void OnStateEntered()
 		{
-			if (eventToRaiseOnStateEntered != null)
+			if (messageToSendOnStateEntered.IsValid())
 			{
-				eventToRaiseOnStateEntered.Raise();
+				UnderMessageSystem.SendMessage(Game_State_Channel, messageToSendOnStateEntered);
 			}
 		}
 
@@ -96,9 +74,9 @@ namespace Unidork.GameStates
 		/// </summary>
 		public void OnStateExited()
 		{
-			if (eventToRaiseOnStateExited != null)
+			if (messageToSendOnStateExited.IsValid())
 			{
-				eventToRaiseOnStateExited.Raise();
+				UnderMessageSystem.SendMessage(Game_State_Channel, messageToSendOnStateExited);
 			}
 		}
 
