@@ -31,6 +31,7 @@ namespace UnderdorkStudios.UnderTags.Editor
         public const string ExpandTagArrowRotatedClass = "expand-tag-arrow-rotated";
         public const string ExpandTagArrowHiddenClass = "expand-tag-arrow-hidden";
         public const string TagLabelName = "tag-label";
+        public const string TagDropdownName = "tag-dropdown";
         public const string TagExpandedClass = "tag-expanded";
         public const string TagHiddenClass = "tag-hidden";
         public const string MainTagContainerName = "main-tag-container";

@@ -35,6 +35,7 @@ namespace UnderdorkStudios.UnderTags.Editor
             this.tag = tag;
 
             tagLabel = this.Q<Label>(UnderTagStyles.TagLabelName);
+            
             removeTagButton = this.Q<Button>(UnderTagStyles.RemoveTagButtonName);
             
             if (tag.IsValid())

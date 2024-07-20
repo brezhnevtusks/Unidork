@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Reflection;
+using UnderdorkStudios.UnderTools.Extensions;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -26,7 +29,10 @@ namespace UnderdorkStudios.UnderTags.Editor
         private SerializedProperty property;
         private UnderTagPropertyDrawer propertyDrawer;
         private Label tagNameLabel;
+        private DropdownField tagDropdown;
         private Button clearTagButton;
+
+        private Dictionary<string, UnderTag> dropdownTagDict;
         
         #endregion
 
@@ -40,10 +46,69 @@ namespace UnderdorkStudios.UnderTags.Editor
             this.Q<Label>(UnderTagStyles.TagPropertyNameName).text = property.displayName;
             
             tagNameLabel = this.Q<Label>(UnderTagStyles.TagValueName);
+            tagDropdown = this.Q<DropdownField>(UnderTagStyles.TagDropdownName);
+            clearTagButton = this.Q<Button>(UnderTagStyles.ClearTagButtonName);
 
+            UnderTagDropdownAttribute dropdownAttribute = propertyDrawer.fieldInfo.GetCustomAttribute<UnderTagDropdownAttribute>(false);
+
+            if (dropdownAttribute != null)
+            {
+                UnderTagDatabase tagDatabase = UnderTagDatabase.GetOrCreateUnderTagDatabase();
+                UnderTag parentTag = new UnderTag(dropdownAttribute.ParentTag);
+                dropdownTagDict = new Dictionary<string, UnderTag>();
+                
+                if (tagDatabase.TagIsValid(parentTag))
+                {
+                    List<UnderTag> dropdownTags = new();
+
+                    if (dropdownAttribute.IncludeParent)
+                    {
+                        dropdownTags.Add(parentTag);
+                    }
+                    
+                    if (dropdownAttribute.DirectChildrenOnly)
+                    {
+                        _ = tagDatabase.TryGetChildTags(parentTag, out dropdownTags);
+                    }
+                    else
+                    {
+                        tagDatabase.GetDescendentTags(parentTag, dropdownTags);
+                    }
+
+                    foreach (UnderTag dropdownTag in dropdownTags)
+                    {
+                        _ = dropdownTagDict.TryAdd(dropdownTag.GetIndividualName(), dropdownTag);
+                    }
+
+                    tagDropdown.RemoveFromClassList(UnderTagStyles.ElementHidden);
+                    
+                    tagNameLabel.AddToClassList(UnderTagStyles.ElementHidden);
+                    clearTagButton.AddToClassList(UnderTagStyles.ElementHidden);
+                    
+                    tagDropdown.choices = dropdownTagDict.Keys.ToList(dropdownTagDict.Count);
+
+                    if (tagDropdown.choices.Count > 0)
+                    { 
+                        tagDropdown.value = tagDropdown.choices[0];
+                    }
+                    
+                    tagDropdown.RegisterValueChangedCallback(evt =>
+                    {
+                        SetSelectedTag(dropdownTagDict[evt.newValue], false);
+                    });
+                    
+                    return;
+                }
+
+                Debug.LogError($"UnderTags: UnderTagDropdownAttribute has an invalid parent tag: {parentTag.Value}!");
+            }
+            
+            tagNameLabel.RemoveFromClassList(UnderTagStyles.ElementHidden);
+            clearTagButton.RemoveFromClassList(UnderTagStyles.ElementHidden);
+            tagDropdown.AddToClassList(UnderTagStyles.ElementHidden);
+            
             RefreshTagValueLabel();
             
-            clearTagButton = this.Q<Button>(UnderTagStyles.ClearTagButtonName);
             clearTagButton.clicked += OnClearTagButtonPressed;
             
             this
@@ -57,11 +122,16 @@ namespace UnderdorkStudios.UnderTags.Editor
 
         #region Tags
 
-        public void SetSelectedTag(UnderTag tag)
+        public void SetSelectedTag(UnderTag tag, bool toggleClearButton = true)
         {
             property.boxedValue = tag;
             RefreshTagValueLabel();
-            ToggleClearButton();
+
+            if (toggleClearButton)
+            {
+                ToggleClearButton();
+            }
+            
             property.serializedObject.ApplyModifiedProperties();
         }
         

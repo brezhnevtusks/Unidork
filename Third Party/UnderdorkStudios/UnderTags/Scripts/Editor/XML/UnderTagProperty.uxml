@@ -4,6 +4,7 @@
     <UnderdorkStudios.UnderTags.Editor.UnderTagPropertyVisualElement name="root-container">
         <ui:VisualElement name="tag-container" class="unity-base-field unity-base-field__aligned unity-base-field__inspector-field" style="flex-grow: 1;">
             <ui:Label tabindex="-1" text="Tag" parse-escape-sequences="true" display-tooltip-when-elided="true" name="tag-property-name" />
+            <ui:DropdownField name="tag-dropdown" class="element-hidden" />
             <ui:VisualElement name="tag-value-container" style="display: flex;">
                 <ui:VisualElement name="tag-background">
                     <ui:Label tabindex="-1" text="Test.Test" parse-escape-sequences="true" display-tooltip-when-elided="true" name="tag-value" />

@@ -327,7 +327,7 @@ namespace UnderdorkStudios.UnderTags
         /// </returns>
         public bool TryGetChildTags(UnderTag tag, out List<UnderTag> childTags)
         {
-            childTags = null;
+            childTags = new List<UnderTag>();
 
             if (!tagChildDictionary.TryGetValue(tag, out UnderTagChildList childList))
             {
