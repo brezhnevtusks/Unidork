@@ -47,6 +47,7 @@ namespace UnderdorkStudios.UnderTags.Editor
 
         public const string TagPropertyNameName = "tag-property-name";
         public const string TagValueName = "tag-value";
+        public const string TagValueContainerName = "tag-value-container";
         public const string TagBackgroundName = "tag-background";
         public const string ClearTagButtonName = "clear-tag-button";
 

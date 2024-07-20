@@ -28,6 +28,7 @@ namespace UnderdorkStudios.UnderTags.Editor
 
         private SerializedProperty property;
         private UnderTagPropertyDrawer propertyDrawer;
+        private VisualElement tagValueContainer;
         private Label tagNameLabel;
         private DropdownField tagDropdown;
         private Button clearTagButton;
@@ -46,6 +47,7 @@ namespace UnderdorkStudios.UnderTags.Editor
             this.Q<Label>(UnderTagStyles.TagPropertyNameName).text = property.displayName;
             
             tagNameLabel = this.Q<Label>(UnderTagStyles.TagValueName);
+            tagValueContainer = this.Q<VisualElement>(UnderTagStyles.TagValueContainerName);
             tagDropdown = this.Q<DropdownField>(UnderTagStyles.TagDropdownName);
             clearTagButton = this.Q<Button>(UnderTagStyles.ClearTagButtonName);
 
@@ -82,14 +84,15 @@ namespace UnderdorkStudios.UnderTags.Editor
 
                     tagDropdown.RemoveFromClassList(UnderTagStyles.ElementHidden);
                     
-                    tagNameLabel.AddToClassList(UnderTagStyles.ElementHidden);
+                    tagValueContainer.AddToClassList(UnderTagStyles.ElementHidden);
                     clearTagButton.AddToClassList(UnderTagStyles.ElementHidden);
                     
                     tagDropdown.choices = dropdownTagDict.Keys.ToList(dropdownTagDict.Count);
 
                     if (tagDropdown.choices.Count > 0)
-                    { 
-                        tagDropdown.value = tagDropdown.choices[0];
+                    {
+                        UnderTag currentValue = (UnderTag)property.boxedValue;
+                        tagDropdown.value = currentValue.IsValid() ? currentValue.GetIndividualName() : string.Empty;
                     }
                     
                     tagDropdown.RegisterValueChangedCallback(evt =>
@@ -103,7 +106,7 @@ namespace UnderdorkStudios.UnderTags.Editor
                 Debug.LogError($"UnderTags: UnderTagDropdownAttribute has an invalid parent tag: {parentTag.Value}!");
             }
             
-            tagNameLabel.RemoveFromClassList(UnderTagStyles.ElementHidden);
+            tagValueContainer.RemoveFromClassList(UnderTagStyles.ElementHidden);
             clearTagButton.RemoveFromClassList(UnderTagStyles.ElementHidden);
             tagDropdown.AddToClassList(UnderTagStyles.ElementHidden);
             

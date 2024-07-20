@@ -3,7 +3,6 @@
     <Style src="project://database/Assets/UnderdorkStudios/UnderTags/Scripts/Editor/CSS/Common.uss?fileID=7433441132597879392&amp;guid=9bc5358f01fba436ca389dc00507ed4d&amp;type=3#Common" />
     <UnderdorkStudios.UnderTags.Editor.UnderTagVisualElement name="root-tag-container">
         <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="tag-label" />
-        <ui:DropdownField name="test" />
         <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="remove-tag-button" focusable="false" />
     </UnderdorkStudios.UnderTags.Editor.UnderTagVisualElement>
 </ui:UXML>
