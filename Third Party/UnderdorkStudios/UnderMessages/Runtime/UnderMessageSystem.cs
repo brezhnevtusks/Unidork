@@ -245,7 +245,6 @@ namespace UnderdorkStudios.UnderMessages
             
             if (underMessageReceivers.TryGetValue((channelName, messageName), out HashSet<UnderMessageReceiver> receivers))
             {
-                
                 foreach (UnderMessageReceiver receiver in receivers)
                 {
                     if (receiver.IsValid())

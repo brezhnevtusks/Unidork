@@ -65,7 +65,7 @@ namespace Unidork.GameStates
 		{
 			if (messageToSendOnStateEntered.IsValid())
 			{
-				UnderMessageSystem.SendMessage(Game_State_Channel, messageToSendOnStateEntered);
+				UnderMessageSystem.SendMessage(channelName: Game_State_Channel, messageName:messageToSendOnStateEntered);
 			}
 		}
 
@@ -76,7 +76,7 @@ namespace Unidork.GameStates
 		{
 			if (messageToSendOnStateExited.IsValid())
 			{
-				UnderMessageSystem.SendMessage(Game_State_Channel, messageToSendOnStateExited);
+				UnderMessageSystem.SendMessage(channelName: Game_State_Channel, messageName: messageToSendOnStateExited);
 			}
 		}
 

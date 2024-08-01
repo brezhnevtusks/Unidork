@@ -40,6 +40,11 @@ namespace Unidork.GameStates
 	    [SerializeField]
 	    private bool logStateChangesToConsole;
 
+	    /// <summary>
+	    /// Has this component been initialized?
+	    /// </summary>
+	    private bool isInitialized;
+	    
 		#endregion
 
 		#region Init
@@ -56,6 +61,8 @@ namespace Unidork.GameStates
 			GameState
 				.Subscribe(OnStateSwitched)
 				.AddTo(this);
+			
+			isInitialized = true;
 			
 			SwitchToState(startState);
 
@@ -85,6 +92,11 @@ namespace Unidork.GameStates
 
 		private void OnStateSwitched(GameState newGameState)
 		{
+			if (!isInitialized)
+			{
+				return;
+			}
+			
 			if (newGameState != null)
 			{
 				newGameState.OnStateEntered();
