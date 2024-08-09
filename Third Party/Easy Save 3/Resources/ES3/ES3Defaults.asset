@@ -40,6 +40,7 @@ MonoBehaviour:
     - CatchTheRobbers.Common
     - CatchTheRobbers.Constants
     - CatchTheRobbers.Core
+    - CatchTheRobbers.Environment
     - CatchTheRobbers.EscapeBuildings
     - CatchTheRobbers.EscapeTools
     - CatchTheRobbers.GameConfig
