@@ -1,8 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UnderdorkStudios/UnderTags/Scripts/Editor/CSS/UnderTag.uss?fileID=7433441132597879392&amp;guid=b8e90e2e9be0993cebd3c41e3a8f8497&amp;type=3#UnderTag" />
-    <Style src="project://database/Assets/UnderdorkStudios/UnderTags/Scripts/Editor/CSS/Common.uss?fileID=7433441132597879392&amp;guid=9bc5358f01fba436ca389dc00507ed4d&amp;type=3#Common" />
-    <UnderdorkStudios.UnderTags.Editor.UnderTagVisualElement name="root-tag-container">
-        <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="tag-label" />
-        <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" name="remove-tag-button" focusable="false" />
-    </UnderdorkStudios.UnderTags.Editor.UnderTagVisualElement>
-</ui:UXML>

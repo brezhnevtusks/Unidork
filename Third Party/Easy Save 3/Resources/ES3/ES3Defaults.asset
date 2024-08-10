@@ -32,42 +32,15 @@ MonoBehaviour:
     assemblyNames:
     - ALINE
     - Assembly-CSharp
-    - Assembly-CSharp-firstpass
-    - CatchTheRobbers.Banks
-    - CatchTheRobbers.Base
-    - CatchTheRobbers.Boosts
-    - CatchTheRobbers.Camera
-    - CatchTheRobbers.Common
-    - CatchTheRobbers.Constants
-    - CatchTheRobbers.Core
-    - CatchTheRobbers.Environment
-    - CatchTheRobbers.EscapeBuildings
-    - CatchTheRobbers.EscapeTools
-    - CatchTheRobbers.GameConfig
-    - CatchTheRobbers.Input
-    - CatchTheRobbers.Localization
-    - CatchTheRobbers.Mercs
-    - CatchTheRobbers.Mission
-    - CatchTheRobbers.Resources
-    - CatchTheRobbers.Robbers
-    - CatchTheRobbers.SceneManagement
-    - CatchTheRobbers.Serialization
-    - CatchTheRobbers.Settings
-    - CatchTheRobbers.Shop
-    - CatchTheRobbers.UI
-    - CatchTheRobbers.Utility
-    - Doozy.Runtime
     - EasySave3
-    - GameAnalytics.Editor
-    - GameAnalytics.Runtime
     - I2Localization.Runtime
     - Lofelt.NiceVibrations
     - MoreMountains.Tools
-    - PlayFab
-    - Renge.ProgressBar
+    - NWH.Common
+    - NWH.VehiclePhysics2
+    - NWH.VehiclePhysics2.SetupWizard
+    - NWH.WheelController
     - SerializableCollections
-    - SingularityGroup.HotReload.Runtime
-    - SingularityGroup.HotReload.Runtime.Public
     - Sirenix.OdinInspector.Modules.Unity.Addressables
     - UnderMessages
     - UnderTags
@@ -81,7 +54,6 @@ MonoBehaviour:
     - Unidork.CameraUtility
     - Unidork.Constants
     - Unidork.DeviceUtility
-    - Unidork.DoozyUI
     - Unidork.Events
     - Unidork.Extensions
     - Unidork.Feedbacks
@@ -114,15 +86,6 @@ MonoBehaviour:
     - UniTask.DOTween
     - UniTask.Linq
     - UniTask.TextMeshPro
-    - VoxelBusters.CoreLibrary
-    - VoxelBusters.CoreLibrary.NativePlugins
-    - VoxelBusters.CoreLibrary.NativePlugins.AndroidModule
-    - VoxelBusters.CoreLibrary.NativePlugins.iOSModule
-    - VoxelBusters.CoreLibrary.Parser
-    - VoxelBusters.EssentialKit
-    - VoxelBusters.EssentialKit.AndroidModule
-    - VoxelBusters.EssentialKit.Demo
-    - VoxelBusters.EssentialKit.iOSModule
     showAdvancedSettings: 1
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1

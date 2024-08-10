@@ -2,12 +2,17 @@
     "name": "Unidork.GameStates",
     "rootNamespace": "",
     "references": [
-        "GUID:0d520b1bc5a9904938e8e0f99797d678",
-        "GUID:37618fc917fa4d97b56fc02508da0ea7",
-        "GUID:4ee1b0f5de000e041a6521f50852d501",
-        "GUID:8d58f2f2ebe1e634db8166fe60297cb4",
-        "GUID:367906a638f979e48bf10b4a11437981",
-        "GUID:560b04d1a97f54a4e82edc0cbbb69285"
+        "UnderMessages",
+        "UnderTags",
+        "Unidork.Attributes",
+        "Unidork.SceneManagement",
+        "Unidork.UniRx",
+        "UniRx",
+        "UnderTools.Extensions",
+        "UnderTools.Serialization",
+        "Unidork.Events",
+        "UniTask",
+        "UniTask.Addressables"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -15,12 +20,19 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "UNDERTAGS"
+    ],
     "versionDefines": [
         {
             "name": "com.unity.addressables",
             "expression": "1",
             "define": "ADDRESSABLES"
+        },
+        {
+            "name": "com.underdork-studios.undertags",
+            "expression": "1",
+            "define": "UNDERTAGS"
         }
     ],
     "noEngineReferences": false
