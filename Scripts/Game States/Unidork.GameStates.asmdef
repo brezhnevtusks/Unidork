@@ -21,7 +21,8 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "UNDERTAGS"
+        "UNDERTAGS",
+        "UNDERMESSAGES"
     ],
     "versionDefines": [
         {
@@ -33,6 +34,11 @@
             "name": "com.underdork-studios.undertags",
             "expression": "1",
             "define": "UNDERTAGS"
+        },
+        {
+            "name": "com.underdork-studios.undermessages",
+            "expression": "1",
+            "define": "UNDERMESSAGES"
         }
     ],
     "noEngineReferences": false
