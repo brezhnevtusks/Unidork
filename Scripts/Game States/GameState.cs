@@ -21,6 +21,16 @@ namespace Unidork.GameStates
 		/// </value>
 		public UnderTag StateName => stateName;
 
+		/// <summary>
+		/// Optional message to send when the state is entered.
+		/// </summary>
+		public UnderTag MessageToSendOnStateEntered => messageToSendOnStateEntered;
+
+		/// <summary>
+		/// Optional message to send when the state is exited.
+		/// </summary>
+		public UnderTag MessageToSendOnStateExited => messageToSendOnStateExited;
+
 		#endregion
 
 		#region Constants
