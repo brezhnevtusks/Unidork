@@ -109,11 +109,12 @@ namespace Unidork.WeightedSelection
         /// <summary>
         /// Computes and gets weighted selection data from this table.
         /// </summary>
+        /// <param name="objectsToInclude">Objects from the original list to include when computing weights.</param>
         /// <param name="objectsToExclude">Objects to exclude from the original list when computing weights.</param>
         /// <returns>
         /// A tuple containing a list of <see cref="TWeightedObject"/> and a float representing total weight.
         /// </returns>
-        public (List<TWeightedObject>, float) GetComputedWeights(List<TWeightedObject> objectsToExclude = null)
+        public (List<TWeightedObject>, float) GetComputedWeights(List<TObject> objectsToInclude = null, List<TObject> objectsToExclude = null)
         {
             if (objects.IsNullOrEmpty())
             {
@@ -124,12 +125,16 @@ namespace Unidork.WeightedSelection
             var weightedObjects = new List<TWeightedObject>();
             weightedObjects.AddRange(objects);
 
+            if (!objectsToInclude.IsNullOrEmpty())
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                weightedObjects = weightedObjects.FindAll(weightedObject => objectsToInclude.FindIndex(objectToInclude => objectToInclude.Equals(weightedObject.Object)) != -1);
+            }
+
             if (!objectsToExclude.IsNullOrEmpty())
             {
-                foreach (TWeightedObject objectToExclude in objectsToExclude)
-                {
-                    weightedObjects.Remove(objectToExclude);
-                }
+                // ReSharper disable once PossibleNullReferenceException
+                weightedObjects.RemoveAll(weightedObject => objectsToExclude.Contains(weightedObject.Object));
             }
             
             float totalWeight = 0f;
