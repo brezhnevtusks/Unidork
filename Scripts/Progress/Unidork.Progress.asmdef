@@ -2,18 +2,10 @@
     "name": "Unidork.Progress",
     "rootNamespace": "",
     "references": [
-        "GUID:4ee1b0f5de000e041a6521f50852d501",
-        "GUID:79528398fe486e54781a16c334294da4",
-        "GUID:1580a914ce3e3d34499465036968799c",
-        "GUID:f2624564a2dc98e43b069312b63c832f",
-        "Doozy.Runtime",
-        "EasySave3",
-        "UnderTools.Extensions",
-        "Unidork.AddressableUtility.Editor",
-        "Unidork.Extensions",
-        "Unidork.FileUtility",
-        "Unidork.Tweens",
-        "UniRx"
+        "Unidork.Attributes",
+        "Unidork.Resources",
+        "Unidork.Events",
+        "Unidork.Serialization"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

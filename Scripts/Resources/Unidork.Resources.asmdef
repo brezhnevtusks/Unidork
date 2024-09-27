@@ -2,12 +2,12 @@
     "name": "Unidork.Resources",
     "rootNamespace": "",
     "references": [
-        "GUID:6abe7d7cbadb4d83a635b4df5c571be6",
-        "GUID:4ee1b0f5de000e041a6521f50852d501",
-        "GUID:9549780f47e97fc4aae12a67385fdc4b",
-        "GUID:f2624564a2dc98e43b069312b63c832f",
-        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
-        "GUID:49a2a1ed1b55f7fa5994009a6172b28c"
+        "EasySave3",
+        "UnderTools.Extensions",
+        "Unidork.Attributes",
+        "Unidork.Extensions",
+        "Unidork.Serialization",
+        "UniRx"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

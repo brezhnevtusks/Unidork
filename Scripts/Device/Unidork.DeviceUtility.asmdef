@@ -2,7 +2,7 @@
     "name": "Unidork.DeviceUtility",
     "rootNamespace": "",
     "references": [
-        "GUID:4ee1b0f5de000e041a6521f50852d501"
+        "Unidork.Attributes"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

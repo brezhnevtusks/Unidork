@@ -5,14 +5,11 @@
         "UnderMessages",
         "UnderTags",
         "Unidork.Attributes",
+        "Unidork.Events",
         "Unidork.SceneManagement",
         "Unidork.UniRx",
         "UniRx",
-        "UnderTools.Extensions",
-        "UnderTools.Serialization",
-        "Unidork.Events",
-        "UniTask",
-        "UniTask.Addressables"
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

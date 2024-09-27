@@ -32,17 +32,15 @@ MonoBehaviour:
     assemblyNames:
     - ALINE
     - Assembly-CSharp
+    - Doozy.Editor
+    - Doozy.Runtime
     - EasySave3
     - I2Localization.Runtime
     - Lofelt.NiceVibrations
     - MoreMountains.Tools
-    - NWH.Common
-    - NWH.VehiclePhysics2
-    - NWH.VehiclePhysics2.SetupWizard
-    - NWH.WheelController
-    - RoadHero.Constants
     - SerializableCollections
     - Sirenix.OdinInspector.Modules.Unity.Addressables
+    - Tayx.Graphy
     - UnderMessages
     - UnderMessagesExample
     - UnderTags
@@ -56,6 +54,7 @@ MonoBehaviour:
     - Unidork.CameraUtility
     - Unidork.Constants
     - Unidork.DeviceUtility
+    - Unidork.DoozyUI
     - Unidork.Events
     - Unidork.Extensions
     - Unidork.Feedbacks
@@ -79,6 +78,7 @@ MonoBehaviour:
     - Unidork.Tweens
     - Unidork.UI
     - Unidork.UniRx
+    - Unidork.Unlockables
     - Unidork.Utility
     - Unidork.Variables
     - Unidork.WeightedSelection
