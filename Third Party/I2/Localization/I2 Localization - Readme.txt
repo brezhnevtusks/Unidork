@@ -1,6 +1,6 @@
 ﻿----------------------------------------------
               I2 Localization
-                   2.8.22 f4
+                   2.8.22 f6
         http://www.inter-illusion.com
           inter.illusion@gmail.com
 ----------------------------------------------
@@ -68,6 +68,7 @@ AssetStore Deals   - A bot that constantly checks the Store to find you the late
 -----------------------
 2.8.22
 NEW: Added support for Unity 2022.3.X
+NEW: Added support for Unity 6
 NEW: Specializations can now also use the New Input System to detect if touch is supported
 FIX: Improved performance when importing Spreadsheets on startup
 FIX: Android App Name was not correctly exported when in Unity 2021.2 or newer 
