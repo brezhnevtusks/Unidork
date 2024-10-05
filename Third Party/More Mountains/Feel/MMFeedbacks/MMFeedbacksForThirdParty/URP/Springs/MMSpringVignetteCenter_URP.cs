@@ -5,6 +5,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringVignetteCenter_URP")]
 	public class MMSpringVignetteCenter_URP : MMSpringVector2Component<Volume>
 	{
 		protected Vignette _vignette;

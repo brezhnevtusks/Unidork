@@ -1,9 +1,11 @@
 #if MM_HDRP
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringChromaticAberrationIntensity_HDRP")]
 	public class MMSpringChromaticAberrationIntensity_HDRP : MMSpringFloatComponent<Volume>
 	{
 		protected ChromaticAberration _chromaticAberration;

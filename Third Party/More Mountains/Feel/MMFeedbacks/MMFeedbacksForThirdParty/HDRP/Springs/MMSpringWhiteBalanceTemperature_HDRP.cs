@@ -1,9 +1,11 @@
 #if MM_HDRP
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringWhiteBalanceTemperature_HDRP")]
 	public class MMSpringWhiteBalanceTemperature_HDRP : MMSpringFloatComponent<Volume>
 	{
 		protected WhiteBalance _whiteBalance;

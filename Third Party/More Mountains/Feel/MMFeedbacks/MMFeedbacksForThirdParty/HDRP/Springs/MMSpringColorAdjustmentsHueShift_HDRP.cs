@@ -1,9 +1,11 @@
 #if MM_HDRP
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringColorAdjustmentsHueShift_HDRP")]
 	public class MMSpringColorAdjustmentsHueShift_HDRP : MMSpringFloatComponent<Volume>
 	{
 		protected ColorAdjustments _colorAdjustments;

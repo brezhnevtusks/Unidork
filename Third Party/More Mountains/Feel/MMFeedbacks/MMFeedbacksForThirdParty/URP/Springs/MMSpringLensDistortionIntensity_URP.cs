@@ -1,9 +1,11 @@
 #if MM_URP
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringLensDistortionIntensity_URP")]
 	public class MMSpringLensDistortionIntensity_URP : MMSpringFloatComponent<Volume>
 	{
 		protected LensDistortion _lensDistortion;

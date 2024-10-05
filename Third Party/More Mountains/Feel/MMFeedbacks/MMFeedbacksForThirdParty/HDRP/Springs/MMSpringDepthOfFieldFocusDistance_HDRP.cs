@@ -1,9 +1,11 @@
 #if MM_HDRP
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringDepthOfFieldFocusDistance_HDRP")]
 	public class MMSpringDepthOfFieldFocusDistance_HDRP : MMSpringFloatComponent<Volume>
 	{
 		protected DepthOfField _depthOfField;

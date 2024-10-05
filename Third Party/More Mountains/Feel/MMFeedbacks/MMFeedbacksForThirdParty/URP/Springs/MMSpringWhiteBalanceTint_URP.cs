@@ -1,9 +1,11 @@
 #if MM_URP
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringWhiteBalanceTint_URP")]
 	public class MMSpringWhiteBalanceTint_URP : MMSpringFloatComponent<Volume>
 	{
 		protected WhiteBalance _whiteBalance;

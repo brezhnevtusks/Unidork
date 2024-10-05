@@ -1,9 +1,7 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using MoreMountains.Tools;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 

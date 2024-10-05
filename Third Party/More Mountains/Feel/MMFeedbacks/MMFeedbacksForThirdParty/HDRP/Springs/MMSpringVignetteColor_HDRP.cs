@@ -5,6 +5,7 @@ using UnityEngine.Rendering.HighDefinition;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringVignetteColor_HDRP")]
 	public class MMSpringVignetteColor_HDRP : MMSpringColorComponent<Volume>
 	{
 		protected Vignette _vignette;

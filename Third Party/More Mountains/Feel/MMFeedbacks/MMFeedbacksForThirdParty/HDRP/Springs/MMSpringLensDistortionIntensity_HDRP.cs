@@ -1,9 +1,11 @@
 #if MM_HDRP
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringLensDistortionIntensity_HDRP")]
 	public class MMSpringLensDistortionIntensity_HDRP : MMSpringFloatComponent<Volume>
 	{
 		protected LensDistortion _lensDistortion;

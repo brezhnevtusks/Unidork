@@ -4,6 +4,7 @@ using UnityEngine.Rendering.PostProcessing;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringVignetteCenter")]
 	public class MMSpringVignetteCenter : MMSpringVector2Component<PostProcessVolume>
 	{
 		protected Vignette _vignette;

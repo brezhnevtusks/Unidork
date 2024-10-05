@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿#if MM_UI
+using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
@@ -215,3 +216,4 @@ namespace MoreMountains.Feedbacks
 		}
 	}
 }
+#endif

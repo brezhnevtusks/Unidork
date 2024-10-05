@@ -1,9 +1,11 @@
 #if MM_URP
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringVignetteIntensity_URP")]
 	public class MMSpringVignetteIntensity_URP : MMSpringFloatComponent<Volume>
 	{
 		protected Vignette _vignette;

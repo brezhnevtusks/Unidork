@@ -239,37 +239,39 @@ namespace MoreMountains.Feedbacks
 		{
 			get
 			{
+				float timescaleMultiplier = Owner.TimescaleMultiplier;
+				
 				#if UNITY_EDITOR
 				if (!Application.isPlaying)
 				{
-					return (float)EditorApplication.timeSinceStartup;
+					return (float)EditorApplication.timeSinceStartup * timescaleMultiplier;
 				}
 				#endif
 
 				if (Timing.UseScriptDrivenTimescale)
 				{
-					return Timing.ScriptDrivenTime;
+					return Timing.ScriptDrivenTime * timescaleMultiplier;
 				}
 
 				if (Owner.ForceTimescaleMode)
 				{
 					if (Owner.ForcedTimescaleMode == TimescaleModes.Scaled)
 					{
-						return Time.time;
+						return Time.time * timescaleMultiplier;
 					}
 					else
 					{
-						return Time.unscaledTime;
+						return Time.unscaledTime * timescaleMultiplier;
 					}
 				}
 
 				if (Timing.TimescaleMode == TimescaleModes.Scaled)
 				{
-					return Time.time;
+					return Time.time * timescaleMultiplier;
 				}
 				else
 				{
-					return Time.unscaledTime;
+					return Time.unscaledTime * timescaleMultiplier;
 				}
 			}
 		}
@@ -279,20 +281,22 @@ namespace MoreMountains.Feedbacks
 		{
 			get
 			{
+				float timescaleMultiplier = Owner.TimescaleMultiplier;
+				
 				if (Timing.UseScriptDrivenTimescale)
 				{
-					return Timing.ScriptDrivenDeltaTime;
+					return Timing.ScriptDrivenDeltaTime * timescaleMultiplier;
 				}
 
 				if (Owner.ForceTimescaleMode)
 				{
 					if (Owner.ForcedTimescaleMode == TimescaleModes.Scaled)
 					{
-						return Time.deltaTime;
+						return Time.deltaTime * timescaleMultiplier;
 					}
 					else
 					{
-						return Time.unscaledDeltaTime;
+						return Time.unscaledDeltaTime * timescaleMultiplier;
 					}
 				}
 
@@ -303,11 +307,11 @@ namespace MoreMountains.Feedbacks
 
 				if (Timing.TimescaleMode == TimescaleModes.Scaled)
 				{
-					return Time.deltaTime;
+					return Time.deltaTime * timescaleMultiplier;
 				}
 				else
 				{
-					return Time.unscaledDeltaTime;
+					return Time.unscaledDeltaTime * timescaleMultiplier;
 				}
 			}
 		}

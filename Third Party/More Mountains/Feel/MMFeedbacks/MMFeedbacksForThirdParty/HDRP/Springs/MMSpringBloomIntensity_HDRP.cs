@@ -1,9 +1,11 @@
 #if MM_HDRP
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringBloomIntensity_HDRP")]
 	public class MMSpringBloomIntensity_HDRP : MMSpringFloatComponent<Volume>
 	{
 		protected Bloom _bloom;

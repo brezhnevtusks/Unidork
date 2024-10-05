@@ -1,9 +1,11 @@
 #if MM_HDRP
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
 namespace MoreMountains.Feedbacks
 {
+	[AddComponentMenu("More Mountains/Springs/MMSpringMotionBlurIntensity_HDRP")]
 	public class MMSpringMotionBlurIntensity_HDRP : MMSpringFloatComponent<Volume>
 	{
 		protected MotionBlur _motionBlur;
