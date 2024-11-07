@@ -1,6 +1,9 @@
 using Cysharp.Threading.Tasks;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.LowLevel;
+
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace Unidork.Utility
 {
@@ -8,26 +11,35 @@ namespace Unidork.Utility
     {
         #region Properties
         
+        public static bool SaveLoaded { get; protected set; }
         public static bool IsInitialized { get; private set; }
         
         #endregion
         
         #region Init
+
+        protected virtual void Awake()
+        {
+            PlayerLoopSystem playerLoopSystem = PlayerLoop.GetCurrentPlayerLoop();
+            PlayerLoopHelper.Initialize(ref playerLoopSystem);
+        }
         
         private async Task Start()
         {
             Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
-            await InitAsync();
-            await PostSceneLoadAsync();
+            try
+            {
+                await InitAsync();
+            }
+            catch(System.Exception e)
+            {
+                Debug.LogError($"Game initialization failed! {e}");
+            }
             IsInitialized = true;
-            Debug.Log("Game initialized");
+            Debug.Log("Game initialized!");
         }
-
+        
         protected virtual async UniTask InitAsync()
-        {
-        }
-
-        protected virtual async UniTask PostSceneLoadAsync()
         {
         }
         

@@ -237,6 +237,7 @@ namespace Unidork.ObjectPooling
                 }
             }
                 
+            Debug.LogError($"Failed to find ObjectSpawner with name {spawnerName}!");
             return null;
         }
 
