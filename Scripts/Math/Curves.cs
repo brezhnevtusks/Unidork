@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Specialized;
+using UnityEngine;
 
 namespace Unidork.Math
 {
@@ -25,6 +26,35 @@ namespace Unidork.Math
             newPosition.y += arcHeight * Mathf.Sin(progress * Mathf.PI);
 
             return newPosition;
+        }
+
+        /// <summary>
+        /// Approximates the length of a symmetrical arc by splitting it into line segments and approximating their length.
+        /// </summary>
+        /// <param name="startPosition">Arc's start position.</param>
+        /// <param name="endPosition">Arc's end position.</param>
+        /// <param name="arcHeight">Height of the arc.</param>
+        /// <param name="precision">Number of segments to split the arc into.</param>
+        /// <returns></returns>
+        public static float CalculateApproximateSymmetricalArcLength(Vector3 startPosition, Vector3 endPosition, float arcHeight, int precision)
+        {
+            float progressPerSegment = 1f / precision;
+            float length = 0f;
+
+            float progress = 0f;
+
+            while (progress < 1f)
+            {
+                float newProgress = Mathf.Clamp01(progress + progressPerSegment);
+
+                Vector3 firstPoint = CalculateSymmetricalArcMovementPoint(progress, startPosition, endPosition, arcHeight);
+                Vector3 secondPoint = CalculateSymmetricalArcMovementPoint(newProgress, startPosition, endPosition, arcHeight);
+                length += Vector3.Distance(firstPoint, secondPoint);
+                
+                progress = newProgress;
+            }
+            
+            return length;
         }
 
         #endregion
