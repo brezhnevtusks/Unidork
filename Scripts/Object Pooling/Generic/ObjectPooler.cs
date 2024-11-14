@@ -140,6 +140,9 @@ namespace Unidork.ObjectPooling
                 var pooledObject = (IPooledObject<T>)Addressables
                     .InstantiateAsync(itemSettings.AssetReference).Result
                     .GetComponentInChildren(typeof(IPooledObject<T>));
+
+                GameObject gameObject = ((Component)pooledObject).gameObject;
+                gameObject.name = gameObject.name.Replace("(Clone)", $"_{i}");
                 
                 pooledObject.SetParent(pooledObjectHolder);
                 pooledObject.Deactivate(deactivateOnStart: true);
