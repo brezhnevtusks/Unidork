@@ -16,7 +16,7 @@ namespace MoreMountains.Tools
 	/// Make sure this intermediary layer only has one child
 	/// If movement feels glitchy make sure your rigidbody is on Interpolate
 	/// </summary>
-	[AddComponentMenu("More Mountains/Tools/Movement/MMSquashAndStretch")]
+	[AddComponentMenu("More Mountains/Tools/Movement/MM Squash And Stretch")]
 	public class MMSquashAndStretch : MonoBehaviour
 	{
 		public enum Timescales { Regular, Unscaled }
@@ -186,11 +186,11 @@ namespace MoreMountains.Tools
 			switch (Mode)
 			{
 				case Modes.Rigidbody:
-					Velocity = _rigidbody.velocity;
+					Velocity = _rigidbody.linearVelocity;
 					break;
 
 				case Modes.Rigidbody2D:
-					Velocity = _rigidbody2D.velocity;
+					Velocity = _rigidbody2D.linearVelocity;
 					break;
 
 				case Modes.Position:
