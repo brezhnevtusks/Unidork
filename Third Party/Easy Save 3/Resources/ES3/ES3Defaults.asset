@@ -32,17 +32,50 @@ MonoBehaviour:
     assemblyNames:
     - ALINE
     - Assembly-CSharp
-    - Doozy.Editor
+    - Assembly-CSharp-firstpass
+    - CatchTheRobbers.Arena
+    - CatchTheRobbers.Banks
+    - CatchTheRobbers.Base
+    - CatchTheRobbers.Boosts
+    - CatchTheRobbers.Camera
+    - CatchTheRobbers.Common
+    - CatchTheRobbers.Constants
+    - CatchTheRobbers.Core
+    - CatchTheRobbers.Effects
+    - CatchTheRobbers.Environment
+    - CatchTheRobbers.EscapeTools
+    - CatchTheRobbers.GameConfig
+    - CatchTheRobbers.Health
+    - CatchTheRobbers.Input
+    - CatchTheRobbers.Localization
+    - CatchTheRobbers.Mercs
+    - CatchTheRobbers.Mission
+    - CatchTheRobbers.ObjectPooling
+    - CatchTheRobbers.Projectiles
+    - CatchTheRobbers.Resources
+    - CatchTheRobbers.Robbers
+    - CatchTheRobbers.SceneManagement
+    - CatchTheRobbers.Serialization
+    - CatchTheRobbers.Settings
+    - CatchTheRobbers.Shop
+    - CatchTheRobbers.UI
+    - CatchTheRobbers.Utility
+    - CFXRDemo
+    - CFXRRuntime
     - Doozy.Runtime
     - EasySave3
+    - GameAnalytics.Runtime
     - I2Localization.Runtime
+    - KinoBloom.Runtime
     - Lofelt.NiceVibrations
     - MoreMountains.Tools
+    - PlayFab
+    - Renge.ProgressBar
     - SerializableCollections
+    - SingularityGroup.HotReload.Runtime
+    - SingularityGroup.HotReload.Runtime.Public
     - Sirenix.OdinInspector.Modules.Unity.Addressables
-    - Tayx.Graphy
     - UnderMessages
-    - UnderMessagesExample
     - UnderTags
     - UnderTools.Extensions
     - UnderTools.Serialization
@@ -88,6 +121,15 @@ MonoBehaviour:
     - UniTask.DOTween
     - UniTask.Linq
     - UniTask.TextMeshPro
+    - VoxelBusters.CoreLibrary
+    - VoxelBusters.CoreLibrary.NativePlugins
+    - VoxelBusters.CoreLibrary.NativePlugins.AndroidModule
+    - VoxelBusters.CoreLibrary.NativePlugins.iOSModule
+    - VoxelBusters.CoreLibrary.Parser
+    - VoxelBusters.EssentialKit
+    - VoxelBusters.EssentialKit.AndroidModule
+    - VoxelBusters.EssentialKit.Demo
+    - VoxelBusters.EssentialKit.iOSModule
     showAdvancedSettings: 1
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1
